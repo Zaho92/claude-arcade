@@ -1,0 +1,23 @@
+name: Translation
+description: A text reads oddly, or a language is missing.
+labels: [translation]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Language
+    validations:
+      required: true
+  - type: textarea
+    id: text
+    attributes:
+      label: What reads oddly, and how it should read
+      description: The text as the arcade shows it, and your version. For a new language, just say which one.
+    validations:
+      required: true
+  - type: checkboxes
+    id: native
+    attributes:
+      label: About you
+      options:
+        - label: I speak this language natively
