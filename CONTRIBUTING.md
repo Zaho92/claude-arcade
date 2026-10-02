@@ -96,7 +96,7 @@ The changelog is for the person playing. Say what they will notice, not what
 the code does.
 
 ```
-## 0.3.0 - 2026-10-05
+## 1.3.0 - 2026-10-05
 
 ### Added
 
@@ -123,12 +123,9 @@ The step follows from the section, and CI checks it:
 
 | The section has | Step | Example |
 |---|---|---|
-| only Fixed | patch | 0.2.0 → 0.2.1 |
-| Added or Changed | minor | 0.2.1 → 0.3.0 |
-| a `**Breaking:**` entry | major, from 1.0 on | 1.3.0 → 2.0.0 |
-
-Before 1.0 a breaking change is a minor. 1.0.0 itself is declared by the
-maintainer in a pull request of its own.
+| only Fixed | patch | 1.2.0 → 1.2.1 |
+| Added or Changed | minor | 1.2.1 → 1.3.0 |
+| a `**Breaking:**` entry | major | 1.3.0 → 2.0.0 |
 
 Two open pull requests cannot both take the same version. The second one to
 merge is updated from `main` and takes the next.

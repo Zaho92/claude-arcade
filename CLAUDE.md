@@ -54,12 +54,10 @@ that run while Claude works and freeze when Claude needs the person.
   is a release: add a `## <version> - <date>` section on top of CHANGELOG.md
   and raise `version` in `.claude-plugin/plugin.json` by the step it calls
   for. Only Fixed is a patch; Added or Changed a minor; a `**Breaking:**`
-  entry a major (a minor before 1.0). CI checks it
-  (`.github/scripts/check-version.mjs`); CONTRIBUTING.md, "Versions and
-  releases", has the full rules.
+  entry a major. CI checks it (`.github/scripts/check-version.mjs`);
+  CONTRIBUTING.md, "Versions and releases", has the full rules.
 - The changelog is for the person playing: what they notice, nothing about
   tests, docs or CI. Released sections are never edited.
-- 1.0.0 is the maintainer's call. Do not propose or make that step unasked.
 - Commits carry the GitHub noreply address, never a private e-mail.
 - The API types live in `.claude-plugin/types/` (written by the engine,
   git-ignored). The API moves between releases: when raising
