@@ -1,7 +1,22 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/games/bricks'
+import { MAX_SPEED, brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/games/bricks'
+import type { Game } from '../hooks/games/bricks'
 import { GLYPHS } from '../hooks/glyphs'
+import { expectFrames, lines } from './frames'
+
+/** Leaves one brick and sends the ball straight up into it. */
+function clearWall(g: Game): void {
+  g.bricks = g.bricks.map((_, i) => (i === 0 ? 1 : 0))
+  g.phase = 'play'
+  g.ballX = g.brickLeft + 0.5
+  g.ballY = 2 + 1.1
+  g.vx = 0
+  g.vy = -0.4
+  let r = tick(g)
+  while (r === 'moved') r = tick(g)
+  expect(r).toBe('cleared')
+}
 
 describe('bricks logic', () => {
   test('a new game waits with the ball on the paddle', () => {
@@ -41,7 +56,7 @@ describe('bricks logic', () => {
     expect(bricksLeft(g)).toBe(before - 1)
     expect(g.score).toBeGreaterThan(0)
     expect(g.vy).toBeGreaterThan(0)
-    expect(brickAt(g, col, row)).toBeGreaterThan(-1)
+    expect(g.bricks[brickAt(g, col, row)]).toBe(0)
   })
 
   test('the paddle sends the ball back', () => {
@@ -70,42 +85,43 @@ describe('bricks logic', () => {
       expect(r).toBe(life === 1 ? 'over' : 'lost')
     }
     expect(g.phase).toBe('over')
-    press(g, 'primary')
-    expect(g.phase).toBe('ready')
-    expect(g.lives).toBe(START_LIVES)
-    expect(g.score).toBe(0)
   })
 
-  test('clearing the wall starts the next level', () => {
+  test('a finished game stands still: the arcade starts the next one, not a key', () => {
     const g = newGame(40, 20)
-    g.bricks = g.bricks.map((_, i) => (i === 0 ? 1 : 0))
-    g.phase = 'play'
-    g.ballX = g.brickLeft + 0.5
-    g.ballY = 2 + 1.1
-    g.vx = 0
-    g.vy = -0.4
-    let r = tick(g)
-    while (r === 'moved') r = tick(g)
-    expect(r).toBe('cleared')
+    g.phase = 'over'
+    const before = JSON.stringify(g)
+    for (const key of ['left', 'right', 'up', 'down', 'primary', 'secondary'] as const) expect(press(g, key)).toBe(false)
+    expect(tick(g)).toBe('none')
+    expect(JSON.stringify(g)).toBe(before)
+  })
+
+  test('clearing the wall starts the next level, a little faster', () => {
+    const g = newGame(40, 20)
+    const speed = g.speed
+    clearWall(g)
     expect(g.level).toBe(2)
+    expect(g.phase).toBe('ready')
+    expect(g.speed).toBeGreaterThan(speed)
     expect(bricksLeft(g)).toBe(g.brickCols * g.brickRows)
   })
 
-  test('a frame has one row per field row, each as wide as the field', () => {
-    const g = newGame(50, 18)
-    const rows = frame(g, GLYPHS.unicode)
-    expect(rows).toHaveLength(g.h)
-    for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(g.w)
+  test('the ball stops getting faster at a pace the paddle can still meet', () => {
+    const g = newGame(40, 20)
+    for (let level = 1; level < 30; level++) clearWall(g)
+    expect(g.level).toBe(30)
+    expect(g.speed).toBe(MAX_SPEED)
+    press(g, 'primary')
+    expect(Math.hypot(g.vx, g.vy)).toBeLessThanOrEqual(MAX_SPEED)
   })
 
-  test('the ascii glyphs draw the same field with plain characters', () => {
+  test('every row of the frame is as wide as the field, in both glyph sets', () => {
     const g = newGame(50, 18)
-    const text = frame(g, GLYPHS.ascii)
-      .map(row => row.map(s => s.text).join(''))
-      .join('')
-    expect(text).toMatch(/^[ -~]+$/)
+    expectFrames(glyphs => frame(g, glyphs), g.w, g.h)
+    const text = lines(frame(g, GLYPHS.ascii)).join('')
     expect(text).toContain('#')
     expect(text).toContain('=')
+    expect(text).toContain('o')
   })
 
   test('a long rally never leaves the field', () => {

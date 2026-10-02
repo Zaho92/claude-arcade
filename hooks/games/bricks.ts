@@ -2,9 +2,8 @@
 // feeds it actions and ticks; the tests drive it directly.
 
 import type { Glyphs } from '../glyphs'
-import type { Action, Frame, GameDef, Segment, TickResult } from './types'
-
-export type Phase = 'ready' | 'play' | 'over'
+import { put } from './types'
+import type { Action, Frame, GameDef, Segment, Status, TickResult } from './types'
 
 export type Game = {
   w: number
@@ -23,7 +22,7 @@ export type Game = {
   lives: number
   score: number
   level: number
-  phase: Phase
+  phase: Status
 }
 
 export const BRICK_W = 4
@@ -31,6 +30,9 @@ export const BRICK_STEP = BRICK_W + 1
 export const BRICK_TOP = 2
 export const START_LIVES = 3
 const BASE_SPEED = 0.55
+// Each cleared wall speeds the ball up, to a pace the paddle can still meet.
+const LEVEL_SPEEDUP = 1.12
+export const MAX_SPEED = 1
 const SUBSTEPS = 4
 const PADDLE_STEP = 3
 // Terminal cells are about twice as tall as wide: vertical speed is halved
@@ -113,17 +115,13 @@ export function brickAt(g: Game, col: number, row: number): number {
 
 /** Applies one action; true when something changed. */
 export function press(g: Game, action: Action): boolean {
+  // A finished game stands still; the arcade starts the next one.
+  if (g.phase === 'over') return false
   if (action === 'left') return movePaddle(g, -PADDLE_STEP)
   if (action === 'right') return movePaddle(g, PADDLE_STEP)
-  if (action === 'primary' || action === 'up') {
-    if (g.phase === 'ready') {
-      launch(g)
-      return true
-    }
-    if (g.phase === 'over') {
-      Object.assign(g, newGame(g.w, g.h))
-      return true
-    }
+  if ((action === 'primary' || action === 'up') && g.phase === 'ready') {
+    launch(g)
+    return true
   }
   return false
 }
@@ -179,7 +177,7 @@ function step(g: Game, dt: number): StepResult {
     else g.vy = -g.vy
     if (bricksLeft(g) === 0) {
       g.level += 1
-      g.speed *= 1.12
+      g.speed = Math.min(MAX_SPEED, g.speed * LEVEL_SPEEDUP)
       buildWall(g)
       g.phase = 'ready'
       parkBall(g)
@@ -244,9 +242,7 @@ export function frame(g: Game, glyphs: Glyphs): Frame {
           color = BRICK_COLORS[(v - 1) % BRICK_COLORS.length]
         }
       }
-      const last = cells[cells.length - 1]
-      if (last && last.color === color) last.text += ch
-      else cells.push({ text: ch, color })
+      put(cells, ch, color)
     }
     rows.push(cells)
   }

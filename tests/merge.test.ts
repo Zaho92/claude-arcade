@@ -2,7 +2,7 @@ import { describe, expect, test } from 'claude-code/testing'
 
 import { FIELD_H, FIELD_W, GOAL, canMove, merge, newMerge, press, slideLine } from '../hooks/games/merge'
 import type { Merge } from '../hooks/games/merge'
-import { GLYPHS } from '../hooks/glyphs'
+import { expectFrames } from './frames'
 
 // New tiles go to the first free cell and are always 2.
 const low = () => 0
@@ -39,10 +39,24 @@ describe('merge', () => {
     const right = withGrid(start)
     press(right, 'right')
     expect(right.grid[3]).toBe(4)
+    const left = withGrid(start)
+    press(left, 'left')
+    expect(left.grid[0]).toBe(4)
     const down = withGrid(start)
     press(down, 'down')
     expect(down.grid[12]).toBe(2)
     expect(down.grid[15]).toBe(2)
+    // prettier-ignore
+    const up = withGrid([
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      0, 0, 0, 0,
+      2, 0, 0, 2,
+    ])
+    press(up, 'up')
+    expect(up.grid[0]).toBe(2)
+    expect(up.grid[3]).toBe(2)
+    expect(up.grid[15]).toBe(0)
   })
 
   test('a move that changes nothing brings no new tile', () => {
@@ -75,6 +89,32 @@ describe('merge', () => {
     expect(g.phase).toBe('play')
   })
 
+  test('the note about the goal goes with the next key, even one that moves nothing', () => {
+    const g = withGrid([GOAL / 2, GOAL / 2, ...Array(14).fill(0)])
+    press(g, 'left')
+    g.grid = [GOAL, ...Array(15).fill(0)]
+    expect(merge.banner(g)).toBe('merge.won')
+    // Nothing can slide left, but the line goes, so the arcade must redraw.
+    expect(press(g, 'left')).toBe(true)
+    expect(merge.banner(g)).toBeUndefined()
+    expect(press(g, 'left')).toBe(false)
+  })
+
+  test('reaching the goal with the last possible move is the end, not a note to play on', () => {
+    // prettier-ignore
+    const g = withGrid([
+      GOAL / 2, GOAL / 2, 4, 8,
+      4, 2, 4, 8,
+      2, 4, 2, 4,
+      4, 2, 4, 2,
+    ])
+    // The top row slides to GOAL 4 8 0 and the new 2 fills the corner: no move left.
+    press(g, 'left')
+    expect(g.hasWon).toBe(true)
+    expect(merge.status(g)).toBe('over')
+    expect(merge.banner(g)).toBeUndefined()
+  })
+
   test('moves are left while a cell is free or two neighbours match', () => {
     // prettier-ignore
     const stuck = [
@@ -89,11 +129,8 @@ describe('merge', () => {
   })
 
   test('the board is drawn the same size in both glyph sets', () => {
-    for (const glyphs of [GLYPHS.unicode, GLYPHS.ascii]) {
-      const rows = merge.frame(newMerge(0, 0, low), glyphs)
-      expect(rows).toHaveLength(FIELD_H)
-      for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(FIELD_W)
-    }
+    const g = withGrid([2, 16, 128, GOAL, GOAL * 64, ...Array(11).fill(0)])
+    expectFrames(glyphs => merge.frame(g, glyphs), FIELD_W, FIELD_H)
   })
 
   test('a key is all it takes to lose, and the host learns it from the key', () => {

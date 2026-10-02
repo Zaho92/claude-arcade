@@ -3,6 +3,7 @@ import { describe, expect, test } from 'claude-code/testing'
 import { fieldAt, lay, mines, newMines, open, openCount, press, score } from '../hooks/games/mines'
 import type { Mines } from '../hooks/games/mines'
 import { GLYPHS } from '../hooks/glyphs'
+import { expectFrames, lines } from './frames'
 
 /** A field with mines exactly where `at` says, numbers worked out. */
 function rigged(at: [number, number][], cols = 8, rows = 8): Mines {
@@ -89,15 +90,27 @@ describe('mines', () => {
   })
 
   test('every row of the frame is as wide as the field, and the cursor shows without color', () => {
+    const g = newMines(36, 10)
+    expectFrames(glyphs => mines.frame(g, glyphs), g.w, g.rows)
     for (const glyphs of [GLYPHS.unicode, GLYPHS.ascii]) {
-      const g = newMines(36, 10)
-      const rows = mines.frame(g, glyphs)
-      expect(rows).toHaveLength(g.rows)
-      for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(g.w)
-      const line = rows[g.cursor.y]?.map(s => s.text).join('') ?? ''
-      expect(line).toContain(`[${glyphs.dot}]`)
+      const line = lines(mines.frame(g, glyphs))[g.cursor.y] ?? ''
+      expect(line).toContain(`${glyphs.cursorLeft}${glyphs.dot}${glyphs.cursorRight}`)
       // Closed fields carry a mark of their own, so they read without colors.
       expect(line).toContain(` ${glyphs.dot} `)
     }
+  })
+
+  test('a lost board is drawn at full size too, mines and flags and all', () => {
+    const g = rigged([
+      [3, 3],
+      [5, 5],
+    ])
+    g.cursor = { x: 0, y: 0 }
+    press(g, 'secondary')
+    open(g, 3, 3)
+    expectFrames(glyphs => mines.frame(g, glyphs), g.w, g.rows)
+    const text = lines(mines.frame(g, GLYPHS.ascii)).join('\n')
+    expect(text).toContain(GLYPHS.ascii.mine)
+    expect(text).toContain(GLYPHS.ascii.flag)
   })
 })

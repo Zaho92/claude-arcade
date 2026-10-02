@@ -13,6 +13,19 @@ export type PauseState = {
   reason: PauseReason
 }
 
+/**
+ * What holds the games still, each kept apart so that one ending does not
+ * release another. `PauseState` is read off it.
+ */
+export type Waiting = {
+  /** The main turn: '' while Claude works. */
+  turn: '' | 'idle' | 'done'
+  /** The open questions, one entry per call. */
+  asking: string[]
+  /** The open permission dialogs, one entry per call, as `<agent id>:<tool>`. */
+  permission: string[]
+}
+
 /** How the arcade speaks and draws, resolved once per session. */
 export type Display = {
   locale: Locale
@@ -29,6 +42,7 @@ declare module 'claude-code' {
   interface PluginState {
     arcade: {
       pause: PauseState
+      waiting: Waiting
       display: Display
       best: Record<string, number>
     }

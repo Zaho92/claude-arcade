@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { newWorm, press, step, tick, worm } from '../hooks/games/worm'
+import { framesPerStep, newWorm, press, step, tick, worm } from '../hooks/games/worm'
 import type { Worm } from '../hooks/games/worm'
-import { GLYPHS } from '../hooks/glyphs'
+import { expectFrames } from './frames'
 
 // Food always in the first free cell: (0,0) unless the worm is there.
 const first = () => 0
@@ -68,7 +68,28 @@ describe('worm', () => {
     for (let i = 0; i < 100 && r !== 'over'; i++) r = step(g)
     expect(r).toBe('over')
     expect(g.phase).toBe('over')
+    expect(g.isWon).toBe(false)
+    // A crash gets the arcade's usual game-over line.
+    expect(worm.banner(g)).toBeUndefined()
     expect(press(g, 'up')).toBe(false)
+  })
+
+  test('filling the whole board is a win, with a line of its own', () => {
+    const g = playing()
+    g.cols = 2
+    g.rows = 2
+    g.body = [
+      { x: 0, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+    ]
+    g.dir = 'right'
+    g.food = { x: 1, y: 0 }
+    expect(step(g)).toBe('over')
+    expect(g.body).toHaveLength(4)
+    expect(g.isWon).toBe(true)
+    expect(worm.status(g)).toBe('over')
+    expect(worm.banner(g)).toBe('worm.won')
   })
 
   test('biting itself ends the game', () => {
@@ -97,25 +118,36 @@ describe('worm', () => {
     expect(step(g)).toBe('changed')
   })
 
-  test('gets faster every five pieces of food', () => {
+  test('gets faster every five pieces of food, down to two frames a step', () => {
     const g = playing(48, 12)
-    for (let i = 0; i < 5; i++) {
-      const head = g.body[0]!
-      g.food = { x: head.x + 1, y: head.y }
-      g.dir = 'right'
-      step(g)
-      g.body = g.body.map(c => ({ x: c.x - 1, y: c.y }))
+    const eat = (pieces: number) => {
+      for (let i = 0; i < pieces; i++) {
+        const head = g.body[0]!
+        g.food = { x: head.x + 1, y: head.y }
+        g.dir = 'right'
+        step(g)
+        g.body = g.body.map(c => ({ x: c.x - 1, y: c.y }))
+      }
     }
+    expect(framesPerStep(g)).toBe(4)
+    eat(5)
     expect(g.level).toBe(2)
+    expect(framesPerStep(g)).toBe(3)
+    // The clock follows: the next step comes after three frames, not four.
+    g.wait = 1
+    tick(g)
+    let frames = 1
+    while (tick(g) === 'none') frames++
+    expect(frames).toBe(3)
+
+    eat(10)
+    expect(g.level).toBe(4)
+    expect(framesPerStep(g)).toBe(2)
   })
 
   test('every row of the frame is as wide as the field, in both glyph sets', () => {
-    for (const glyphs of [GLYPHS.unicode, GLYPHS.ascii]) {
-      const g = newWorm(41, 10, first)
-      const rows = worm.frame(g, glyphs)
-      expect(rows).toHaveLength(g.h)
-      for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(g.w)
-      expect(g.w % 2).toBe(0)
-    }
+    const g = newWorm(41, 10, first)
+    expect(g.w % 2).toBe(0)
+    expectFrames(glyphs => worm.frame(g, glyphs), g.w, g.h)
   })
 })

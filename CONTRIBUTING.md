@@ -5,7 +5,7 @@ contributions, but bug reports, ideas and fixes of any size are too.
 
 ## Translations
 
-All texts live in `hooks/i18n.ts`: about forty short lines per language.
+All texts live in `hooks/i18n.ts`: about fifty short lines per language.
 
 - **Fix a translation:** edit the line and open a pull request. Say which
   language you speak natively; that is all the review needs.
@@ -24,11 +24,17 @@ drawing, high scores.
 
 1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame.
 2. Add its texts (name, one-line description, help line) to `hooks/i18n.ts`,
-   in English at least. Other languages fall back to English until someone
-   translates them.
+   in every language; a test checks that none is missing. For a language you
+   do not speak, a careful machine translation is fine: say so in the pull
+   request, and a native speaker can correct it later.
 3. Add it to `GAMES` in `hooks/games/index.ts`.
 4. Add `tests/<game>.test.ts` covering its rules and that every row of its
-   frame is exactly as wide as the field in both glyph sets.
+   frame is exactly as wide as the field in both glyph sets (`expectFrames`
+   in `tests/frames.ts` does the measuring).
+
+The line that says "Space: start" or how a game ended is drawn under the
+field by the arcade: a game's frame is the field alone, and every character
+in it comes from `Glyphs`.
 
 Games that move on keys alone (turn-based) suit the arcade especially well:
 pausing never costs the player anything.

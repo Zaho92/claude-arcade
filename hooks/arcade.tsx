@@ -7,9 +7,9 @@ import type { ClientElements, ClientModule } from 'claude-code'
 
 import { GAMES } from './games'
 import type { Frame } from './games/types'
-import { GLYPHS, center, textWidth } from './glyphs'
+import { GLYPHS, textWidth } from './glyphs'
 import type { Glyphs } from './glyphs'
-import { FRAME_MS, commandFor, frameTick, handle, newHost } from './host'
+import { CHECKPOINT_MS, FRAME_MS, checkpoint, commandFor, fits, frameTick, handle, newHost } from './host'
 import type { Host, Running } from './host'
 import { t } from './i18n'
 import type { TextKey } from './i18n'
@@ -34,9 +34,13 @@ const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
     surface.every(FRAME_MS, () => {
       const cur = surface.state
       if (!cur) return
-      const out = frameTick(cur)
+      const out = frameTick(cur, surface.columns)
       if (out.report) surface.post(out.report)
       if (out.changed) surface.setState({ ...cur })
+    })
+    surface.every(CHECKPOINT_MS, () => {
+      const record = surface.state && checkpoint(surface.state)
+      if (record) surface.post(record)
     })
     surface.onKey(k => {
       const cur = surface.state
@@ -53,7 +57,9 @@ const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
   s.props = props
   const glyphs = GLYPHS[props.glyphs]
 
-  return s.run ? drawGame(s, s.run, glyphs, tr, surface.elements) : drawMenu(s, glyphs, tr, surface.elements)
+  if (!s.run) return drawMenu(s, glyphs, tr, surface.elements)
+  if (!fits(s.run, surface.columns)) return drawTooSmall(s.run, glyphs, tr, surface.elements)
+  return drawGame(s, s.run, glyphs, tr, surface.elements)
 }
 
 function pauseLine(s: Host, glyphs: Glyphs, tr: Tr): string | undefined {
@@ -79,7 +85,7 @@ function drawMenu(s: Host, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements
             <Text dimColor wrap="truncate">
               {'   '}
               {tr(def.blurb)}
-              {best > 0 ? `  ·  ${tr('menu.best', { n: best })}` : ''}
+              {best > 0 ? `  ${glyphs.dot}  ${tr('menu.best', { n: best })}` : ''}
             </Text>
           </Box>
         )
@@ -93,6 +99,21 @@ function drawMenu(s: Host, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements
   )
 }
 
+// The pane is narrower than the field: say so instead of drawing half a game.
+function drawTooSmall(run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements) {
+  return (
+    <Box flexDirection="column" paddingX={1}>
+      <Text bold>{tr(run.def.name)}</Text>
+      <Text wrap="wrap">
+        {glyphs.pause} {tr('tooSmall')}
+      </Text>
+      <Text dimColor wrap="wrap">
+        {tr('help.small')}
+      </Text>
+    </Box>
+  )
+}
+
 function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements) {
   const { def, g } = run
   const rows: Frame = def.frame(g, glyphs)
@@ -100,10 +121,11 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
   const hud = def.hud(g)
   const best = Math.max(s.props.best[def.id] ?? 0, hud.score)
 
+  // Under the field, not over it: the line may be longer than a small field
+  // is wide, and the field keeps every row it drew.
   const own = def.banner(g)
   const line = own ?? (def.status(g) === 'over' ? 'over' : undefined)
-  const banner = pauseLine(s, glyphs, tr) ?? (line ? tr(line, { n: hud.score }) : undefined)
-  if (banner) rows[Math.floor(rows.length / 2)] = [{ text: center(banner, w), color: '#ffffff' }]
+  const banner = pauseLine(s, glyphs, tr) ?? (line ? tr(line, { n: hud.score }) : '')
   const isDim = s.props.isPaused || s.isManuallyPaused
 
   const lives =
@@ -120,7 +142,7 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
     .join('  ')
   // A game's help may name its glyphs, as `{bull}` does.
   const glyphNames = glyphs as unknown as Record<string, string>
-  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help, glyphNames)} · ${tr('help.common')}`
+  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help, glyphNames)} ${glyphs.dot} ${tr('help.common')}`
   const score = tr('hud.score', { n: hud.score })
   // As wide as the field, or wider when a narrow game's score line needs it.
   const hudW = Math.max(w + 2, textWidth(score) + textWidth(lives) + textWidth(right) + 6)
@@ -147,6 +169,10 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
           </Text>
         ))}
       </Box>
+      <Text bold wrap="wrap">
+        {' '}
+        {banner}
+      </Text>
       <Text dimColor wrap="wrap">
         {' '}
         {help}

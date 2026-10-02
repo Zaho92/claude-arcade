@@ -7,6 +7,9 @@ import type { TextKey } from '../i18n'
 /** A key, already mapped from whatever layout typed it. */
 export type Action = 'left' | 'right' | 'up' | 'down' | 'primary' | 'secondary'
 
+/** The four ways a game moves. */
+export type Dir = 'left' | 'right' | 'up' | 'down'
+
 /** A run of cells in one color; absent colors are the terminal's default. */
 export type Segment = { text: string; color?: string; bg?: string }
 
@@ -14,6 +17,13 @@ export type Segment = { text: string; color?: string; bg?: string }
 export type Frame = Segment[][]
 
 export type Status = 'ready' | 'play' | 'over'
+
+/** Adds text to a row, joined to the run before it when the color is the same. */
+export function put(cells: Segment[], text: string, color?: string): void {
+  const last = cells[cells.length - 1]
+  if (last && last.color === color && last.bg === undefined) last.text += text
+  else cells.push({ text, color })
+}
 
 export type Hud = {
   score: number
@@ -51,9 +61,9 @@ export type GameDef<G = unknown> = {
   hud(g: G): Hud
   frame(g: G, glyphs: Glyphs): Frame
   /**
-   * A line over the middle of the field: while waiting ("Space: start"), or
-   * the game's own ending ("All clear! {n} points"); `{n}` is the score.
-   * Left undefined at the end, the arcade shows its usual game-over line.
+   * A line under the field: while waiting ("Space: start"), or the game's
+   * own ending ("All clear! {n} points"); `{n}` is the score. Left undefined
+   * at the end, the arcade shows its usual game-over line.
    */
   banner(g: G): TextKey | undefined
 }

@@ -4,9 +4,7 @@
 // brackets, so it shows without colors too.
 
 import type { Glyphs } from '../glyphs'
-import type { Action, Frame, GameDef, Segment, TickResult } from './types'
-
-export type Phase = 'ready' | 'play' | 'over'
+import type { Action, Frame, GameDef, Segment, Status, TickResult } from './types'
 
 export type Field = {
   isMine: boolean
@@ -27,7 +25,7 @@ export type Mines = {
   cursor: { x: number; y: number }
   /** Mines are laid on the first open, away from it. */
   isLaid: boolean
-  phase: Phase
+  phase: Status
   isWon: boolean
   random: () => number
 }
@@ -199,7 +197,7 @@ export function frame(g: Mines, glyphs: Glyphs): Frame {
         color = HIDDEN_DOT
       }
       const isCursor = g.phase !== 'over' && g.cursor.x === x && g.cursor.y === y
-      const text = isCursor ? `[${mark}]` : ` ${mark} `
+      const text = isCursor ? `${glyphs.cursorLeft}${mark}${glyphs.cursorRight}` : ` ${mark} `
       cells.push({ text, color: isCursor && (!color || color === HIDDEN_DOT) ? CURSOR_COLOR : color, bg })
     }
     rows.push(cells)
