@@ -31,8 +31,10 @@ export type Glyphs = {
   ordinal: string
   answer: string
   empty: string
-  /** A closed field, an empty slot, and the mark between two texts in a line. */
+  /** A closed field and an empty slot. */
   dot: string
+  /** Between two parts of a line ("P pause · Q menu"). */
+  sep: string
   border: 'round' | 'classic'
   pointer: string
   pause: string
@@ -58,6 +60,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     answer: '=',
     empty: ' ',
     dot: '·',
+    sep: '·',
     border: 'round',
     pointer: '▶',
     pause: '⏸',
@@ -81,10 +84,19 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     answer: '=',
     empty: ' ',
     dot: '.',
+    sep: '|',
     border: 'classic',
     pointer: '>',
     pause: '||',
   },
+}
+
+// The texts write the mark between two parts of a line as a middle dot.
+const TEXT_SEP = '·'
+
+/** A text with its separators in the glyph set's own mark. */
+export function withSep(text: string, glyphs: Glyphs): string {
+  return glyphs.sep === TEXT_SEP ? text : text.replaceAll(TEXT_SEP, glyphs.sep)
 }
 
 /** True for a code point a terminal draws two cells wide (East Asian Wide/Fullwidth, emoji). */

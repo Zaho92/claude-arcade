@@ -160,7 +160,7 @@ describe('scores', () => {
     // nothing is reported twice.
     const g = s.run?.g as Game
     const paddle = g.paddleX
-    for (const key of ['left', 'right', 'up', 'down', 'secondary'] as const) {
+    for (const key of ['left', 'right', 'up', 'down', 'secondary', 'pause'] as const) {
       expect(handle(s, key, 70, 24)).toEqual({ changed: false })
     }
     for (let i = 0; i < 50; i++) expect(frameTick(s, 70)).toEqual({ changed: false })
@@ -235,7 +235,8 @@ describe('field size', () => {
   const [bricks] = GAMES
 
   test('the field fills the pane, less the border and the lines around it', () => {
-    expect(fieldSize(bricks!, 60, 22)).toEqual({ w: 58, h: 22 - CHROME_ROWS })
+    expect(CHROME_ROWS).toBe(5)
+    expect(fieldSize(bricks!, 60, 22)).toEqual({ w: 58, h: 17 })
   })
 
   test('the field is never larger than the game wants, nor smaller than it needs', () => {

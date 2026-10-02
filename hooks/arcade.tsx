@@ -7,7 +7,7 @@ import type { ClientElements, ClientModule } from 'claude-code'
 
 import { GAMES } from './games'
 import type { Frame } from './games/types'
-import { GLYPHS, textWidth } from './glyphs'
+import { GLYPHS, textWidth, withSep } from './glyphs'
 import type { Glyphs } from './glyphs'
 import { CHECKPOINT_MS, FRAME_MS, checkpoint, commandFor, fits, frameTick, handle, newHost } from './host'
 import type { Host, Running } from './host'
@@ -26,7 +26,8 @@ type Tr = (key: TextKey, params?: Record<string, string | number>) => string
 
 const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
   const { Text } = surface.elements
-  const tr: Tr = (key, params) => t(props.locale, key, params)
+  const glyphs = GLYPHS[props.glyphs]
+  const tr: Tr = (key, params) => withSep(t(props.locale, key, params), glyphs)
   const s = surface.state
 
   if (!s) {
@@ -55,7 +56,6 @@ const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
 
   // New props from the hooks module reach the running loop through here.
   s.props = props
-  const glyphs = GLYPHS[props.glyphs]
 
   if (!s.run) return drawMenu(s, glyphs, tr, surface.elements)
   if (!fits(s.run, surface.columns)) return drawTooSmall(s.run, glyphs, tr, surface.elements)
@@ -85,7 +85,7 @@ function drawMenu(s: Host, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements
             <Text dimColor wrap="truncate">
               {'   '}
               {tr(def.blurb)}
-              {best > 0 ? `  ${glyphs.dot}  ${tr('menu.best', { n: best })}` : ''}
+              {best > 0 ? `  ${glyphs.sep}  ${tr('menu.best', { n: best })}` : ''}
             </Text>
           </Box>
         )
@@ -142,7 +142,7 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
     .join('  ')
   // A game's help may name its glyphs, as `{bull}` does.
   const glyphNames = glyphs as unknown as Record<string, string>
-  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help, glyphNames)} ${glyphs.dot} ${tr('help.common')}`
+  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help, glyphNames)} ${glyphs.sep} ${tr('help.common')}`
   const score = tr('hud.score', { n: hud.score })
   // As wide as the field, or wider when a narrow game's score line needs it.
   const hudW = Math.max(w + 2, textWidth(score) + textWidth(lives) + textWidth(right) + 6)

@@ -180,17 +180,18 @@ export function handle(s: Host, cmd: Command, columns: number, rows: number): Ou
     return { changed: true, report: leave(run) }
   }
   if (s.props.isPaused || !fits(run, columns)) return { changed: false }
-  if (cmd === 'pause') {
-    s.isManuallyPaused = !s.isManuallyPaused
-    return { changed: true }
-  }
-  if (s.isManuallyPaused) return { changed: false }
-  // A finished game takes one key: the one that starts the next.
+  // A finished game takes one key: the one that starts the next. There is
+  // nothing left to pause, and a pause would hide the line that says so.
   if (run.def.status(run.g) === 'over') {
     if (cmd !== 'primary') return { changed: false }
     s.run = start(run.def, columns, rows)
     return { changed: true }
   }
+  if (cmd === 'pause') {
+    s.isManuallyPaused = !s.isManuallyPaused
+    return { changed: true }
+  }
+  if (s.isManuallyPaused) return { changed: false }
   const changed = run.def.key(run.g, cmd)
   // A turn-based game can end on a key rather than on a tick.
   return { changed, report: changed ? finish(run) : undefined }

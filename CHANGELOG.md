@@ -38,6 +38,10 @@ CI are in the pull requests, not here.
   subagent's for example. Now it is the tool the dialog was for.
 - A question or a permission dialog answered while Claude is idle no longer
   sets the game running.
+- A permission that a settings hook answers by itself, so that no dialog
+  opens, no longer freezes the game until the tool has run.
+- With the ascii glyphs, the mark between the parts of a line ("P pause |
+  Q menu") is a plain character too.
 - Worm: the worm is visible before the game starts.
 - Bulls & Cows and Mines: the end of a game no longer hides a row of the
   board.

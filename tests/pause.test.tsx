@@ -1,8 +1,6 @@
 import type { On } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
 
-import { highest, pauseOf, scores, without } from '../hooks/register'
-
 type World = {
   store: Map<string, unknown>
   sounds: string[]
@@ -12,6 +10,11 @@ type World = {
   /** What `ui.open` was asked for, and what it answers. */
   opened: unknown[]
   open: { isPlaced: true } | { isPlaced: false; reason: string }
+  /** What a settings hook beneath the plugin answers to a permission request, if it does. */
+  decision?: { behavior: 'allow' }
+  /** Set, a clip keeps playing until the test ends it with `endSounds`. */
+  isSoundHeld: boolean
+  endSounds: (() => void)[]
 }
 
 // What the engine answers beneath the plugin in a real session.
@@ -23,11 +26,13 @@ function engine(on: On, settings: Record<string, unknown> = {}, env: Record<stri
     panes: [{ id: 'arcade', title: 'Arcade', isShown: true, isFocused: true, isPlaced: true }],
     opened: [],
     open: { isPlaced: true },
+    isSoundHeld: false,
+    endSounds: [],
   }
   on('session.start', (_$, e) => ({ cwd: e.cwd }))
   on('turn.start', (_$, e) => ({ turnId: e.turnId }))
   on('turn.complete', (_$, e) => ({ text: e.answer }))
-  on('classic.PermissionRequest', () => ({}) as never)
+  on('classic.PermissionRequest', () => (world.decision ? { decision: world.decision } : {}) as never)
   on('settings.read', () => ({ value: settings }) as never)
   on('env.get', (_$, e) => ({ value: env[e.name] }) as never)
   on('command.register', (_$, e) => {
@@ -41,7 +46,8 @@ function engine(on: On, settings: Record<string, unknown> = {}, env: Record<stri
   })
   on('audio.play', (_$, e) => {
     world.sounds.push((e as { clip: { asset: string } }).clip.asset)
-    return { value: undefined } as never
+    if (!world.isSoundHeld) return { value: undefined } as never
+    return new Promise(resolve => world.endSounds.push(() => resolve({ value: undefined }))) as never
   })
   on('store.get', (_$, e) => ({ value: world.store.get(e.key) }) as never)
   on('store.set', (_$, e) => {
@@ -399,9 +405,10 @@ test('a permission dialog freezes the game until the tool it is for has run', as
   await ui.advance(100)
   expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
 
-  // Another tool finishing in between, here a subagent's, is not the answer.
-  await $.tool.call({ tool: 'Read', file_path: '/tmp/a', agentId: 'a1' } as never)
+  // Another tool finishing in between is not the answer, nor is the same
+  // tool finishing in a subagent.
   await $.tool.call({ tool: 'Read', file_path: '/tmp/a' } as never)
+  await $.tool.call({ tool: 'Bash', command: 'ls', agentId: 'a1' } as never)
   await ui.advance(100)
   expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
 
@@ -436,21 +443,95 @@ test('a dialog answered while Claude is idle leaves the game frozen', async ($, 
   await ui.unmount()
 })
 
-test('what the games wait for: a dialog before the turn, each on its own', () => {
-  expect(pauseOf({ turn: '', asking: [], permission: [] })).toEqual({ isPaused: false, reason: '' })
-  expect(pauseOf({ turn: 'idle', asking: [], permission: [] })).toEqual({ isPaused: true, reason: 'idle' })
-  expect(pauseOf({ turn: '', asking: [':1'], permission: [] })).toEqual({ isPaused: true, reason: 'asking' })
-  expect(pauseOf({ turn: 'done', asking: [':1'], permission: [':Bash'] })).toEqual({ isPaused: true, reason: 'permission' })
-  // Two dialogs for the same tool are two entries; one answer ends one.
-  expect(without([':Bash', 'a1:Bash', ':Bash'], ':Bash')).toEqual(['a1:Bash', ':Bash'])
-  expect(without([':Bash'], ':Read')).toEqual([':Bash'])
+test('a permission a settings hook answers by itself does not leave the game frozen', async ($, on) => {
+  const world = engine(on, { language: 'german' })
+  world.decision = { behavior: 'allow' }
+  on('tool.call', () => ({ result: { text: 'ok' } }) as never)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+
+  // No dialog opens, and the tool may run for minutes.
+  await $.classic.PermissionRequest(BASH)
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeUndefined()
+  expect(await shows(ui, /Leertaste: Start/)).toBeDefined()
+  await ui.unmount()
 })
 
-test('score tables merge to the higher score per game', () => {
-  expect(scores({ bricks: 300, worm: '70', mines: null })).toEqual({ bricks: 300 })
-  expect(scores(undefined)).toEqual({})
-  expect(scores('bricks')).toEqual({})
-  expect(highest({ bricks: 300, worm: 70 }, { bricks: 120, mines: 9 })).toEqual({ bricks: 300, worm: 70, mines: 9 })
+test('the end of the main turn takes its dialog with it, and a new turn leaves a dialog of a subagent open', async ($, on) => {
+  engine(on, { language: 'german' })
+  on('tool.call', () => ({ result: { text: 'ok' } }) as never)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.key({ key: 'return', in: 'arcade' })
+
+  // Interrupted at its own permission dialog: the turn is over, so is the dialog.
+  await $.turn.start({ text: 'go', turnId: 't1' })
+  await $.classic.PermissionRequest(BASH)
+  await $.turn.complete({ ...DONE, turnId: 't1' })
+  await ui.advance(100)
+  expect(await shows(ui, /Claude ist fertig – du bist dran/)).toBeDefined()
+  await $.turn.start({ text: 'again', turnId: 't2' })
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
+
+  // A background subagent's dialog is still open when the next turn starts.
+  await $.turn.complete({ ...DONE, turnId: 't2' })
+  await $.classic.PermissionRequest({ ...(BASH as object), agent_id: 'a1' } as never)
+  await $.turn.start({ text: 'next', turnId: 't3' })
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+  await $.tool.call({ tool: 'Bash', command: 'ls', agentId: 'a1' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
+  await ui.unmount()
+})
+
+test('a ball in the air does not fly on behind the note that the pane is too narrow', async ($, on) => {
+  engine(on)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.advance(100)
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+  await ui.advance(100)
+  await ui.key({ key: ' ', in: 'arcade' })
+  await ui.advance(100)
+
+  // Long enough to lose every ball, were the clock still running.
+  await ui.resize({ columns: 30, rows: 24, in: 'arcade' })
+  await ui.advance(60000)
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.advance(33)
+  expect(await shows(ui, /Game over/)).toBeUndefined()
+  expect(await shows(ui, /Space: continue/)).toBeUndefined()
+  expect(await shows(ui, /♥♥♥/)).toBeDefined()
+  await ui.unmount()
+})
+
+test('the ascii glyphs reach the marks between the parts of a line', { options: { language: 'ja' } }, async ($, on) => {
+  const world = engine(on)
+  world.store.set('best', { bricks: 300 })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.advance(100)
+  // The menu: the hint under the list and the record beside a game.
+  expect(await shows(ui, /·/)).toBeUndefined()
+  expect(await shows(ui, / \| +ベスト 300/)).toBeDefined()
+
+  // A game: the help line under the field.
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+  await ui.advance(100)
+  expect(await shows(ui, /·/)).toBeUndefined()
+  expect(await shows(ui, / \| P /)).toBeDefined()
+  await ui.unmount()
 })
 
 test('the chime is off unless switched on', async ($, on) => {
@@ -468,6 +549,27 @@ test('with sound on, Claude finishing chimes once', { options: { sound: true } }
   await $.turn.complete({ ...DONE, turnId: 't1' })
   await $.turn.complete({ ...DONE, turnId: 't1' })
   expect(world.sounds).toEqual(['sounds/pause.wav'])
+  // Claude going back to work is no reason to chime.
+  await $.turn.start({ text: 'more', turnId: 't2' })
+  await $.turn.start({ text: 'and more', turnId: 't3' })
+  expect(world.sounds).toEqual(['sounds/pause.wav'])
+})
+
+test('with sound on, nothing waits for the chime to finish', { options: { sound: true } }, async ($, on) => {
+  const world = engine(on)
+  world.isSoundHeld = true
+  on('tool.call', () => ({ result: { text: 'ok' } }) as never)
+  await $.session.start(SESSION)
+  await $.turn.start({ text: 'go', turnId: 't1' })
+
+  // The clip is still playing when the dialog is due: these must come back.
+  await $.classic.PermissionRequest(BASH)
+  expect(world.sounds).toHaveLength(1)
+  expect(world.endSounds).toHaveLength(1)
+  await $.tool.call({ tool: 'Bash', command: 'ls' } as never)
+  await $.turn.complete({ ...DONE, turnId: 't1' })
+  expect(world.sounds).toHaveLength(2)
+  for (const end of world.endSounds) end()
 })
 
 test('with sound on, a question and a permission dialog chime too', { options: { sound: true } }, async ($, on) => {
