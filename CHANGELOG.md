@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.2.0 (unreleased)
+What changes for the person playing, newest first. Changes to tests, docs and
+CI are in the pull requests, not here.
+
+## 0.2.0 - 2026-10-02
+
+### Added
 
 - Worm: eat, grow, never bite yourself.
 - Merge: slide and merge number tiles, turn-based.
@@ -12,15 +17,21 @@
 - ascii glyphs for terminals that draw symbols two cells wide; automatic for
   Chinese, Japanese and Korean.
 - Optional chime when Claude needs you (off by default, macOS only).
-- Letter keys work on a Russian layout too.
 - High scores per game.
-- The ball-and-paddle game is now called Bricks.
-- CONTRIBUTING.md: how to translate and add games.
-- README: about this project, and a legal note with a contact path.
-- Fixed: in a docked pane only a click on the rows the game drew gave it the
-  keys; a click anywhere in the pane does now.
 
-## 0.1.0
+### Changed
+
+- The ball-and-paddle game is now called Bricks.
+
+### Fixed
+
+- Letter keys work on a Russian layout too.
+- In a docked pane only a click on the rows the game drew gave it the keys; a
+  click anywhere in the pane does now.
+
+## 0.1.0 - 2026-10-02
+
+### Added
 
 - A ball-and-paddle game in a pane, opened with `/arcade`.
 - Runs while Claude works; freezes when Claude is done, asks a question or

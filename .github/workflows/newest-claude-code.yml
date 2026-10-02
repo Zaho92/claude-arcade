@@ -1,0 +1,60 @@
+name: Newest Claude Code
+
+# CI tests on a pinned Claude Code version, and the function-hooks API moves
+# between releases. Once a week this runs the same checks on the newest
+# version and opens an issue when they fail. It blocks nothing.
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  newest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Install the newest Claude Code
+        run: |
+          npm install -g @anthropic-ai/claude-code@latest
+          echo "NEWEST=$(claude --version | cut -d' ' -f1)" >> "${GITHUB_ENV}"
+      # The time limits are on the steps: a step that runs out of time fails,
+      # a job that does is cancelled and would open no issue.
+      - name: Validate manifest, marketplace and hooks
+        id: validate
+        timeout-minutes: 3
+        run: |
+          claude plugin validate .
+          claude plugin validate .claude-plugin/plugin.json
+      - name: Test
+        id: test
+        timeout-minutes: 5
+        run: claude plugin test .
+      # Only for the checks themselves: a failed download is not an API change.
+      - name: Open an issue, unless one is open
+        if: failure() && (steps.validate.outcome == 'failure' || steps.test.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          LABEL: claude-code-update
+        run: |
+          gh label create "${LABEL}" --color FBCA04 --force \
+            --description "The checks fail on a newer Claude Code than CI pins"
+          open="$(gh issue list --label "${LABEL}" --state open --json number --jq 'length')"
+          if [ "${open}" != "0" ]; then
+            echo "An issue is open already."
+            exit 0
+          fi
+          gh issue create --label "${LABEL}" \
+            --title "The checks fail on Claude Code ${NEWEST:-latest}" \
+            --body "The weekly run on the newest Claude Code failed: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+
+          CI pins an older version in \`.github/workflows/ci.yml\` (\`CLAUDE_CODE_VERSION\`), so pull requests are not blocked. To fix: adapt the plugin to the new API, raise the pin in the same pull request, and close this issue."

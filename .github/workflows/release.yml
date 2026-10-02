@@ -1,0 +1,40 @@
+name: Release
+
+# Every merge that raises the version in .claude-plugin/plugin.json is a
+# release: installations follow main. This marks it with a tag and a GitHub
+# release, so "what was 0.3.0" has an answer.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Tag and release a version that has no tag yet
+        run: |
+          version="$(node -p "require('./.claude-plugin/plugin.json').version")"
+          tag="v${version}"
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${tag}" --silent 2>/dev/null; then
+            echo "${tag} exists: nothing to release."
+            exit 0
+          fi
+          # The changelog section first, then GitHub's list of the pull
+          # requests since the last tag: tests, docs and CI show up there.
+          node .github/scripts/release-notes.mjs "${version}" > "${RUNNER_TEMP}/notes.md"
+          gh release create "${tag}" \
+            --target "${GITHUB_SHA}" \
+            --title "${tag}" \
+            --notes-file "${RUNNER_TEMP}/notes.md" \
+            --generate-notes
