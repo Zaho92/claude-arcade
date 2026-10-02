@@ -180,3 +180,11 @@ export function check({ baseVersion, baseChangelog, version, changelog, shipped 
   }
   return found
 }
+
+// What a release says about itself: the section of its version, without the
+// heading. The release carries version and date already.
+export function releaseNotes(changelog, version) {
+  const section = parseChangelog(changelog).sections.find(s => s.version === version)
+  if (!section) throw new Error(`CHANGELOG.md has no section for ${version}.`)
+  return section.lines.slice(1).join('\n').trim()
+}
