@@ -76,6 +76,7 @@ game region yet and show a note instead.
 | Game | |
 |---|---|
 | Breakout | Clear the wall with ball and paddle |
+| Snake | Eat, grow, never bite yourself; faster every five bites |
 
 ## Settings
 
@@ -128,7 +129,7 @@ plugin, and `tsc -p .` type-checks against them.
 
 ## Ideas
 
-Snake, Tetris and 2048 are next.
+Tetris and 2048 are next.
 
 ## License
 

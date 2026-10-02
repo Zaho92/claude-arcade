@@ -37,6 +37,9 @@ const en = {
   'breakout.name': 'Breakout',
   'breakout.blurb': 'Clear the wall',
   'breakout.help': '←/→ move · Space launch',
+  'snake.name': 'Snake',
+  'snake.blurb': 'Eat, grow, never bite yourself',
+  'snake.help': '←↑↓→ steer',
 }
 
 export type TextKey = keyof typeof en
@@ -66,6 +69,8 @@ const de: Table = {
   unsupported: 'Arcade braucht das Terminal oder die Desktop-App.',
   'breakout.blurb': 'Räum die Mauer ab',
   'breakout.help': '←/→ bewegen · Leertaste abschießen',
+  'snake.blurb': 'Fressen, wachsen, nicht beißen',
+  'snake.help': '←↑↓→ lenken',
 }
 
 const fr: Table = {
@@ -92,6 +97,8 @@ const fr: Table = {
   unsupported: "Arcade nécessite le terminal ou l'application de bureau.",
   'breakout.blurb': 'Détruis le mur',
   'breakout.help': '←/→ déplacer · Espace lancer',
+  'snake.blurb': 'Mange, grandis, ne te mords pas',
+  'snake.help': '←↑↓→ diriger',
 }
 
 const es: Table = {
@@ -118,6 +125,8 @@ const es: Table = {
   unsupported: 'Arcade necesita la terminal o la app de escritorio.',
   'breakout.blurb': 'Derriba el muro',
   'breakout.help': '←/→ mover · Espacio lanzar',
+  'snake.blurb': 'Come, crece y no te muerdas',
+  'snake.help': '←↑↓→ girar',
 }
 
 const pt: Table = {
@@ -144,6 +153,8 @@ const pt: Table = {
   unsupported: 'O Arcade precisa do terminal ou do app desktop.',
   'breakout.blurb': 'Derrube o muro',
   'breakout.help': '←/→ mover · Espaço lançar',
+  'snake.blurb': 'Coma, cresça e não se morda',
+  'snake.help': '←↑↓→ virar',
 }
 
 const it: Table = {
@@ -170,6 +181,8 @@ const it: Table = {
   unsupported: "Arcade richiede il terminale o l'app desktop.",
   'breakout.blurb': 'Abbatti il muro',
   'breakout.help': '←/→ muovi · Spazio lancia',
+  'snake.blurb': 'Mangia, cresci, non morderti',
+  'snake.help': '←↑↓→ sterza',
 }
 
 const ja: Table = {
@@ -197,6 +210,9 @@ const ja: Table = {
   'breakout.name': 'ブロック崩し',
   'breakout.blurb': '壁を崩そう',
   'breakout.help': '←/→ 移動 · Space 発射',
+  'snake.name': 'スネーク',
+  'snake.blurb': '食べて伸びよう。自分をかまないで',
+  'snake.help': '←↑↓→ 方向転換',
 }
 
 const zh: Table = {
@@ -224,6 +240,9 @@ const zh: Table = {
   'breakout.name': '打砖块',
   'breakout.blurb': '打碎砖墙',
   'breakout.help': '←/→ 移动 · 空格 发球',
+  'snake.name': '贪吃蛇',
+  'snake.blurb': '吃东西变长，别咬到自己',
+  'snake.help': '←↑↓→ 转向',
 }
 
 const ko: Table = {
@@ -251,6 +270,9 @@ const ko: Table = {
   'breakout.name': '벽돌깨기',
   'breakout.blurb': '벽을 부수세요',
   'breakout.help': '←/→ 이동 · Space 발사',
+  'snake.name': '스네이크',
+  'snake.blurb': '먹고 자라고, 자기 몸은 물지 마세요',
+  'snake.help': '←↑↓→ 방향 전환',
 }
 
 const ru: Table = {
@@ -278,6 +300,9 @@ const ru: Table = {
   'breakout.name': 'Арканоид',
   'breakout.blurb': 'Разбей стену',
   'breakout.help': '←/→ двигать · Пробел запуск',
+  'snake.name': 'Змейка',
+  'snake.blurb': 'Ешь, расти и не кусай себя',
+  'snake.help': '←↑↓→ поворот',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
