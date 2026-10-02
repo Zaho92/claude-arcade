@@ -118,7 +118,9 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
   ]
     .filter(Boolean)
     .join('  ')
-  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help)} · ${tr('help.common')}`
+  // A game's help may name its glyphs, as `{bull}` does.
+  const glyphNames = glyphs as unknown as Record<string, string>
+  const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help, glyphNames)} · ${tr('help.common')}`
   const score = tr('hud.score', { n: hud.score })
   // As wide as the field, or wider when a narrow game's score line needs it.
   const hudW = Math.max(w + 2, textWidth(score) + textWidth(lives) + textWidth(right) + 6)

@@ -80,6 +80,7 @@ game region yet and show a note instead.
 | Worm | Eat, grow, never bite yourself; faster every five bites |
 | Merge | Slide and merge number tiles up to 2048; turn-based, so a pause never costs anything |
 | Mines | Open every safe field, flag the mines; the first field is always safe |
+| Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
 
 ## Settings
 
