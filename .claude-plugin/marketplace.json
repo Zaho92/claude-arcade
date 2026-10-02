@@ -1,0 +1,16 @@
+{
+  "name": "zaho92-arcade",
+  "owner": {
+    "name": "zaho92"
+  },
+  "metadata": {
+    "description": "Retro games for the time you wait on Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "arcade",
+      "source": "./",
+      "description": "Retro games in a Claude Code pane that run while Claude works and freeze the moment it needs you."
+    }
+  ]
+}
