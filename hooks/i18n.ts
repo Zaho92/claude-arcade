@@ -40,6 +40,10 @@ const en = {
   'worm.name': 'Worm',
   'worm.blurb': 'Eat, grow, never bite yourself',
   'worm.help': '←↑↓→ steer',
+  'merge.name': 'Merge',
+  'merge.blurb': 'Slide, merge, reach 2048',
+  'merge.help': '←↑↓→ slide',
+  'merge.won': '2048! Keep going',
 }
 
 export type TextKey = keyof typeof en
@@ -73,6 +77,10 @@ const de: Table = {
   'worm.name': 'Wurm',
   'worm.blurb': 'Fressen, wachsen, nicht beißen',
   'worm.help': '←↑↓→ lenken',
+  'merge.name': 'Verschmelzen',
+  'merge.blurb': 'Schieben, verschmelzen, 2048 erreichen',
+  'merge.help': '←↑↓→ schieben',
+  'merge.won': '2048! Weiter so',
 }
 
 const fr: Table = {
@@ -103,6 +111,10 @@ const fr: Table = {
   'worm.name': 'Ver',
   'worm.blurb': 'Mange, grandis, ne te mords pas',
   'worm.help': '←↑↓→ diriger',
+  'merge.name': 'Fusion',
+  'merge.blurb': 'Glisse, fusionne, atteins 2048',
+  'merge.help': '←↑↓→ glisser',
+  'merge.won': '2048 ! Continue',
 }
 
 const es: Table = {
@@ -133,6 +145,10 @@ const es: Table = {
   'worm.name': 'Gusano',
   'worm.blurb': 'Come, crece y no te muerdas',
   'worm.help': '←↑↓→ girar',
+  'merge.name': 'Fusión',
+  'merge.blurb': 'Desliza, combina y llega a 2048',
+  'merge.help': '←↑↓→ deslizar',
+  'merge.won': '¡2048! Sigue así',
 }
 
 const pt: Table = {
@@ -163,6 +179,10 @@ const pt: Table = {
   'worm.name': 'Minhoca',
   'worm.blurb': 'Coma, cresça e não se morda',
   'worm.help': '←↑↓→ virar',
+  'merge.name': 'Fusão',
+  'merge.blurb': 'Deslize, junte e chegue a 2048',
+  'merge.help': '←↑↓→ deslizar',
+  'merge.won': '2048! Continue',
 }
 
 const it: Table = {
@@ -193,6 +213,10 @@ const it: Table = {
   'worm.name': 'Verme',
   'worm.blurb': 'Mangia, cresci, non morderti',
   'worm.help': '←↑↓→ sterza',
+  'merge.name': 'Fusione',
+  'merge.blurb': 'Scorri, unisci, arriva a 2048',
+  'merge.help': '←↑↓→ scorri',
+  'merge.won': '2048! Continua così',
 }
 
 const ja: Table = {
@@ -223,6 +247,10 @@ const ja: Table = {
   'worm.name': 'ワーム',
   'worm.blurb': '食べて伸びよう。自分をかまないで',
   'worm.help': '←↑↓→ 方向転換',
+  'merge.name': 'マージ',
+  'merge.blurb': 'スライドして合体、2048 を目指そう',
+  'merge.help': '←↑↓→ スライド',
+  'merge.won': '2048 達成！そのまま続けよう',
 }
 
 const zh: Table = {
@@ -253,6 +281,10 @@ const zh: Table = {
   'worm.name': '贪吃虫',
   'worm.blurb': '吃东西变长，别咬到自己',
   'worm.help': '←↑↓→ 转向',
+  'merge.name': '合并',
+  'merge.blurb': '滑动合并，凑出 2048',
+  'merge.help': '←↑↓→ 滑动',
+  'merge.won': '达成 2048！继续加油',
 }
 
 const ko: Table = {
@@ -283,6 +315,10 @@ const ko: Table = {
   'worm.name': '지렁이',
   'worm.blurb': '먹고 자라고, 자기 몸은 물지 마세요',
   'worm.help': '←↑↓→ 방향 전환',
+  'merge.name': '합치기',
+  'merge.blurb': '밀고 합쳐서 2048을 만드세요',
+  'merge.help': '←↑↓→ 밀기',
+  'merge.won': '2048 달성! 계속하세요',
 }
 
 const ru: Table = {
@@ -313,6 +349,10 @@ const ru: Table = {
   'worm.name': 'Червяк',
   'worm.blurb': 'Ешь, расти и не кусай себя',
   'worm.help': '←↑↓→ поворот',
+  'merge.name': 'Слияние',
+  'merge.blurb': 'Сдвигай, объединяй, дойди до 2048',
+  'merge.help': '←↑↓→ сдвиг',
+  'merge.won': '2048! Играй дальше',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

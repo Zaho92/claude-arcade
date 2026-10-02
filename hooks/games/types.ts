@@ -7,8 +7,8 @@ import type { TextKey } from '../i18n'
 /** A key, already mapped from whatever layout typed it. */
 export type Action = 'left' | 'right' | 'up' | 'down' | 'primary'
 
-/** A run of cells in one color; `color` absent is the terminal's default. */
-export type Segment = { text: string; color?: string }
+/** A run of cells in one color; absent colors are the terminal's default. */
+export type Segment = { text: string; color?: string; bg?: string }
 
 /** The field, one array of runs per row, every row exactly `w` cells wide. */
 export type Frame = Segment[][]

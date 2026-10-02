@@ -129,7 +129,15 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
       <Box flexDirection="column" borderStyle={glyphs.border} borderDimColor width={w + 2}>
         {rows.map(row => (
           <Text dimColor={isDim} wrap="truncate">
-            {row.map(seg => (seg.color ? <Text color={seg.color}>{seg.text}</Text> : seg.text))}
+            {row.map(seg =>
+              seg.color || seg.bg ? (
+                <Text color={seg.color} backgroundColor={seg.bg}>
+                  {seg.text}
+                </Text>
+              ) : (
+                seg.text
+              ),
+            )}
           </Text>
         ))}
       </Box>

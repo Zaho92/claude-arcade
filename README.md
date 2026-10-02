@@ -77,6 +77,7 @@ game region yet and show a note instead.
 |---|---|
 | Bricks | Clear the wall with ball and paddle |
 | Worm | Eat, grow, never bite yourself; faster every five bites |
+| Merge | Slide and merge number tiles up to 2048; turn-based, so a pause never costs anything |
 
 ## Settings
 

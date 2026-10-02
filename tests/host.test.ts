@@ -99,3 +99,21 @@ test('a game over is reported once, with the game and the score', () => {
   expect(reports[0]).toMatchObject({ type: 'over', game: 'bricks' })
   expect(FRAME_MS).toBeGreaterThan(0)
 })
+
+test('a game that ends on a key, not a tick, is reported too', () => {
+  const s = newHost(PLAYING)
+  s.selected = GAMES.findIndex(def => def.id === 'merge')
+  handle(s, 'primary', 70, 24)
+  const g = s.run?.g as { grid: number[] }
+  // prettier-ignore
+  g.grid = [
+    2, 4, 2, 4,
+    4, 2, 4, 2,
+    16, 32, 64, 128,
+    4, 8, 16, 0,
+  ]
+  const out = handle(s, 'right', 70, 24)
+  expect(out.report).toMatchObject({ type: 'over', game: 'merge' })
+  expect(handle(s, 'primary', 70, 24).changed).toBe(true)
+  expect(s.run?.def.status(s.run.g)).toBe('play')
+})
