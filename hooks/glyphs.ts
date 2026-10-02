@@ -21,6 +21,9 @@ export type Glyphs = {
   /** Mines: a marked field and a mine. */
   flag: string
   mine: string
+  /** Bulls & Cows: a right digit in the right place, and in the wrong one. */
+  bull: string
+  cow: string
   empty: string
   dot: string
   border: 'round' | 'classic'
@@ -40,6 +43,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     food: '()',
     flag: 'F',
     mine: '✱',
+    bull: '●',
+    cow: '○',
     empty: ' ',
     dot: '·',
     border: 'round',
@@ -57,6 +62,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     food: '()',
     flag: 'F',
     mine: '*',
+    bull: '+',
+    cow: 'o',
     empty: ' ',
     dot: '.',
     border: 'classic',

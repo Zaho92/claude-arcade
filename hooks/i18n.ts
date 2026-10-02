@@ -19,6 +19,7 @@ const en = {
   'hud.level': 'Level {n}',
   'hud.best': 'Best {n}',
   'hud.minesLeft': 'Mines {n}',
+  'hud.triesLeft': 'Tries {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
   'pause.asking': 'Claude has a question for you',
@@ -49,6 +50,10 @@ const en = {
   'mines.blurb': 'Open every safe field, flag the mines',
   'mines.help': '←↑↓→ move · Space open · F flag',
   'mines.won': 'All clear! {n} points · Space',
+  'cows.name': 'Bulls & Cows',
+  'cows.blurb': 'Crack the four-digit code in ten tries',
+  'cows.help': '←/→ digit · ↑/↓ change · Space guess · {bull} right place · {cow} wrong place',
+  'cows.won': 'Cracked! {n} points · Space',
 }
 
 export type TextKey = keyof typeof en
@@ -61,6 +66,7 @@ const de: Table = {
   'hud.level': 'Level {n}',
   'hud.best': 'Rekord {n}',
   'hud.minesLeft': 'Minen {n}',
+  'hud.triesLeft': 'Versuche {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
   'pause.asking': 'Claude hat eine Frage an dich',
@@ -91,6 +97,10 @@ const de: Table = {
   'mines.blurb': 'Alle sicheren Felder aufdecken, Minen markieren',
   'mines.help': '←↑↓→ bewegen · Leertaste aufdecken · F markieren',
   'mines.won': 'Alles frei! {n} Punkte · Leertaste',
+  'cows.name': 'Bullen & Kühe',
+  'cows.blurb': 'Knack den vierstelligen Code in zehn Versuchen',
+  'cows.help': '←/→ Stelle · ↑/↓ ändern · Leertaste raten · {bull} richtig · {cow} falsche Stelle',
+  'cows.won': 'Geknackt! {n} Punkte · Leertaste',
 }
 
 const fr: Table = {
@@ -100,6 +110,7 @@ const fr: Table = {
   'hud.level': 'Niveau {n}',
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mines {n}',
+  'hud.triesLeft': 'Essais {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
   'pause.asking': 'Claude a une question pour toi',
@@ -130,6 +141,10 @@ const fr: Table = {
   'mines.blurb': 'Ouvre les cases sûres, marque les mines',
   'mines.help': '←↑↓→ déplacer · Espace ouvrir · F drapeau',
   'mines.won': 'Terrain dégagé ! {n} points · Espace',
+  'cows.name': 'Taureaux et vaches',
+  'cows.blurb': 'Trouve le code à quatre chiffres en dix essais',
+  'cows.help': '←/→ chiffre · ↑/↓ changer · Espace proposer · {bull} bien placé · {cow} mal placé',
+  'cows.won': 'Trouvé ! {n} points · Espace',
 }
 
 const es: Table = {
@@ -139,6 +154,7 @@ const es: Table = {
   'hud.level': 'Nivel {n}',
   'hud.best': 'Récord {n}',
   'hud.minesLeft': 'Minas {n}',
+  'hud.triesLeft': 'Intentos {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
   'pause.asking': 'Claude tiene una pregunta para ti',
@@ -169,6 +185,10 @@ const es: Table = {
   'mines.blurb': 'Abre las casillas seguras, marca las minas',
   'mines.help': '←↑↓→ mover · Espacio abrir · F bandera',
   'mines.won': '¡Despejado! {n} puntos · Espacio',
+  'cows.name': 'Toros y vacas',
+  'cows.blurb': 'Descifra el código de cuatro cifras en diez intentos',
+  'cows.help': '←/→ cifra · ↑/↓ cambiar · Espacio probar · {bull} en su sitio · {cow} fuera de sitio',
+  'cows.won': '¡Descifrado! {n} puntos · Espacio',
 }
 
 const pt: Table = {
@@ -178,6 +198,7 @@ const pt: Table = {
   'hud.level': 'Nível {n}',
   'hud.best': 'Recorde {n}',
   'hud.minesLeft': 'Minas {n}',
+  'hud.triesLeft': 'Tentativas {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
   'pause.asking': 'O Claude tem uma pergunta para você',
@@ -208,6 +229,10 @@ const pt: Table = {
   'mines.blurb': 'Abra as casas seguras, marque as minas',
   'mines.help': '←↑↓→ mover · Espaço abrir · F bandeira',
   'mines.won': 'Tudo limpo! {n} pontos · Espaço',
+  'cows.name': 'Touros e vacas',
+  'cows.blurb': 'Descubra o código de quatro dígitos em dez tentativas',
+  'cows.help': '←/→ dígito · ↑/↓ mudar · Espaço chutar · {bull} lugar certo · {cow} lugar errado',
+  'cows.won': 'Descoberto! {n} pontos · Espaço',
 }
 
 const it: Table = {
@@ -217,6 +242,7 @@ const it: Table = {
   'hud.level': 'Livello {n}',
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mine {n}',
+  'hud.triesLeft': 'Tentativi {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
   'pause.asking': 'Claude ha una domanda per te',
@@ -247,6 +273,10 @@ const it: Table = {
   'mines.blurb': 'Apri le caselle sicure, segna le mine',
   'mines.help': '←↑↓→ muovi · Spazio apri · F bandierina',
   'mines.won': 'Tutto libero! {n} punti · Spazio',
+  'cows.name': 'Tori e mucche',
+  'cows.blurb': 'Scopri il codice di quattro cifre in dieci tentativi',
+  'cows.help': '←/→ cifra · ↑/↓ cambia · Spazio prova · {bull} al posto giusto · {cow} al posto sbagliato',
+  'cows.won': 'Trovato! {n} punti · Spazio',
 }
 
 const ja: Table = {
@@ -256,6 +286,7 @@ const ja: Table = {
   'hud.level': 'レベル {n}',
   'hud.best': 'ベスト {n}',
   'hud.minesLeft': '地雷 {n}',
+  'hud.triesLeft': '残り {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
   'pause.asking': 'Claude から質問があります',
@@ -286,6 +317,10 @@ const ja: Table = {
   'mines.blurb': '安全なマスを開き、地雷に旗を立てよう',
   'mines.help': '←↑↓→ 移動 · Space 開く · F 旗',
   'mines.won': 'クリア！ {n} 点 · Space',
+  'cows.name': '数当て',
+  'cows.blurb': '4桁の数字を10回以内で当てよう',
+  'cows.help': '←/→ 桁 · ↑/↓ 変更 · Space 決定 · {bull} 位置も正解 · {cow} 数字だけ正解',
+  'cows.won': '正解！ {n} 点 · Space',
 }
 
 const zh: Table = {
@@ -295,6 +330,7 @@ const zh: Table = {
   'hud.level': '关卡 {n}',
   'hud.best': '最高 {n}',
   'hud.minesLeft': '地雷 {n}',
+  'hud.triesLeft': '剩余 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
   'pause.asking': 'Claude 有问题要问你',
@@ -325,6 +361,10 @@ const zh: Table = {
   'mines.blurb': '翻开安全格子，标出地雷',
   'mines.help': '←↑↓→ 移动 · 空格 翻开 · F 插旗',
   'mines.won': '全部清除！{n} 分 · 空格',
+  'cows.name': '猜数字',
+  'cows.blurb': '十次之内猜出四位数密码',
+  'cows.help': '←/→ 选位 · ↑/↓ 改数 · 空格 猜 · {bull} 位置正确 · {cow} 位置错误',
+  'cows.won': '猜中了！{n} 分 · 空格',
 }
 
 const ko: Table = {
@@ -334,6 +374,7 @@ const ko: Table = {
   'hud.level': '레벨 {n}',
   'hud.best': '최고 {n}',
   'hud.minesLeft': '지뢰 {n}',
+  'hud.triesLeft': '남은 기회 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
   'pause.asking': 'Claude가 질문이 있어요',
@@ -364,6 +405,10 @@ const ko: Table = {
   'mines.blurb': '안전한 칸을 열고 지뢰에 깃발을 꽂으세요',
   'mines.help': '←↑↓→ 이동 · Space 열기 · F 깃발',
   'mines.won': '클리어! {n}점 · Space',
+  'cows.name': '숫자 야구',
+  'cows.blurb': '네 자리 숫자를 열 번 안에 맞히세요',
+  'cows.help': '←/→ 자리 · ↑/↓ 바꾸기 · Space 확인 · {bull} 스트라이크 · {cow} 볼',
+  'cows.won': '정답! {n}점 · Space',
 }
 
 const ru: Table = {
@@ -373,6 +418,7 @@ const ru: Table = {
   'hud.level': 'Уровень {n}',
   'hud.best': 'Рекорд {n}',
   'hud.minesLeft': 'Мины {n}',
+  'hud.triesLeft': 'Попыток {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
   'pause.asking': 'У Claude есть вопрос к тебе',
@@ -403,6 +449,10 @@ const ru: Table = {
   'mines.blurb': 'Открой безопасные клетки, отметь мины',
   'mines.help': '←↑↓→ ход · Пробел открыть · F флажок',
   'mines.won': 'Поле чисто! {n} очк. · Пробел',
+  'cows.name': 'Быки и коровы',
+  'cows.blurb': 'Угадай код из четырёх цифр за десять попыток',
+  'cows.help': '←/→ цифра · ↑/↓ сменить · Пробел ход · {bull} на месте · {cow} не на месте',
+  'cows.won': 'Угадал! {n} очк. · Пробел',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
