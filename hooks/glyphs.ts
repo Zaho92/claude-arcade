@@ -38,6 +38,8 @@ export type Glyphs = {
   border: 'round' | 'classic'
   pointer: string
   pause: string
+  /** The menu's title, letter by letter: each letter its rows, all equally wide. */
+  logo: string[][]
 }
 
 export const GLYPHS: Record<GlyphSet, Glyphs> = {
@@ -64,6 +66,14 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     border: 'round',
     pointer: '▶',
     pause: '⏸',
+    logo: [
+      ['▄▀█', '█▀█'],
+      ['█▀█', '█▀▄'],
+      ['█▀▀', '█▄▄'],
+      ['▄▀█', '█▀█'],
+      ['█▀▄', '█▄▀'],
+      ['█▀▀', '██▄'],
+    ],
   },
   ascii: {
     ball: 'o',
@@ -88,6 +98,14 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     border: 'classic',
     pointer: '>',
     pause: '||',
+    logo: [
+      [' _ ', '|_|', '| |'],
+      [' _ ', '|_)', '| \\'],
+      [' _ ', '|  ', '|_ '],
+      [' _ ', '|_|', '| |'],
+      [' _ ', '| \\', '|_/'],
+      [' _ ', '|_ ', '|_ '],
+    ],
   },
 }
 

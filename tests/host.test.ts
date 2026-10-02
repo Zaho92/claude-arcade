@@ -3,6 +3,7 @@ import { describe, expect, test } from 'claude-code/testing'
 import { GAMES } from '../hooks/games'
 import type { Game } from '../hooks/games/bricks'
 import type { Merge } from '../hooks/games/merge'
+import { GLYPHS, textWidth } from '../hooks/glyphs'
 import { CHROME_ROWS, FRAME_MS, HOLD_AFTER_MS, checkpoint, commandFor, fieldSize, fits, frameTick, handle, newHost } from '../hooks/host'
 import type { Host, Report } from '../hooks/host'
 import type { ArcadeProps } from '../types'
@@ -105,6 +106,33 @@ describe('menu', () => {
     expect(s.run?.def.id).toBe(GAMES[0]?.id)
     handle(s, 'menu', 70, 24)
     expect(s.run).toBeUndefined()
+  })
+
+  test('every game has a sign for the menu, two cells wide in both glyph sets', () => {
+    for (const def of GAMES) {
+      for (const set of ['unicode', 'ascii'] as const) {
+        const sign = def
+          .sign(GLYPHS[set])
+          .map(seg => seg.text)
+          .join('')
+        expect([def.id, set, textWidth(sign)]).toEqual([def.id, set, 2])
+        if (set === 'ascii') expect(sign).toMatch(/^[ -~]*$/)
+      }
+    }
+  })
+
+  test('the title is drawn letter by letter, every letter as wide and as tall as the others', () => {
+    for (const set of ['unicode', 'ascii'] as const) {
+      const { logo } = GLYPHS[set]
+      expect(logo).toHaveLength(6)
+      for (const letter of logo) {
+        expect([set, letter.length]).toEqual([set, logo[0]!.length])
+        for (const row of letter) {
+          expect([set, row, textWidth(row)]).toEqual([set, row, 3])
+          if (set === 'ascii') expect(row).toMatch(/^[ -~]*$/)
+        }
+      }
+    }
   })
 
   test('Q still leaves a game while Claude needs you', () => {

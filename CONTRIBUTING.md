@@ -22,7 +22,8 @@ A game is one file of pure logic in `hooks/games/`, implementing `GameDef`
 from `hooks/games/types.ts`. The arcade does the rest: keys, menu, pause,
 drawing, high scores.
 
-1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame.
+1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame,
+   and its sign for the menu (two cells, in its own colors).
 2. Add its texts (name, one-line description, help line) to `hooks/i18n.ts`,
    in every language; a test checks that none is missing. For a language you
    do not speak, a careful machine translation is fine: say so in the pull
@@ -95,7 +96,7 @@ The changelog is for the person playing. Say what they will notice, not what
 the code does.
 
 ```
-## 0.3.0 - 2026-10-05
+## 1.3.0 - 2026-10-05
 
 ### Added
 
@@ -122,12 +123,9 @@ The step follows from the section, and CI checks it:
 
 | The section has | Step | Example |
 |---|---|---|
-| only Fixed | patch | 0.2.0 → 0.2.1 |
-| Added or Changed | minor | 0.2.1 → 0.3.0 |
-| a `**Breaking:**` entry | major, from 1.0 on | 1.3.0 → 2.0.0 |
-
-Before 1.0 a breaking change is a minor. 1.0.0 itself is declared by the
-maintainer in a pull request of its own.
+| only Fixed | patch | 1.2.0 → 1.2.1 |
+| Added or Changed | minor | 1.2.1 → 1.3.0 |
+| a `**Breaking:**` entry | major | 1.3.0 → 2.0.0 |
 
 Two open pull requests cannot both take the same version. The second one to
 merge is updated from `main` and takes the next.

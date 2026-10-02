@@ -170,6 +170,7 @@ export const worm: GameDef<Worm> = {
   name: 'worm.name',
   blurb: 'worm.blurb',
   help: 'worm.help',
+  sign: glyphs => [{ text: glyphs.wormHead, color: HEAD_COLOR }],
   tickMs: 33,
   minW: 16,
   minH: 8,

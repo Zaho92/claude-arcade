@@ -3,6 +3,16 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.0.0 - 2026-10-02
+
+### Changed
+
+- The main menu has a new look: the title in large colored letters, the
+  games in a frame like the one around a game's field, with air between
+  them, each with a sign in its own colors, and the chosen game on a bar.
+  Records stand at the right edge. The line that says what a game is about is shown for the chosen game
+  only, under the list, so it is no longer cut off in a narrow pane.
+
 ## 0.4.0 - 2026-10-02
 
 ### Changed

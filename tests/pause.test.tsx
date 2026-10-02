@@ -1,6 +1,8 @@
 import type { On } from 'claude-code'
 import { expect, test } from 'claude-code/testing'
 
+import { textWidth } from '../hooks/glyphs'
+
 type World = {
   store: Map<string, unknown>
   sounds: string[]
@@ -214,6 +216,71 @@ test('a pane too narrow for the game says so, and the game comes back when it is
   await ui.advance(100)
   expect(await shows(ui, /Make the pane bigger/)).toBeUndefined()
   expect(await shows(ui, /Space: start/)).toBeDefined()
+  await ui.unmount()
+})
+
+type Drawn = { type: string; props?: Record<string, unknown>; children?: (Drawn | string)[] }
+
+function textOf(el: Drawn | string): string {
+  return typeof el === 'string' ? el : (el.children ?? []).map(textOf).join('')
+}
+
+/** The menu as drawn: the title's lines, the width of the list's box and its games as plain text. */
+async function menu(ui: { drawn: (scope: { in: string }) => Promise<unknown> }): Promise<{ title: string[]; width: unknown; rows: string[] }> {
+  const root = (await ui.drawn({ in: 'arcade' })) as Drawn
+  const list = (root.children ?? []).find((el): el is Drawn => typeof el !== 'string' && el.props?.borderStyle !== undefined)
+  const all = (root.children ?? []).filter((el): el is Drawn => typeof el !== 'string')
+  const title = all.slice(0, list ? all.indexOf(list) : 0).map(textOf)
+  // Between two games stands a line of air.
+  const rows = (list?.children ?? []).map(textOf).filter(row => row.trim() !== '')
+  return { title, width: list?.props?.width, rows }
+}
+
+test('the menu: the title, the games in a frame, and under it what the chosen game is about', async ($, on) => {
+  engine(on, { language: 'german' })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.advance(100)
+
+  expect((await menu(ui)).title).toEqual(['▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀', '█▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄'])
+  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe'])
+  expect(await shows(ui, /Räum die Mauer ab/)).toBeDefined()
+  expect(await shows(ui, /Fressen, wachsen/)).toBeUndefined()
+
+  await ui.key({ key: 'down', in: 'arcade' })
+  await ui.advance(100)
+  expect(await shows(ui, /Räum die Mauer ab/)).toBeUndefined()
+  expect(await shows(ui, /Fressen, wachsen/)).toBeDefined()
+  expect((await menu(ui)).rows[1]).toMatch(/^▶ ██ Wurm/)
+  await ui.unmount()
+})
+
+for (const language of ['en', 'de', 'ja', 'zh', 'ru'] as const) {
+  test(`the menu's rows are all as wide as their frame, records at the right edge (${language})`, { options: { language } }, async ($, on) => {
+    const world = engine(on)
+    world.store.set('best', { bricks: 300, mines: 12345 })
+    await $.session.start(SESSION)
+    const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+    await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+    await ui.advance(100)
+    const { width, rows } = await menu(ui)
+    expect(rows).toHaveLength(5)
+    // The frame's border and padding take two cells on either side.
+    for (const row of rows) expect([row, textWidth(row) + 4]).toEqual([row, width])
+    expect(rows[0]).toMatch(/ 300$/)
+    expect(rows[3]).toMatch(/ 12345$/)
+    await ui.unmount()
+  })
+}
+
+test('a pane narrower than the menu cuts the frame to the pane', async ($, on) => {
+  engine(on)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 18, rows: 24, in: 'arcade' })
+  await ui.advance(100)
+  expect((await menu(ui)).width).toBe(18)
   await ui.unmount()
 })
 
@@ -590,9 +657,9 @@ test('the ascii glyphs reach the marks between the parts of a line', { options: 
   const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
   await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
   await ui.advance(100)
-  // The menu: the hint under the list and the record beside a game.
+  // The menu: the hint under the list.
   expect(await shows(ui, /·/)).toBeUndefined()
-  expect(await shows(ui, / \| +ベスト 300/)).toBeDefined()
+  expect(await shows(ui, / \| Enter /)).toBeDefined()
 
   // A game: the help line under the field.
   await ui.key({ key: 'return', in: 'arcade' })

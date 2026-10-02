@@ -158,6 +158,7 @@ export const cows: GameDef<Cows> = {
   name: 'cows.name',
   blurb: 'cows.blurb',
   help: 'cows.help',
+  sign: glyphs => [{ text: glyphs.bull, color: BULL_COLOR }, { text: glyphs.cow, color: COW_COLOR }],
   tickMs: 0,
   minW: FIELD_W,
   minH: FIELD_H,

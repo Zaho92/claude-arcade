@@ -63,6 +63,25 @@ claude --plugin-dir ./claude-arcade
    or docked beside the transcript in fullscreen mode).
 2. Click into the pane so it gets the keyboard, pick a game with `↑`/`↓` and
    `Enter`.
+
+   ```
+      ▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀
+      █▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄
+   ╭───────────────────────────╮
+   │ ▶ ██ Bricks      Best 870 │
+   │                           │
+   │   ██ Worm         Best 31 │
+   │                           │
+   │      Merge                │
+   │                           │
+   │   ✱  Mines                │
+   │                           │
+   │   ●○ Bulls & Cows         │
+   ╰───────────────────────────╯
+    Clear the wall
+    ↑/↓ choose · Enter play · Esc prompt
+   ```
+
 3. Give Claude something to do. The game runs as soon as Claude starts.
 
 | Key | |
