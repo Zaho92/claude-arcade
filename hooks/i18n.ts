@@ -34,9 +34,9 @@ const en = {
   'cmd.opened': 'Arcade open. Click into the field to play, Esc returns to the prompt.',
   'cmd.tooNarrow': 'Arcade: the terminal is too narrow.',
   unsupported: 'Arcade needs the terminal or the desktop app.',
-  'breakout.name': 'Breakout',
-  'breakout.blurb': 'Clear the wall',
-  'breakout.help': '←/→ move · Space launch',
+  'bricks.name': 'Bricks',
+  'bricks.blurb': 'Clear the wall',
+  'bricks.help': '←/→ move · Space launch',
 }
 
 export type TextKey = keyof typeof en
@@ -64,8 +64,9 @@ const de: Table = {
   'cmd.opened': 'Arcade geöffnet. Klick ins Feld zum Spielen, Esc zurück zur Eingabe.',
   'cmd.tooNarrow': 'Arcade: das Terminal ist zu schmal.',
   unsupported: 'Arcade braucht das Terminal oder die Desktop-App.',
-  'breakout.blurb': 'Räum die Mauer ab',
-  'breakout.help': '←/→ bewegen · Leertaste abschießen',
+  'bricks.name': 'Mauerbrecher',
+  'bricks.blurb': 'Räum die Mauer ab',
+  'bricks.help': '←/→ bewegen · Leertaste abschießen',
 }
 
 const fr: Table = {
@@ -90,8 +91,9 @@ const fr: Table = {
   'cmd.opened': 'Arcade ouvert. Clique dans le jeu pour jouer, Échap revient à la saisie.',
   'cmd.tooNarrow': 'Arcade : le terminal est trop étroit.',
   unsupported: "Arcade nécessite le terminal ou l'application de bureau.",
-  'breakout.blurb': 'Détruis le mur',
-  'breakout.help': '←/→ déplacer · Espace lancer',
+  'bricks.name': 'Briques',
+  'bricks.blurb': 'Détruis le mur',
+  'bricks.help': '←/→ déplacer · Espace lancer',
 }
 
 const es: Table = {
@@ -116,8 +118,9 @@ const es: Table = {
   'cmd.opened': 'Arcade abierto. Haz clic en el juego para jugar; Esc vuelve a la entrada.',
   'cmd.tooNarrow': 'Arcade: la terminal es demasiado estrecha.',
   unsupported: 'Arcade necesita la terminal o la app de escritorio.',
-  'breakout.blurb': 'Derriba el muro',
-  'breakout.help': '←/→ mover · Espacio lanzar',
+  'bricks.name': 'Ladrillos',
+  'bricks.blurb': 'Derriba el muro',
+  'bricks.help': '←/→ mover · Espacio lanzar',
 }
 
 const pt: Table = {
@@ -142,8 +145,9 @@ const pt: Table = {
   'cmd.opened': 'Arcade aberto. Clique no jogo para jogar; Esc volta à entrada.',
   'cmd.tooNarrow': 'Arcade: o terminal é estreito demais.',
   unsupported: 'O Arcade precisa do terminal ou do app desktop.',
-  'breakout.blurb': 'Derrube o muro',
-  'breakout.help': '←/→ mover · Espaço lançar',
+  'bricks.name': 'Tijolos',
+  'bricks.blurb': 'Derrube o muro',
+  'bricks.help': '←/→ mover · Espaço lançar',
 }
 
 const it: Table = {
@@ -168,8 +172,9 @@ const it: Table = {
   'cmd.opened': "Arcade aperto. Clicca nel gioco per giocare, Esc torna all'input.",
   'cmd.tooNarrow': 'Arcade: il terminale è troppo stretto.',
   unsupported: "Arcade richiede il terminale o l'app desktop.",
-  'breakout.blurb': 'Abbatti il muro',
-  'breakout.help': '←/→ muovi · Spazio lancia',
+  'bricks.name': 'Mattoni',
+  'bricks.blurb': 'Abbatti il muro',
+  'bricks.help': '←/→ muovi · Spazio lancia',
 }
 
 const ja: Table = {
@@ -194,9 +199,9 @@ const ja: Table = {
   'cmd.opened': 'Arcade を開きました。ゲーム内をクリックして操作、Esc で入力に戻ります。',
   'cmd.tooNarrow': 'Arcade: ターミナルの幅が足りません。',
   unsupported: 'Arcade はターミナルかデスクトップアプリで動作します。',
-  'breakout.name': 'ブロック崩し',
-  'breakout.blurb': '壁を崩そう',
-  'breakout.help': '←/→ 移動 · Space 発射',
+  'bricks.name': 'ブロック崩し',
+  'bricks.blurb': '壁を崩そう',
+  'bricks.help': '←/→ 移動 · Space 発射',
 }
 
 const zh: Table = {
@@ -221,9 +226,9 @@ const zh: Table = {
   'cmd.opened': 'Arcade 已打开。点击游戏区域开始玩，Esc 返回输入。',
   'cmd.tooNarrow': 'Arcade：终端太窄。',
   unsupported: 'Arcade 需要终端或桌面应用。',
-  'breakout.name': '打砖块',
-  'breakout.blurb': '打碎砖墙',
-  'breakout.help': '←/→ 移动 · 空格 发球',
+  'bricks.name': '打砖块',
+  'bricks.blurb': '打碎砖墙',
+  'bricks.help': '←/→ 移动 · 空格 发球',
 }
 
 const ko: Table = {
@@ -248,9 +253,9 @@ const ko: Table = {
   'cmd.opened': 'Arcade를 열었습니다. 게임 영역을 클릭해 플레이하고, Esc로 입력으로 돌아갑니다.',
   'cmd.tooNarrow': 'Arcade: 터미널 폭이 너무 좁습니다.',
   unsupported: 'Arcade는 터미널 또는 데스크톱 앱이 필요합니다.',
-  'breakout.name': '벽돌깨기',
-  'breakout.blurb': '벽을 부수세요',
-  'breakout.help': '←/→ 이동 · Space 발사',
+  'bricks.name': '벽돌깨기',
+  'bricks.blurb': '벽을 부수세요',
+  'bricks.help': '←/→ 이동 · Space 발사',
 }
 
 const ru: Table = {
@@ -275,9 +280,9 @@ const ru: Table = {
   'cmd.opened': 'Arcade открыт. Кликни в поле, чтобы играть; Esc — вернуться к вводу.',
   'cmd.tooNarrow': 'Arcade: терминал слишком узкий.',
   unsupported: 'Arcade работает в терминале или в приложении для компьютера.',
-  'breakout.name': 'Арканоид',
-  'breakout.blurb': 'Разбей стену',
-  'breakout.help': '←/→ двигать · Пробел запуск',
+  'bricks.name': 'Кирпичи',
+  'bricks.blurb': 'Разбей стену',
+  'bricks.help': '←/→ двигать · Пробел запуск',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

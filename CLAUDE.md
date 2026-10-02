@@ -32,6 +32,9 @@ that run while Claude works and freeze when Claude needs the person.
 - A function that takes `$` is declared at the top level of its file; the
   validator refuses `$` handed to a closure.
 - The state contract (`types/index.d.ts`) is self-contained: no imports.
+- No trademarks and no look-alikes of protected games, not even in code
+  identifiers: own names, own looks, own colors (CONTRIBUTING.md, "Original
+  games only"). Falling-block puzzles are out entirely.
 - The plugin is named `arcade`: names starting with `claude-` are reserved.
 - Work on a branch, merge to `main` through a pull request with green CI.
 - Commits carry the GitHub noreply address, never a private e-mail.

@@ -9,11 +9,13 @@
   Chinese, Japanese and Korean.
 - Optional chime when Claude needs you (off by default, macOS only).
 - Letter keys work on a Russian layout too.
-- High scores per game; 0.1.0's Breakout record carries over.
+- High scores per game.
+- The ball-and-paddle game is now called Bricks.
+- CONTRIBUTING.md: how to translate and add games.
 
 ## 0.1.0
 
-- Breakout in a pane, opened with `/arcade`.
+- A ball-and-paddle game in a pane, opened with `/arcade`.
 - Runs while Claude works; freezes when Claude is done, asks a question or
   waits for a permission. A subagent finishing does not pause it.
 - High score kept across sessions.

@@ -10,8 +10,6 @@ import type { Display, PauseReason, PauseState } from '../types'
 
 const PANE = 'arcade'
 const BEST_KEY = 'best'
-// Where 0.1.0 kept Breakout's record; folded into BEST_KEY on first start.
-const LEGACY_BEST_KEY = 'breakout.best'
 const SOUND = 'sounds/pause.wav'
 
 const RUNNING: PauseState = { isPaused: false, reason: '' }
@@ -69,12 +67,10 @@ export const register: Register = (on, options) => {
     await $.command.register({ name: 'arcade', description: t(shown.locale, 'cmd.description') })
 
     const stored = await $.store.get(BEST_KEY)
-    const legacy = await $.store.get(LEGACY_BEST_KEY)
     const record: Record<string, number> = {}
     if (stored && typeof stored === 'object') {
       for (const [id, n] of Object.entries(stored)) if (typeof n === 'number') record[id] = n
     }
-    if (typeof legacy === 'number') record.breakout = Math.max(record.breakout ?? 0, legacy)
     await update($, best, now => ({ ...record, ...now }))
 
     return next(e)

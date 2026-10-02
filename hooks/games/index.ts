@@ -1,6 +1,6 @@
 // Every game in the menu, in menu order.
 
-import { breakout } from './breakout'
+import { bricks } from './bricks'
 import type { GameDef } from './types'
 
-export const GAMES: readonly GameDef[] = [breakout]
+export const GAMES: readonly GameDef[] = [bricks]

@@ -96,6 +96,6 @@ test('a game over is reported once, with the game and the score', () => {
     if (out.report) reports.push(out.report)
   }
   expect(reports).toHaveLength(1)
-  expect(reports[0]).toMatchObject({ type: 'over', game: 'breakout' })
+  expect(reports[0]).toMatchObject({ type: 'over', game: 'bricks' })
   expect(FRAME_MS).toBeGreaterThan(0)
 })

@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/games/breakout'
+import { brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/games/bricks'
 import { GLYPHS } from '../hooks/glyphs'
 
-describe('breakout logic', () => {
+describe('bricks logic', () => {
   test('a new game waits with the ball on the paddle', () => {
     const g = newGame(60, 20)
     expect(g.phase).toBe('ready')

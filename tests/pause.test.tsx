@@ -65,7 +65,7 @@ test('the game freezes when Claude is done and runs while Claude works', async (
     await ui.advance(100)
 
     // The menu first; Enter starts the selected game.
-    expect(await shows(ui, /Breakout/)).toBeDefined()
+    expect(await shows(ui, /Mauerbrecher/)).toBeDefined()
     await ui.key({ key: 'return', in: 'arcade' })
     await ui.advance(100)
     // Idle at first, done after the previous surface's round: frozen either way.
@@ -139,24 +139,15 @@ test('a subagent finishing does not pause the game', async ($, on) => {
 
 test('a game over keeps the high score per game', async ($, on) => {
   const world = engine(on)
-  world.store.set('breakout.best', 300)
-  await $.session.start(SESSION)
-  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
-  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
-  await ui.post({ type: 'over', game: 'breakout', score: 420 }, { in: 'arcade' })
-  await ui.advance(100)
-  expect(world.store.get('best')).toEqual({ breakout: 420 })
-  expect(await shows(ui, /Best 420/)).toBeDefined()
-  await ui.unmount()
-})
-
-test("0.1.0's Breakout record carries over", async ($, on) => {
-  const world = engine(on)
-  world.store.set('breakout.best', 300)
+  world.store.set('best', { bricks: 300 })
   await $.session.start(SESSION)
   const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
   await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
   expect(await shows(ui, /Best 300/)).toBeDefined()
+  await ui.post({ type: 'over', game: 'bricks', score: 420 }, { in: 'arcade' })
+  await ui.advance(100)
+  expect(world.store.get('best')).toEqual({ bricks: 420 })
+  expect(await shows(ui, /Best 420/)).toBeDefined()
   await ui.unmount()
 })
 
@@ -166,7 +157,7 @@ test('a question from Claude freezes the game until it is answered', async ($, o
   let check = async (): Promise<void> => {}
   on('tool.call', async () => {
     await check()
-    return { result: { text: 'Breakout' } } as never
+    return { result: { text: 'Mines' } } as never
   })
   await $.session.start(SESSION)
   const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
@@ -185,8 +176,8 @@ test('a question from Claude freezes the game until it is answered', async ($, o
         header: 'Spiel',
         multiSelect: false,
         options: [
-          { label: 'Breakout', description: '' },
-          { label: 'Snake', description: '' },
+          { label: 'Mines', description: '' },
+          { label: 'Merge', description: '' },
         ],
       },
     ],

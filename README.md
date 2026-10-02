@@ -75,7 +75,7 @@ game region yet and show a note instead.
 
 | Game | |
 |---|---|
-| Breakout | Clear the wall with ball and paddle |
+| Bricks | Clear the wall with ball and paddle |
 
 ## Settings
 
@@ -96,12 +96,19 @@ Under `/plugin` → arcade → configure, or in `settings.json` under
 like `●` or `█` two cells wide, which tears the field apart. `auto` uses
 `ascii` for those three languages and `unicode` otherwise.
 
-## Translations
+## Contributing
 
-All texts live in `hooks/i18n.ts`. English is complete; the other nine were
-translated without native review, so corrections are very welcome. To add a
-language, follow the steps at the top of that file; the tests check that every
-translation keeps its placeholders.
+Contributions are very welcome, translations and new games above all.
+
+- **Translations:** the nine languages besides English were translated
+  without native review. If yours reads oddly, a one-line pull request to
+  `hooks/i18n.ts` makes a real difference. New languages are welcome too.
+- **New games:** a game is one file of pure logic; the arcade handles keys,
+  pausing, drawing and high scores. Original games and public-domain classics
+  only, no trademarks or look-alikes.
+- **Ideas and bugs:** open an issue.
+
+[CONTRIBUTING.md](CONTRIBUTING.md) has the details.
 
 ## Develop
 
@@ -128,7 +135,7 @@ plugin, and `tsc -p .` type-checks against them.
 
 ## Ideas
 
-Snake, Tetris and 2048 are next.
+More games are on the way. Have one in mind? Open an issue.
 
 ## License
 

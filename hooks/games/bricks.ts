@@ -1,4 +1,4 @@
-// Breakout as pure logic: no drawing, no input, no clock. The arcade host
+// Bricks (ball and paddle) as pure logic: no drawing, no input, no clock. The arcade host
 // feeds it actions and ticks; the tests drive it directly.
 
 import type { Glyphs } from '../glyphs'
@@ -259,11 +259,11 @@ function toTick(r: StepResult): TickResult {
   return 'changed'
 }
 
-export const breakout: GameDef<Game> = {
-  id: 'breakout',
-  name: 'breakout.name',
-  blurb: 'breakout.blurb',
-  help: 'breakout.help',
+export const bricks: GameDef<Game> = {
+  id: 'bricks',
+  name: 'bricks.name',
+  blurb: 'bricks.blurb',
+  help: 'bricks.help',
   tickMs: 33,
   minW: MIN_W,
   minH: MIN_H,
