@@ -9,8 +9,9 @@ CI are in the pull requests, not here.
 
 - Bricks and Worm: a game Claude interrupted in mid-play no longer runs on by
   itself when Claude is back at work. It stays paused until you press P, so
-  the ball does not fly while the keyboard is still at the prompt. A game
-  that waits for its start anyway, and the turn-based games, go on as before.
+  the ball does not fly while the keyboard is still at the prompt. A freeze
+  shorter than a second, a game that waits for its start anyway, and the
+  turn-based games go on as before.
 
 ## 0.3.0 - 2026-10-02
 

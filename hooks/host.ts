@@ -19,6 +19,8 @@ export type Running = {
   saved: number
   /** Milliseconds of frame clock not yet spent on ticks. */
   carry: number
+  /** Milliseconds Claude has held the game still in mid-play, this time. */
+  frozen: number
 }
 
 export type Host = {
@@ -38,6 +40,12 @@ export const FRAME_MS = 33
 // How often a running game's record is handed over, so that closing the pane
 // in the middle of a game does not lose it.
 export const CHECKPOINT_MS = 5000
+// A game on the clock that Claude held still for this long stays paused when
+// Claude is back at work: the person answered at the prompt, and the keys are
+// not back in the pane yet. P continues. Shorter than this nobody was asked
+// anything: a permission a settings hook answered, or one turn straight after
+// another.
+export const HOLD_AFTER_MS = 1000
 // Around the bordered field: the score line, the two border rows, the line
 // that says why nothing moves, and the help line.
 export const CHROME_ROWS = 5
@@ -121,22 +129,9 @@ export function newHost(props: ArcadeProps): Host {
   return { props, selected: 0, isManuallyPaused: false }
 }
 
-/**
- * Takes the props the hooks module sent. A game on the clock that Claude
- * interrupts in mid-play stays paused once Claude is back at work: the person
- * answered at the prompt, and the keys are not back in the pane yet. P
- * continues. A game that only moves on keys, or still waits for its start,
- * has nothing to hold.
- */
-export function receive(s: Host, props: ArcadeProps): void {
-  s.props = props
-  const run = s.run
-  if (props.isPaused && run && run.def.tickMs > 0 && run.def.status(run.g) === 'play') s.isManuallyPaused = true
-}
-
 function start(def: GameDef, columns: number, rows: number): Running {
   const { w, h } = fieldSize(def, columns, rows)
-  return { def, g: def.create(w, h), w, h, isReported: false, saved: 0, carry: 0 }
+  return { def, g: def.create(w, h), w, h, isReported: false, saved: 0, carry: 0, frozen: 0 }
 }
 
 /**
@@ -215,6 +210,12 @@ export function handle(s: Host, cmd: Command, columns: number, rows: number): Ou
 export function frameTick(s: Host, columns: number): Outcome {
   const run = s.run
   if (!run || run.def.tickMs <= 0) return { changed: false }
+  // A game still waiting for its start has nothing to hold.
+  if (!s.props.isPaused) run.frozen = 0
+  else if (run.def.status(run.g) === 'play') {
+    run.frozen += FRAME_MS
+    if (run.frozen >= HOLD_AFTER_MS) s.isManuallyPaused = true
+  }
   if (s.props.isPaused || s.isManuallyPaused || !fits(run, columns)) {
     run.carry = 0
     return { changed: false }

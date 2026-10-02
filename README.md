@@ -33,7 +33,7 @@ Speaks ten languages and follows the one you set for Claude Code.
 | runs a subagent that finishes | keeps running (only the main turn counts) |
 
 The line under the field says why it stands still. Bricks and Worm, once
-frozen in mid-play, wait for `P` when Claude works again: your keyboard may
+frozen in mid-play for a second or more, wait for `P` when Claude works again: your keyboard may
 still be at the prompt. Each game keeps its high
 score across sessions, also when you leave a game with `Q` or close the pane
 in the middle of one.

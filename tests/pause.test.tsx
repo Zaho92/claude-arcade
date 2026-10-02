@@ -129,7 +129,7 @@ test('the game freezes when Claude is done and runs while Claude works', async (
     expect(await shows(ui, /Leertaste: Start/)).toBeUndefined()
 
     await $.turn.complete({ ...DONE, turnId: `${surface}-1` })
-    await ui.advance(100)
+    await ui.advance(2000)
     expect(await shows(ui, /Claude ist fertig – du bist dran/)).toBeDefined()
 
     await $.turn.start({ text: 'more', turnId: `${surface}-2` })

@@ -9,7 +9,7 @@ import { GAMES } from './games'
 import type { Frame } from './games/types'
 import { GLYPHS, textWidth, withSep } from './glyphs'
 import type { Glyphs } from './glyphs'
-import { CHECKPOINT_MS, FRAME_MS, checkpoint, commandFor, fits, frameTick, handle, newHost, receive } from './host'
+import { CHECKPOINT_MS, FRAME_MS, checkpoint, commandFor, fits, frameTick, handle, newHost } from './host'
 import type { Host, Running } from './host'
 import { t } from './i18n'
 import type { TextKey } from './i18n'
@@ -55,7 +55,7 @@ const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
   }
 
   // New props from the hooks module reach the running loop through here.
-  receive(s, props)
+  s.props = props
 
   if (!s.run) return drawMenu(s, glyphs, tr, surface.elements)
   if (!fits(s.run, surface.columns)) return drawTooSmall(s.run, glyphs, tr, surface.elements)
