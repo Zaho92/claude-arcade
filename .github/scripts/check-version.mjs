@@ -1,13 +1,17 @@
-// A pull request that changes what the plugin ships must raise the version in
-// .claude-plugin/plugin.json and name it in CHANGELOG.md: `claude plugin
-// update` compares versions, so a merge without a new one reaches nobody.
+// Holds a pull request to the release rules. Installations follow main and
+// `claude plugin update` compares versions, so every merge that changes what
+// the plugin ships is a release: it raises the version in
+// .claude-plugin/plugin.json by the step its CHANGELOG.md section calls for.
+// The rules themselves are in changelog.mjs.
 //
 // usage: node .github/scripts/check-version.mjs <base ref>
 
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
+import { check } from './changelog.mjs'
 
 const MANIFEST = '.claude-plugin/plugin.json'
+const CHANGELOG = 'CHANGELOG.md'
 // What a person's installation runs; tests, docs and CI are not shipped code.
 const SHIPPED = ['hooks/', 'sounds/', 'types/', '.claude-plugin/']
 
@@ -19,44 +23,30 @@ if (!base) {
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' })
 
-function parse(version) {
-  const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(version)
-  if (!m) throw new Error(`"${version}" is not a version like 1.2.3`)
-  return m.slice(1).map(Number)
-}
-
-function isHigher(next, prev) {
-  const a = parse(next)
-  const b = parse(prev)
-  for (let i = 0; i < 3; i++) if (a[i] !== b[i]) return a[i] > b[i]
-  return false
-}
-
 // Three dots: what this branch changed since it left the base.
 const changed = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean)
 const shipped = changed.filter(file => SHIPPED.some(prefix => file.startsWith(prefix)))
-if (shipped.length === 0) {
-  console.log('No shipped file changed: no new version needed.')
-  process.exit(0)
-}
-
 const mergeBase = git('merge-base', base, 'HEAD').trim()
-const before = JSON.parse(git('show', `${mergeBase}:${MANIFEST}`)).version
-const after = JSON.parse(readFileSync(MANIFEST, 'utf8')).version
 
-const problems = []
-if (!isHigher(after, before)) {
-  problems.push(`${MANIFEST}: the version is ${after}, on ${base} it is ${before}. Raise it.`)
-} else {
-  const heading = new RegExp(`^## ${after.replaceAll('.', '\\.')}(\\s|$)`, 'm')
-  if (!heading.test(readFileSync('CHANGELOG.md', 'utf8'))) {
-    problems.push(`CHANGELOG.md: no "## ${after}" section for the new version.`)
-  }
-}
+const baseVersion = JSON.parse(git('show', `${mergeBase}:${MANIFEST}`)).version
+const version = JSON.parse(readFileSync(MANIFEST, 'utf8')).version
+const problems = check({
+  baseVersion,
+  baseChangelog: git('show', `${mergeBase}:${CHANGELOG}`),
+  version,
+  changelog: readFileSync(CHANGELOG, 'utf8'),
+  shipped,
+})
 
 if (problems.length > 0) {
-  console.error(`This pull request changes shipped files:\n${shipped.map(f => `  ${f}`).join('\n')}\n`)
+  if (shipped.length > 0) {
+    console.error(`This pull request changes shipped files:\n${shipped.map(f => `  ${f}`).join('\n')}\n`)
+  }
   for (const p of problems) console.error(p)
   process.exit(1)
 }
-console.log(`Version ${before} -> ${after}, named in CHANGELOG.md.`)
+console.log(
+  version === baseVersion
+    ? `No shipped file changed: the version stays ${version}.`
+    : `Version ${baseVersion} -> ${version}, as its CHANGELOG.md section calls for.`
+)
