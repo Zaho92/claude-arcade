@@ -4,6 +4,9 @@
 const GROUPS = ['Added', 'Changed', 'Fixed']
 const HEADING = /^## (\d+\.\d+\.\d+) - (\d{4}-\d{2}-\d{2})$/
 const BREAKING = '**Breaking:**'
+// An entry that opens with the word and a colon, however it is dressed
+// ("Breaking:", "*BREAKING:*"), or the word in bold anywhere.
+const BREAKING_LIKE = /^- [^A-Za-z0-9]*breaking( change)?[^A-Za-z0-9 ]*:|\*\*\s*breaking/i
 
 export function parseVersion(version) {
   const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(version)
@@ -71,7 +74,7 @@ export function parseChangelog(text) {
     }
     if (line.trim() === '') return
     // A mistyped marker would pass as an ordinary entry and a smaller step.
-    if (/\*\*\s*breaking/i.test(line) && !line.startsWith(`- ${BREAKING} `)) {
+    if (BREAKING_LIKE.test(line) && !line.startsWith(`- ${BREAKING} `)) {
       problems.push(`${at}: a breaking change is an entry that starts with "- ${BREAKING} ".`)
     }
     if (line.startsWith('- ')) {

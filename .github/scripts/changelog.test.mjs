@@ -109,9 +109,21 @@ test('a breaking change is marked, and a major from 1.0 on', () => {
 })
 
 test('a mistyped breaking marker is a problem, not an ordinary entry', () => {
-  for (const entry of ['- **Breaking**: scores start over.', '- **BREAKING:** scores start over.', '- Scores: **Breaking:** start over.']) {
-    assert.match(problemsOf(changelog(section('0.3.0', '2026-10-05', `### Changed\n\n${entry}`)))[0], /starts with "- \*\*Breaking:\*\* "/)
+  const problems = entry => problemsOf(changelog(section('0.3.0', '2026-10-05', `### Changed\n\n${entry}`)))
+  for (const entry of [
+    '- **Breaking**: scores start over.',
+    '- **BREAKING:** scores start over.',
+    '- Scores: **Breaking:** start over.',
+    '- Breaking: scores start over.',
+    '- BREAKING CHANGE: scores start over.',
+    '- *Breaking:* scores start over.',
+    '- __Breaking:__ scores start over.',
+  ]) {
+    assert.match(problems(entry)[0], /starts with "- \*\*Breaking:\*\* "/)
   }
+  // The word alone, in a sentence, marks nothing.
+  assert.deepEqual(problems('- Bricks: breaking the last brick starts the next level.'), [])
+  assert.deepEqual(problems('- Breaking a brick scores more on higher levels.'), [])
 })
 
 test('1.0.0 is declared, whatever the section holds', () => {

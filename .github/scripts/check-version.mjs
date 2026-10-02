@@ -23,8 +23,9 @@ if (!base) {
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' })
 
-// Three dots: what this branch changed since it left the base.
-const changed = git('diff', '--name-only', `${base}...HEAD`).split('\n').filter(Boolean)
+// Three dots: what this branch changed since it left the base. Without rename
+// detection a moved file counts where it was and where it is now.
+const changed = git('diff', '--name-only', '--no-renames', `${base}...HEAD`).split('\n').filter(Boolean)
 const shipped = changed.filter(file => SHIPPED.some(prefix => file.startsWith(prefix)))
 const mergeBase = git('merge-base', base, 'HEAD').trim()
 
