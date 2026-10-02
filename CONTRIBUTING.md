@@ -60,6 +60,11 @@ claude plugin test .
 Both must pass; CI runs them on every pull request. Work on a branch, keep a
 pull request to one topic, and describe what you tested by hand.
 
+If you change what the plugin ships (`hooks/`, `sounds/`, `types/`,
+`.claude-plugin/`), raise `version` in `.claude-plugin/plugin.json` and add a
+`## <version>` section to `CHANGELOG.md`. Installed copies only update when
+the version goes up, so CI checks this too.
+
 ## Reporting bugs
 
 Open an issue with your Claude Code version (`claude --version`), your

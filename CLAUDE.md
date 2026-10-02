@@ -37,6 +37,11 @@ that run while Claude works and freeze when Claude needs the person.
   games only"). Falling-block puzzles are out entirely.
 - The plugin is named `arcade`: names starting with `claude-` are reserved.
 - Work on a branch, merge to `main` through a pull request with green CI.
+- Installations follow `main`, and `claude plugin update` compares versions:
+  a pull request that changes `hooks/`, `sounds/`, `types/` or
+  `.claude-plugin/` raises `version` in `.claude-plugin/plugin.json` and adds
+  a `## <version>` section to CHANGELOG.md. CI checks it
+  (`.github/scripts/check-version.mjs`).
 - Commits carry the GitHub noreply address, never a private e-mail.
 - The API types live in `.claude-plugin/types/` (written by the engine,
   git-ignored). The API moves between releases: when raising

@@ -18,9 +18,17 @@ jobs:
       CLAUDE_CODE_VERSION: 2.1.287
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The version check compares with the base branch.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 22
+      - name: A change to shipped files raises the version
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: node .github/scripts/check-version.mjs "origin/${BASE_REF}"
       - name: Install Claude Code
         run: npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
       - name: Validate manifest, marketplace and hooks
