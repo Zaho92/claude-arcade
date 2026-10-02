@@ -24,7 +24,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - name: A change to shipped files raises the version
+      - name: Test the CI scripts
+        run: node --test ".github/scripts/*.test.mjs"
+      - name: Version and changelog follow the release rules
         if: github.event_name == 'pull_request'
         env:
           BASE_REF: ${{ github.base_ref }}
