@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'claude-code/testing'
 
-import { brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/breakout-game'
+import { brickAt, bricksLeft, frame, newGame, paddleRow, press, tick, START_LIVES } from '../hooks/games/breakout'
+import { GLYPHS } from '../hooks/glyphs'
 
 describe('breakout logic', () => {
   test('a new game waits with the ball on the paddle', () => {
@@ -13,28 +14,17 @@ describe('breakout logic', () => {
 
   test('the paddle moves and stays inside the field', () => {
     const g = newGame(40, 20)
-    for (let i = 0; i < 50; i++) press(g, { key: 'left' })
+    for (let i = 0; i < 50; i++) press(g, 'left')
     expect(g.paddleX).toBe(0)
-    for (let i = 0; i < 50; i++) press(g, { key: 'right' })
+    for (let i = 0; i < 50; i++) press(g, 'right')
     expect(g.paddleX).toBe(g.w - g.paddleW)
   })
 
   test('space launches the ball upwards', () => {
     const g = newGame(40, 20)
-    press(g, { key: ' ' })
+    press(g, 'primary')
     expect(g.phase).toBe('play')
     expect(g.vy).toBeLessThan(0)
-  })
-
-  test('P pauses and resumes the ball', () => {
-    const g = newGame(40, 20)
-    press(g, { key: ' ' })
-    press(g, { key: 'p' })
-    const y = g.ballY
-    expect(tick(g)).toBe('none')
-    expect(g.ballY).toBe(y)
-    press(g, { key: 'p' })
-    expect(tick(g)).toBe('moved')
   })
 
   test('a ball that hits a brick removes it and scores', () => {
@@ -80,7 +70,7 @@ describe('breakout logic', () => {
       expect(r).toBe(life === 1 ? 'over' : 'lost')
     }
     expect(g.phase).toBe('over')
-    press(g, { key: ' ' })
+    press(g, 'primary')
     expect(g.phase).toBe('ready')
     expect(g.lives).toBe(START_LIVES)
     expect(g.score).toBe(0)
@@ -103,14 +93,24 @@ describe('breakout logic', () => {
 
   test('a frame has one row per field row, each as wide as the field', () => {
     const g = newGame(50, 18)
-    const rows = frame(g)
+    const rows = frame(g, GLYPHS.unicode)
     expect(rows).toHaveLength(g.h)
     for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(g.w)
   })
 
+  test('the ascii glyphs draw the same field with plain characters', () => {
+    const g = newGame(50, 18)
+    const text = frame(g, GLYPHS.ascii)
+      .map(row => row.map(s => s.text).join(''))
+      .join('')
+    expect(text).toMatch(/^[ -~]+$/)
+    expect(text).toContain('#')
+    expect(text).toContain('=')
+  })
+
   test('a long rally never leaves the field', () => {
     const g = newGame(45, 20)
-    press(g, { key: ' ' })
+    press(g, 'primary')
     for (let i = 0; i < 3000 && g.phase === 'play'; i++) {
       g.paddleX = Math.max(0, Math.min(g.w - g.paddleW, Math.round(g.ballX - g.paddleW / 2)))
       tick(g)

@@ -1,40 +1,91 @@
-// arcade: a game pane that runs while Claude works and freezes the
-// moment Claude is done, asks a question or waits for a permission.
+// arcade: a game pane that runs while Claude works and freezes the moment
+// Claude is done, asks a question or waits for a permission.
 
 import { atom, read, update } from 'claude-code'
-import type { Register } from 'claude-code'
+import type { EngineInterface, PluginOptions, Register } from 'claude-code'
 
-import type { PauseState } from '../types'
+import { prefersAscii, resolveLocale, t } from './i18n'
+import type { GlyphSet } from './glyphs'
+import type { Display, PauseReason, PauseState } from '../types'
 
 const PANE = 'arcade'
-const BEST_KEY = 'breakout.best'
+const BEST_KEY = 'best'
+// Where 0.1.0 kept Breakout's record; folded into BEST_KEY on first start.
+const LEGACY_BEST_KEY = 'breakout.best'
+const SOUND = 'sounds/pause.wav'
 
-export const IDLE: PauseState = { isPaused: true, reason: '⏸  Läuft, sobald Claude arbeitet' }
-export const DONE: PauseState = { isPaused: true, reason: '⏸  Claude ist fertig, du bist dran' }
-export const ASKING: PauseState = { isPaused: true, reason: '⏸  Claude hat eine Frage an dich' }
-export const PERMISSION: PauseState = { isPaused: true, reason: '⏸  Claude wartet auf deine Freigabe' }
-export const RUNNING: PauseState = { isPaused: false, reason: '' }
+const RUNNING: PauseState = { isPaused: false, reason: '' }
+const paused = (reason: Exclude<PauseReason, ''>): PauseState => ({ isPaused: true, reason })
 
-const pause = atom({ plugin: 'arcade', key: 'pause' } as const, IDLE)
-const best = atom({ plugin: 'arcade', key: 'best' } as const, 0)
+const pause = atom({ plugin: 'arcade', key: 'pause' } as const, paused('idle'))
+const display = atom({ plugin: 'arcade', key: 'display' } as const, { locale: 'en', glyphs: 'unicode' } as Display)
+const best = atom({ plugin: 'arcade', key: 'best' } as const, {} as Record<string, number>)
 
-export const register: Register = on => {
+function option(options: PluginOptions, name: string): string | undefined {
+  const v = options[name]
+  return typeof v === 'string' ? v : undefined
+}
+
+/** Reads a source the display falls back past when it is missing or fails. */
+async function quietly<T>(read: () => Promise<T>): Promise<T | undefined> {
+  try {
+    return await read()
+  } catch {
+    return undefined
+  }
+}
+
+/** Language and glyphs: the plugin's settings first, then Claude Code's, then the system's. */
+export async function resolveDisplay($: EngineInterface, options: PluginOptions): Promise<Display> {
+  const settings = await quietly(() => $.settings.read())
+  const claudeLanguage = typeof settings?.language === 'string' ? settings.language : undefined
+  const locale = resolveLocale([
+    option(options, 'language'),
+    claudeLanguage,
+    await quietly(() => $.env.get('LC_ALL')),
+    await quietly(() => $.env.get('LC_MESSAGES')),
+    await quietly(() => $.env.get('LANG')),
+  ])
+  const chosen = option(options, 'glyphs')
+  const glyphs: GlyphSet = chosen === 'unicode' || chosen === 'ascii' ? chosen : prefersAscii(locale) ? 'ascii' : 'unicode'
+  return { locale, glyphs }
+}
+
+/** Freezes the games; chimes once if the person asked for it and the arcade is open. */
+async function freeze($: EngineInterface, reason: Exclude<PauseReason, ''>, isSoundOn: boolean): Promise<void> {
+  const before = await read($, pause)
+  await update($, pause, () => paused(reason))
+  if (!isSoundOn || before.isPaused) return
+  const isOpen = (await $.ui.panes()).some(p => p.id === PANE)
+  if (isOpen) await $.audio.play({ asset: SOUND }).catch(() => undefined)
+}
+
+export const register: Register = (on, options) => {
+  const isSoundOn = options.sound === true
+
   on('session.start', async ($, e, next) => {
-    await $.command.register({
-      name: 'arcade',
-      description: 'Breakout spielen, solange Claude arbeitet (pausiert automatisch)',
-    })
+    const shown = await resolveDisplay($, options)
+    await update($, display, () => shown)
+    await $.command.register({ name: 'arcade', description: t(shown.locale, 'cmd.description') })
+
     const stored = await $.store.get(BEST_KEY)
-    if (typeof stored === 'number') await update($, best, n => Math.max(n, stored))
+    const legacy = await $.store.get(LEGACY_BEST_KEY)
+    const record: Record<string, number> = {}
+    if (stored && typeof stored === 'object') {
+      for (const [id, n] of Object.entries(stored)) if (typeof n === 'number') record[id] = n
+    }
+    if (typeof legacy === 'number') record.breakout = Math.max(record.breakout ?? 0, legacy)
+    await update($, best, now => ({ ...record, ...now }))
 
     return next(e)
   })
 
   on('command.run', { command: 'arcade' }, async $ => {
-    const opened = await $.ui.open({ id: PANE, title: 'Arcade · Breakout', focus: true, rows: 24, columns: 76 })
-    if (!opened.isPlaced) return { text: 'Arcade: das Terminal ist zu schmal für das Spielfeld.' }
+    const { locale } = await read($, display)
+    const opened = await $.ui.open({ id: PANE, title: t(locale, 'title'), focus: true, rows: 24, columns: 76 })
+    if (!opened.isPlaced) return { text: t(locale, 'cmd.tooNarrow') }
 
-    return { text: 'Arcade geöffnet. Klick ins Feld zum Spielen, Esc zurück zur Eingabe.' }
+    return { text: t(locale, 'cmd.opened') }
   })
 
   // Claude starts working: play on.
@@ -48,24 +99,24 @@ export const register: Register = on => {
   // agentId and ends while the main turn still runs, so it is left alone.
   on('turn.complete', async ($, e, next) => {
     const done = await next(e)
-    if (e.agentId === undefined) await update($, pause, () => DONE)
+    if (e.agentId === undefined) await freeze($, 'done', isSoundOn)
 
     return done
   })
 
   // A question for the person: freeze while the dialog is open.
   on('tool.call', { tool: 'AskUserQuestion' }, async ($, e, next) => {
-    await update($, pause, () => ASKING)
+    await freeze($, 'asking', isSoundOn)
     try {
       return await next(e)
     } finally {
-      await update($, pause, p => (p.reason === ASKING.reason ? RUNNING : p))
+      await update($, pause, p => (p.reason === 'asking' ? RUNNING : p))
     }
   })
 
   // A permission dialog: freeze until a tool runs again.
   on('classic.PermissionRequest', async ($, e, next) => {
-    await update($, pause, () => PERMISSION)
+    await freeze($, 'permission', isSoundOn)
 
     return next(e)
   })
@@ -76,15 +127,16 @@ export const register: Register = on => {
     try {
       return await next(e)
     } finally {
-      await update($, pause, p => (p.reason === PERMISSION.reason ? RUNNING : p))
+      await update($, pause, p => (p.reason === 'permission' ? RUNNING : p))
     }
   })
 
   on('ui.message', { requestId: PANE }, async ($, e, next) => {
-    const data = e.data as { type?: unknown; score?: unknown } | null
-    if (data && data.type === 'over' && typeof data.score === 'number') {
+    const data = e.data as { type?: unknown; game?: unknown; score?: unknown } | null
+    if (data && data.type === 'over' && typeof data.game === 'string' && typeof data.score === 'number') {
+      const game = data.game
       const score = data.score
-      await update($, best, n => Math.max(n, score))
+      await update($, best, now => ({ ...now, [game]: Math.max(now[game] ?? 0, score) }))
       await $.store.set(BEST_KEY, await read($, best))
     }
 
@@ -92,9 +144,10 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
+    const shown = await read($, display)
     if (e.surface !== 'terminal' && e.surface !== 'desktop') {
       const { Text } = $.ui.resolve(e)
-      return <Text dimColor>Arcade braucht das Terminal oder die Desktop-App.</Text>
+      return <Text dimColor>{t(shown.locale, 'unsupported')}</Text>
     }
     const { Client } = $.ui.resolve(e)
 
@@ -103,9 +156,9 @@ export const register: Register = on => {
 
     return (
       <Client
-        key="breakout"
-        module="./breakout.tsx"
-        props={{ ...state, best: record }}
+        key="arcade"
+        module="./arcade.tsx"
+        props={{ ...state, ...shown, best: record }}
         width="100%"
         height="100%"
       />
