@@ -37,6 +37,9 @@ const en = {
   'bricks.name': 'Bricks',
   'bricks.blurb': 'Clear the wall',
   'bricks.help': '←/→ move · Space launch',
+  'worm.name': 'Worm',
+  'worm.blurb': 'Eat, grow, never bite yourself',
+  'worm.help': '←↑↓→ steer',
 }
 
 export type TextKey = keyof typeof en
@@ -67,6 +70,9 @@ const de: Table = {
   'bricks.name': 'Mauerbrecher',
   'bricks.blurb': 'Räum die Mauer ab',
   'bricks.help': '←/→ bewegen · Leertaste abschießen',
+  'worm.name': 'Wurm',
+  'worm.blurb': 'Fressen, wachsen, nicht beißen',
+  'worm.help': '←↑↓→ lenken',
 }
 
 const fr: Table = {
@@ -94,6 +100,9 @@ const fr: Table = {
   'bricks.name': 'Briques',
   'bricks.blurb': 'Détruis le mur',
   'bricks.help': '←/→ déplacer · Espace lancer',
+  'worm.name': 'Ver',
+  'worm.blurb': 'Mange, grandis, ne te mords pas',
+  'worm.help': '←↑↓→ diriger',
 }
 
 const es: Table = {
@@ -121,6 +130,9 @@ const es: Table = {
   'bricks.name': 'Ladrillos',
   'bricks.blurb': 'Derriba el muro',
   'bricks.help': '←/→ mover · Espacio lanzar',
+  'worm.name': 'Gusano',
+  'worm.blurb': 'Come, crece y no te muerdas',
+  'worm.help': '←↑↓→ girar',
 }
 
 const pt: Table = {
@@ -148,6 +160,9 @@ const pt: Table = {
   'bricks.name': 'Tijolos',
   'bricks.blurb': 'Derrube o muro',
   'bricks.help': '←/→ mover · Espaço lançar',
+  'worm.name': 'Minhoca',
+  'worm.blurb': 'Coma, cresça e não se morda',
+  'worm.help': '←↑↓→ virar',
 }
 
 const it: Table = {
@@ -175,6 +190,9 @@ const it: Table = {
   'bricks.name': 'Mattoni',
   'bricks.blurb': 'Abbatti il muro',
   'bricks.help': '←/→ muovi · Spazio lancia',
+  'worm.name': 'Verme',
+  'worm.blurb': 'Mangia, cresci, non morderti',
+  'worm.help': '←↑↓→ sterza',
 }
 
 const ja: Table = {
@@ -202,6 +220,9 @@ const ja: Table = {
   'bricks.name': 'ブロック崩し',
   'bricks.blurb': '壁を崩そう',
   'bricks.help': '←/→ 移動 · Space 発射',
+  'worm.name': 'ワーム',
+  'worm.blurb': '食べて伸びよう。自分をかまないで',
+  'worm.help': '←↑↓→ 方向転換',
 }
 
 const zh: Table = {
@@ -229,6 +250,9 @@ const zh: Table = {
   'bricks.name': '打砖块',
   'bricks.blurb': '打碎砖墙',
   'bricks.help': '←/→ 移动 · 空格 发球',
+  'worm.name': '贪吃虫',
+  'worm.blurb': '吃东西变长，别咬到自己',
+  'worm.help': '←↑↓→ 转向',
 }
 
 const ko: Table = {
@@ -256,6 +280,9 @@ const ko: Table = {
   'bricks.name': '벽돌깨기',
   'bricks.blurb': '벽을 부수세요',
   'bricks.help': '←/→ 이동 · Space 발사',
+  'worm.name': '지렁이',
+  'worm.blurb': '먹고 자라고, 자기 몸은 물지 마세요',
+  'worm.help': '←↑↓→ 방향 전환',
 }
 
 const ru: Table = {
@@ -283,6 +310,9 @@ const ru: Table = {
   'bricks.name': 'Кирпичи',
   'bricks.blurb': 'Разбей стену',
   'bricks.help': '←/→ двигать · Пробел запуск',
+  'worm.name': 'Червяк',
+  'worm.blurb': 'Ешь, расти и не кусай себя',
+  'worm.help': '←↑↓→ поворот',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

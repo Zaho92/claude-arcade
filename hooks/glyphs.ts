@@ -14,8 +14,9 @@ export type Glyphs = {
   block: string
   life: string
   lifeLost: string
-  snakeHead: string
-  snakeBody: string
+  /** Two cells wide, so a square on the grid looks square on screen. */
+  wormHead: string
+  wormBody: string
   food: string
   empty: string
   dot: string
@@ -31,9 +32,9 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     block: '█',
     life: '♥',
     lifeLost: '·',
-    snakeHead: '█',
-    snakeBody: '▓',
-    food: '◆',
+    wormHead: '██',
+    wormBody: '▓▓',
+    food: '()',
     empty: ' ',
     dot: '·',
     border: 'round',
@@ -46,9 +47,9 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     block: '#',
     life: '*',
     lifeLost: '-',
-    snakeHead: '@',
-    snakeBody: 'o',
-    food: '$',
+    wormHead: '@@',
+    wormBody: 'oo',
+    food: '()',
     empty: ' ',
     dot: '.',
     border: 'classic',

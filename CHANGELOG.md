@@ -2,6 +2,7 @@
 
 ## 0.2.0 (unreleased)
 
+- Worm: eat, grow, never bite yourself.
 - Game menu: pick a game with ↑/↓ and Enter, Q or Backspace leaves a game.
 - Ten languages (en, de, fr, es, pt, it, ja, zh, ko, ru), chosen from the
   plugin setting, Claude Code's `language` setting or the system locale.

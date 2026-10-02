@@ -76,6 +76,7 @@ game region yet and show a note instead.
 | Game | |
 |---|---|
 | Bricks | Clear the wall with ball and paddle |
+| Worm | Eat, grow, never bite yourself; faster every five bites |
 
 ## Settings
 
