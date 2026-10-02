@@ -33,7 +33,20 @@ export const FRAME_MS = 33
 const CHROME_ROWS = 4
 
 // Keys typed on a Russian layout, mapped to the Latin key in the same place.
-const CYRILLIC: Record<string, string> = { й: 'q', з: 'p', ф: 'a', в: 'd', ц: 'w', ы: 's', р: 'h', д: 'l', о: 'j', л: 'k' }
+const CYRILLIC: Record<string, string> = {
+  й: 'q',
+  з: 'p',
+  ф: 'a',
+  в: 'd',
+  ц: 'w',
+  ы: 's',
+  р: 'h',
+  д: 'l',
+  о: 'j',
+  л: 'k',
+  а: 'f',
+  ч: 'x',
+}
 
 /** What a pressed key means to the arcade, whatever layout typed it. */
 export function commandFor(k: ClientKeyEvent): Command | undefined {
@@ -62,6 +75,9 @@ export function commandFor(k: ClientKeyEvent): Command | undefined {
     case 'return':
     case 'enter':
       return 'primary'
+    case 'f':
+    case 'x':
+      return 'secondary'
     case 'q':
     case 'backspace':
       return 'menu'

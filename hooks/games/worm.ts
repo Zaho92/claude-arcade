@@ -87,7 +87,7 @@ function placeFood(g: Worm): Cell | undefined {
 }
 
 export function press(g: Worm, action: Action): boolean {
-  if (g.phase === 'over') return false
+  if (g.phase === 'over' || action === 'secondary') return false
   if (action === 'primary') {
     if (g.phase !== 'ready') return false
     g.phase = 'play'

@@ -119,3 +119,9 @@ test('a game that ends on a key, not a tick, is reported too', () => {
   expect(handle(s, 'primary', 70, 24).changed).toBe(true)
   expect(s.run?.def.status(s.run.g)).toBe('play')
 })
+
+test('F and X are the second action, also on a Russian layout', () => {
+  expect(commandFor({ key: 'f' })).toBe('secondary')
+  expect(commandFor({ key: 'X' })).toBe('secondary')
+  expect(commandFor({ key: 'а' })).toBe('secondary')
+})

@@ -146,7 +146,7 @@ export function canMove(g: Merge): boolean {
 }
 
 export function press(g: Merge, action: Action): boolean {
-  if (g.phase === 'over' || action === 'primary') return false
+  if (g.phase === 'over' || action === 'primary' || action === 'secondary') return false
   g.isJustWon = false
   if (!slide(g, action)) return false
   spawn(g)

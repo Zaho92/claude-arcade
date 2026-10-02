@@ -61,6 +61,7 @@ claude --plugin-dir ./claude-arcade
 |---|---|
 | `←` `→` `↑` `↓` (or `WASD`, `HJKL`) | move |
 | `Space` / `Enter` | the game's main action, restart after game over |
+| `F` / `X` | the game's second action (flag a field in Mines) |
 | `P` | pause yourself |
 | `Q` / `Backspace` | back to the menu |
 | `Esc` | hand the keyboard back to the prompt |
@@ -78,6 +79,7 @@ game region yet and show a note instead.
 | Bricks | Clear the wall with ball and paddle |
 | Worm | Eat, grow, never bite yourself; faster every five bites |
 | Merge | Slide and merge number tiles up to 2048; turn-based, so a pause never costs anything |
+| Mines | Open every safe field, flag the mines; the first field is always safe |
 
 ## Settings
 

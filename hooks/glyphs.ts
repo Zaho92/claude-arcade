@@ -18,6 +18,9 @@ export type Glyphs = {
   wormHead: string
   wormBody: string
   food: string
+  /** Mines: a marked field and a mine. */
+  flag: string
+  mine: string
   empty: string
   dot: string
   border: 'round' | 'classic'
@@ -35,6 +38,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     wormHead: '██',
     wormBody: '▓▓',
     food: '()',
+    flag: 'F',
+    mine: '✱',
     empty: ' ',
     dot: '·',
     border: 'round',
@@ -50,6 +55,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     wormHead: '@@',
     wormBody: 'oo',
     food: '()',
+    flag: 'F',
+    mine: '*',
     empty: ' ',
     dot: '.',
     border: 'classic',
