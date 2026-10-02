@@ -56,8 +56,8 @@ export async function resolveDisplay($: EngineInterface, options: PluginOptions)
 }
 
 /** Without the first `entry` in the list; the list itself when it is not there. */
-export function without(list: string[], entry: string): string[] {
-  const i = list.indexOf(entry)
+export function without(list: string[], entry: string | undefined): string[] {
+  const i = entry === undefined ? -1 : list.indexOf(entry)
   return i < 0 ? list : [...list.slice(0, i), ...list.slice(i + 1)]
 }
 
@@ -67,39 +67,52 @@ export function without(list: string[], entry: string): string[] {
 // `<tool>#<call id>`, and a dialog takes the oldest one of its tool. Its entry
 // in `permission` is `<agent id>:<tool>#<call id>`; the main loop has no agent
 // id, so its entries start with ":".
+//
+// The pairing can miss: the check names no loop, and a call put to a decider
+// that is not the dialog (auto mode) stays in `asked` while it runs. So the
+// end of a call is read generously, and the end of a loop's turn clears what
+// is left of that loop.
 
 /** The engine put a call to its decider: a dialog may follow. */
 export function asked(w: Waiting, tool: string, call: string): Waiting {
   return { ...w, asked: [...w.asked, `${tool}#${call}`] }
 }
 
-/** A permission dialog opens for `tool` in the loop `agent`. */
+/** A permission dialog opens for `tool` in the loop `agent`; its entry is the last in `permission`. */
 export function dialog(w: Waiting, agent: string, tool: string): Waiting {
   const known = w.asked.find(a => a.startsWith(`${tool}#`))
   // No call known: the entry ends with "#", and any call of the tool in this loop ends it.
   const call = known ? known.slice(tool.length + 1) : ''
-  return { ...w, asked: known ? without(w.asked, known) : w.asked, permission: [...w.permission, `${agent}:${tool}#${call}`] }
+  return { ...w, asked: without(w.asked, known), permission: [...w.permission, `${agent}:${tool}#${call}`] }
 }
 
-/** A hook answered in the person's place: the newest dialog for the tool never opened. */
-export function decided(w: Waiting, agent: string, tool: string): Waiting {
-  const i = w.permission.findLastIndex(p => p.startsWith(`${agent}:${tool}#`))
-  return i < 0 ? w : { ...w, permission: [...w.permission.slice(0, i), ...w.permission.slice(i + 1)] }
-}
-
-/** A tool call ended: its dialog, if it had one, is answered. The same `w` when it had none. */
+/**
+ * A tool call ended: its dialog, if it had one, is answered. The dialog is
+ * the one paired with this call, whichever loop it was put down for. Failing
+ * that, a call that was itself put to a decider, or a dialog whose call
+ * nobody announced, ends the oldest dialog of its tool in its loop. A call
+ * that needed no permission ends nothing: the same `w` comes back.
+ */
 export function ended(w: Waiting, agent: string, tool: string, call: string): Waiting {
-  const own = `${agent}:${tool}#${call}`
-  const unknown = `${agent}:${tool}#`
-  const permission = without(w.permission, w.permission.includes(own) ? own : unknown)
-  const left = without(w.asked, `${tool}#${call}`)
+  const mine = `${tool}#${call}`
+  const ofTool = `${agent}:${tool}#`
+  const paired = call ? w.permission.find(p => p.endsWith(`:${mine}`)) : undefined
+  const wasAsked = w.asked.includes(mine)
+  const other = w.permission.find(p => (wasAsked ? p.startsWith(ofTool) : p === ofTool))
+  const permission = without(w.permission, paired ?? other)
+  const left = without(w.asked, mine)
   return permission === w.permission && left === w.asked ? w : { ...w, asked: left, permission }
 }
 
-/** The main loop's turn starts or ends: its own dialogs are gone with it, a subagent's may still be open. */
+/** A loop's turn ends: whatever dialog of its own is still down has gone with it. */
+export function loopEnds(w: Waiting, agent: string): Waiting {
+  const others = (list: string[]) => list.filter(entry => !entry.startsWith(`${agent}:`))
+  return { ...w, asking: others(w.asking), permission: others(w.permission) }
+}
+
+/** The main loop's turn starts or ends. A subagent's dialog may still be open. */
 export function mainTurn(w: Waiting, turn: Waiting['turn']): Waiting {
-  const others = (list: string[]) => list.filter(entry => !entry.startsWith(':'))
-  return { turn, asking: others(w.asking), asked: turn === '' ? [] : w.asked, permission: others(w.permission) }
+  return { ...loopEnds(w, ''), turn, asked: turn === '' ? [] : w.asked }
 }
 
 /** The high scores in whatever the store holds. */
@@ -118,20 +131,28 @@ export function highest(a: Record<string, number>, b: Record<string, number>): R
   return out
 }
 
-/**
- * Changes what the games wait for. Chimes when that froze a running game, if
- * the person asked for it and the arcade is open.
- */
-async function settle($: EngineInterface, change: (w: Waiting) => Waiting, isSoundOn: boolean): Promise<void> {
+/** Changes what the games wait for. Resolves the state before and after. */
+async function settle($: EngineInterface, change: (w: Waiting) => Waiting): Promise<{ before: Waiting; after: Waiting }> {
   let before = IDLE
   const after = await update($, waiting, w => {
     before = w
     return change(w)
   })
-  if (!isSoundOn || !pauseOf(after).isPaused || pauseOf(before).isPaused) return
+  return { before, after }
+}
+
+/** Chimes, if the person asked for it and the arcade is open. */
+async function chime($: EngineInterface, isSoundOn: boolean): Promise<void> {
+  if (!isSoundOn) return
   const isOpen = (await $.ui.panes()).some(p => p.id === PANE)
   // Not awaited: the clip plays for half a second, and the dialog must not wait for it.
   if (isOpen) void $.audio.play({ asset: SOUND }).catch(() => undefined)
+}
+
+/** Changes what the games wait for, and chimes when that froze a running game. */
+async function freeze($: EngineInterface, change: (w: Waiting) => Waiting, isSoundOn: boolean): Promise<void> {
+  const { before, after } = await settle($, change)
+  if (pauseOf(after).isPaused && !pauseOf(before).isPaused) await chime($, isSoundOn)
 }
 
 export const register: Register = (on, options) => {
@@ -158,16 +179,19 @@ export const register: Register = (on, options) => {
 
   // Claude starts working: play on.
   on('turn.start', async ($, e, next) => {
-    await settle($, w => mainTurn(w, ''), isSoundOn)
+    await settle($, w => mainTurn(w, ''))
 
     return next(e)
   })
 
   // Claude is done with the main turn: freeze. A subagent's turn carries an
-  // agentId and ends while the main turn still runs, so it is left alone.
+  // agentId and ends while the main turn still runs: it freezes nothing, but
+  // a dialog of its own that is still down cannot be open any more.
   on('turn.complete', async ($, e, next) => {
     const done = await next(e)
-    if (e.agentId === undefined) await settle($, w => mainTurn(w, 'done'), isSoundOn)
+    const agent = e.agentId
+    if (agent === undefined) await freeze($, w => mainTurn(w, 'done'), isSoundOn)
+    else await settle($, w => loopEnds(w, agent))
 
     return done
   })
@@ -175,11 +199,11 @@ export const register: Register = (on, options) => {
   // A question for the person: freeze while the dialog is open.
   on('tool.call', { tool: 'AskUserQuestion' }, async ($, e, next) => {
     const id = `${e.agentId ?? ''}:${e.tool_use_id ?? ''}`
-    await settle($, w => ({ ...w, asking: [...w.asking, id] }), isSoundOn)
+    await freeze($, w => ({ ...w, asking: [...w.asking, id] }), isSoundOn)
     try {
       return await next(e)
     } finally {
-      await settle($, w => ({ ...w, asking: without(w.asking, id) }), isSoundOn)
+      await settle($, w => ({ ...w, asking: without(w.asking, id) }))
     }
   })
 
@@ -188,19 +212,22 @@ export const register: Register = (on, options) => {
   on('tool.check', async ($, e, next) => {
     const verdict = await next(e)
     const call = e.tool_use_id
-    if (verdict.decision === 'ask' && call) await update($, waiting, w => asked(w, e.tool, call))
+    if (verdict.decision === 'ask' && call) await settle($, w => asked(w, e.tool, call))
 
     return verdict
   })
 
   // A permission dialog: freeze until the tool it is for has run. Frozen
   // before the hooks beneath are asked, so the game never runs on under a
-  // dialog; when one of them answers instead of the person, it runs again.
+  // dialog. When one of them answers instead of the person, no dialog opens:
+  // the game runs again, and only a dialog that does open chimes.
   on('classic.PermissionRequest', async ($, e, next) => {
     const agent = e.agent_id ?? ''
-    await settle($, w => dialog(w, agent, e.tool_name), isSoundOn)
+    const { before, after } = await settle($, w => dialog(w, agent, e.tool_name))
+    const entry = after.permission[after.permission.length - 1]
     const answer = await next(e)
-    if (answer.decision) await settle($, w => decided(w, agent, e.tool_name), isSoundOn)
+    if (answer.decision) await settle($, w => ({ ...w, permission: without(w.permission, entry) }))
+    else if (!pauseOf(before).isPaused) await chime($, isSoundOn)
 
     return answer
   })
@@ -214,7 +241,7 @@ export const register: Register = (on, options) => {
     } finally {
       const [agent, call] = [e.agentId ?? '', e.tool_use_id ?? '']
       const now = await read($, waiting)
-      if (ended(now, agent, e.tool, call) !== now) await settle($, w => ended(w, agent, e.tool, call), isSoundOn)
+      if (ended(now, agent, e.tool, call) !== now) await settle($, w => ended(w, agent, e.tool, call))
     }
   })
 

@@ -12,6 +12,9 @@ type World = {
   open: { isPlaced: true } | { isPlaced: false; reason: string }
   /** What a settings hook beneath the plugin answers to a permission request, if it does. */
   decision?: { behavior: 'allow' }
+  /** What happens while that hook is still thinking about a request for `slowFor`. */
+  slowFor?: string
+  meanwhile?: () => Promise<unknown>
   /** Set, a clip keeps playing until the test ends it with `endSounds`. */
   isSoundHeld: boolean
   endSounds: (() => void)[]
@@ -32,7 +35,11 @@ function engine(on: On, settings: Record<string, unknown> = {}, env: Record<stri
   on('session.start', (_$, e) => ({ cwd: e.cwd }))
   on('turn.start', (_$, e) => ({ turnId: e.turnId }))
   on('turn.complete', (_$, e) => ({ text: e.answer }))
-  on('classic.PermissionRequest', () => (world.decision ? { decision: world.decision } : {}) as never)
+  on('classic.PermissionRequest', async (_$, e) => {
+    if (e.tool_name !== world.slowFor) return (world.decision ? { decision: world.decision } : {}) as never
+    await world.meanwhile?.()
+    return { decision: { behavior: 'allow' } } as never
+  })
   on('settings.read', () => ({ value: settings }) as never)
   on('env.get', (_$, e) => ({ value: env[e.name] }) as never)
   on('command.register', (_$, e) => {
@@ -458,6 +465,62 @@ test('a permission a settings hook answers by itself does not leave the game fro
   await ui.advance(100)
   expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeUndefined()
   expect(await shows(ui, /Leertaste: Start/)).toBeDefined()
+  await ui.unmount()
+})
+
+test('a hook that answers one permission does not take another, open dialog with it', async ($, on) => {
+  const world = engine(on, { language: 'german' })
+  on('tool.call', () => ({ result: { text: 'ok' } }) as never)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+
+  // While a slow settings hook decides about Bash, a dialog opens for Read.
+  world.slowFor = 'Bash'
+  world.meanwhile = () => $.classic.PermissionRequest({ tool_name: 'Read', tool_input: { file_path: '/tmp/a' } } as never)
+  await $.classic.PermissionRequest(BASH)
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+
+  // Bash runs, allowed by the hook; the dialog for Read is still open.
+  await $.tool.call({ tool: 'Bash', command: 'ls' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+  await $.tool.call({ tool: 'Read', file_path: '/tmp/a' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
+  await ui.unmount()
+})
+
+test('with sound on, a permission a settings hook answers by itself does not chime', { options: { sound: true } }, async ($, on) => {
+  const world = engine(on)
+  world.decision = { behavior: 'allow' }
+  await $.session.start(SESSION)
+  await $.turn.start({ text: 'go', turnId: 't1' })
+  await $.classic.PermissionRequest(BASH)
+  expect(world.sounds).toEqual([])
+})
+
+test('a subagent that ends takes its open dialog with it', async ($, on) => {
+  engine(on, { language: 'german' })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+
+  // The subagent is stopped at its dialog: its tool never runs.
+  await $.classic.PermissionRequest({ ...(BASH as object), agent_id: 'a1' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+  await $.turn.complete({ ...DONE, turnId: 't9', agentId: 'a2' })
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+  await $.turn.complete({ ...DONE, turnId: 't8', agentId: 'a1' })
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
   await ui.unmount()
 })
 

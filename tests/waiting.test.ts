@@ -3,7 +3,7 @@
 
 import { describe, expect, test } from 'claude-code/testing'
 
-import { asked, decided, dialog, ended, highest, mainTurn, pauseOf, scores, without } from '../hooks/register'
+import { asked, dialog, ended, highest, loopEnds, mainTurn, pauseOf, scores, without } from '../hooks/register'
 import type { Waiting } from '../types'
 
 const RUNNING: Waiting = { turn: '', asking: [], asked: [], permission: [] }
@@ -60,12 +60,38 @@ describe('permission dialogs', () => {
     expect(ended(w, '', 'Bash', 'c1')).toEqual(RUNNING)
   })
 
-  test('a hook that answers instead of the person takes the newest dialog back', () => {
-    let w = dialog(asked(RUNNING, 'Bash', 'c1'), '', 'Bash')
-    w = dialog(asked(w, 'Bash', 'c2'), '', 'Bash')
-    expect(decided(w, '', 'Bash').permission).toEqual([':Bash#c1'])
-    expect(decided(w, 'a1', 'Bash')).toBe(w)
-    expect(decided(RUNNING, '', 'Bash')).toBe(RUNNING)
+  test('a dialog put down for the wrong loop still ends with its call', () => {
+    // The check names no loop: main (c1) and a subagent (c2) are both asked
+    // about Bash, and the dialogs come in the other order.
+    let w = asked(asked(RUNNING, 'Bash', 'c1'), 'Bash', 'c2')
+    w = dialog(dialog(w, 'a1', 'Bash'), '', 'Bash')
+    expect(w.permission).toEqual(['a1:Bash#c1', ':Bash#c2'])
+    w = ended(w, '', 'Bash', 'c1')
+    expect(w.permission).toEqual([':Bash#c2'])
+    expect(ended(w, 'a1', 'Bash', 'c2').permission).toEqual([])
+  })
+
+  test('a dialog paired with a call that needed none ends with the call it was really for', () => {
+    // c1 was put to a decider that is not the dialog, and runs on. The
+    // dialog for c2 takes c1 for its call.
+    let w = asked(asked(RUNNING, 'Bash', 'c1'), 'Bash', 'c2')
+    w = dialog(w, '', 'Bash')
+    expect(w).toMatchObject({ asked: ['Bash#c2'], permission: [':Bash#c1'] })
+    expect(ended(w, '', 'Bash', 'c2')).toEqual(RUNNING)
+  })
+})
+
+describe('the end of a turn', () => {
+  const open: Waiting = {
+    turn: '',
+    asking: [':q1', 'a1:q2', 'a2:q3'],
+    asked: [],
+    permission: [':Bash#c1', 'a1:Bash#c2', 'a2:Read#'],
+  }
+
+  test('a subagent that ends takes its own dialogs with it, and nobody else has to wait for them', () => {
+    expect(loopEnds(open, 'a1')).toEqual({ ...open, asking: [':q1', 'a2:q3'], permission: [':Bash#c1', 'a2:Read#'] })
+    expect(loopEnds(open, 'a9')).toEqual(open)
   })
 })
 
