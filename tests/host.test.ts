@@ -104,7 +104,9 @@ test('a game that ends on a key, not a tick, is reported too', () => {
   const s = newHost(PLAYING)
   s.selected = GAMES.findIndex(def => def.id === 'merge')
   handle(s, 'primary', 70, 24)
-  const g = s.run?.g as { grid: number[] }
+  const g = s.run?.g as { grid: number[]; random: () => number }
+  // The new tile is a 2 in the first free field: no move left after it.
+  g.random = () => 0
   // prettier-ignore
   g.grid = [
     2, 4, 2, 4,
