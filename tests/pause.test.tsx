@@ -136,6 +136,12 @@ test('the game freezes when Claude is done and runs while Claude works', async (
     await ui.advance(100)
     expect(await shows(ui, /Claude ist fertig/)).toBeUndefined()
 
+    // The ball was in the air: it waits for P, the keys may still be at the prompt.
+    expect(await shows(ui, /Pause – P zum Weiterspielen/)).toBeDefined()
+    await ui.key({ key: 'p', in: 'arcade' })
+    await ui.advance(100)
+    expect(await shows(ui, /⏸/)).toBeUndefined()
+
     // Q leaves the game for the menu.
     await ui.key({ key: 'q', in: 'arcade' })
     await ui.advance(100)

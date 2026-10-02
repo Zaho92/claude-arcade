@@ -32,7 +32,9 @@ Speaks ten languages and follows the one you set for Claude Code.
 | waits for a permission | freezes until the tool has run |
 | runs a subagent that finishes | keeps running (only the main turn counts) |
 
-The line under the field says why it stands still. Each game keeps its high
+The line under the field says why it stands still. Bricks and Worm, once
+frozen in mid-play, wait for `P` when Claude works again: your keyboard may
+still be at the prompt. Each game keeps its high
 score across sessions, also when you leave a game with `Q` or close the pane
 in the middle of one.
 
@@ -68,12 +70,12 @@ claude --plugin-dir ./claude-arcade
 | `←` `→` `↑` `↓` (or `WASD`, `HJKL`) | move |
 | `Space` / `Enter` | the game's main action, restart after game over |
 | `F` / `X` | the game's second action (flag a field in Mines) |
-| `P` | pause yourself |
+| `P` | pause yourself, continue after a pause |
 | `Q` / `Backspace` | back to the menu |
 | `Esc` | hand the keyboard back to the prompt |
 
 The letter keys also work on a Russian layout. When the game freezes, press
-`Esc`, answer Claude, then click back into the pane.
+`Esc`, answer Claude, then click back into the pane (and press `P` in Bricks and Worm).
 
 It runs in the terminal and the desktop app. Mobile and VS Code cannot draw the
 game region yet and show a note instead.

@@ -25,6 +25,7 @@ export type Host = {
   props: ArcadeProps
   selected: number
   run?: Running
+  /** Paused until the person presses P: by P itself, or held after Claude interrupted. */
   isManuallyPaused: boolean
 }
 
@@ -118,6 +119,19 @@ export function fits(run: Running, columns: number): boolean {
 
 export function newHost(props: ArcadeProps): Host {
   return { props, selected: 0, isManuallyPaused: false }
+}
+
+/**
+ * Takes the props the hooks module sent. A game on the clock that Claude
+ * interrupts in mid-play stays paused once Claude is back at work: the person
+ * answered at the prompt, and the keys are not back in the pane yet. P
+ * continues. A game that only moves on keys, or still waits for its start,
+ * has nothing to hold.
+ */
+export function receive(s: Host, props: ArcadeProps): void {
+  s.props = props
+  const run = s.run
+  if (props.isPaused && run && run.def.tickMs > 0 && run.def.status(run.g) === 'play') s.isManuallyPaused = true
 }
 
 function start(def: GameDef, columns: number, rows: number): Running {

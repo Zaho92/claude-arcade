@@ -3,7 +3,7 @@ import { describe, expect, test } from 'claude-code/testing'
 import { GAMES } from '../hooks/games'
 import type { Game } from '../hooks/games/bricks'
 import type { Merge } from '../hooks/games/merge'
-import { CHROME_ROWS, checkpoint, commandFor, fieldSize, fits, frameTick, handle, newHost } from '../hooks/host'
+import { CHROME_ROWS, checkpoint, commandFor, fieldSize, fits, frameTick, handle, newHost, receive } from '../hooks/host'
 import type { Host, Report } from '../hooks/host'
 import type { ArcadeProps } from '../types'
 
@@ -124,10 +124,10 @@ describe('pause', () => {
     expect(g.ballY).not.toBe(at.y)
   })
 
-  test('a ball in the air stands still while Claude needs you, and flies on after', () => {
+  test('a ball in the air stands still while Claude needs you, and after it until P', () => {
     const { s, g } = rally()
     expect(frameTick(s, 70).changed).toBe(true)
-    s.props = WAITING
+    receive(s, WAITING)
     const at = { x: g.ballX, y: g.ballY, paddle: g.paddleX, lives: g.lives }
     for (let i = 0; i < 200; i++) expect(frameTick(s, 70).changed).toBe(false)
     expect(handle(s, 'left', 70, 24).changed).toBe(false)
@@ -136,9 +136,44 @@ describe('pause', () => {
     // No time piles up for the moment Claude is back at work.
     expect(s.run?.carry).toBe(0)
 
-    s.props = PLAYING
+    // Claude is back at work, but the keys may still be at the prompt: the
+    // ball waits for the person.
+    receive(s, PLAYING)
+    for (let i = 0; i < 200; i++) expect(frameTick(s, 70).changed).toBe(false)
+    expect(handle(s, 'left', 70, 24).changed).toBe(false)
+    expect({ x: g.ballX, y: g.ballY, paddle: g.paddleX, lives: g.lives }).toEqual(at)
+
+    expect(handle(s, 'pause', 70, 24).changed).toBe(true)
     expect(frameTick(s, 70).changed).toBe(true)
     expect(g.ballY).not.toBe(at.y)
+  })
+
+  test('a ball still on the paddle is not held: it waits for Space anyway', () => {
+    const s = playing('bricks')
+    receive(s, WAITING)
+    receive(s, PLAYING)
+    expect(s.isManuallyPaused).toBe(false)
+    expect(handle(s, 'primary', 70, 24).changed).toBe(true)
+    expect(frameTick(s, 70).changed).toBe(true)
+  })
+
+  test('a game that only moves on keys goes on as soon as Claude works again', () => {
+    const s = scoring()
+    receive(s, WAITING)
+    expect(handle(s, 'left', 70, 24).changed).toBe(false)
+    receive(s, PLAYING)
+    expect(s.isManuallyPaused).toBe(false)
+    expect(handle(s, 'left', 70, 24).changed).toBe(true)
+  })
+
+  test('a game left while it was held starts the next one unpaused', () => {
+    const { s } = rally()
+    receive(s, WAITING)
+    receive(s, PLAYING)
+    expect(s.isManuallyPaused).toBe(true)
+    handle(s, 'menu', 70, 24)
+    handle(s, 'primary', 70, 24)
+    expect(s.isManuallyPaused).toBe(false)
   })
 
   test('a game cannot be started into while Claude needs you', () => {
