@@ -2,7 +2,7 @@
 
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { check, nextVersion, parseChangelog } from './changelog.mjs'
+import { check, nextVersion, parseChangelog, releaseNotes } from './changelog.mjs'
 
 const section = (version, date, body) => `## ${version} - ${date}\n\n${body}\n`
 const changelog = (...sections) => `# Changelog\n\nFor the player.\n\n${sections.join('\n')}`
@@ -176,4 +176,10 @@ test('a base that is not in form yet holds nothing fixed', () => {
     shipped: [],
   })
   assert.deepEqual(found, [])
+})
+
+test('a release says what its section says, without the heading', () => {
+  assert.equal(releaseNotes(BASE, '0.2.0'), '### Added\n\n- Worm.\n\n### Fixed\n\n- A click\n  anywhere works.')
+  assert.equal(releaseNotes(BASE.replaceAll('\n', '\r\n'), '0.1.0'), '### Added\n\n- A game in a pane.')
+  assert.throws(() => releaseNotes(BASE, '0.3.0'), /no section for 0\.3\.0/)
 })
