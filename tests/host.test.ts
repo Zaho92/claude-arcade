@@ -121,6 +121,20 @@ describe('menu', () => {
     }
   })
 
+  test('the title is drawn letter by letter, every letter as wide and as tall as the others', () => {
+    for (const set of ['unicode', 'ascii'] as const) {
+      const { logo } = GLYPHS[set]
+      expect(logo).toHaveLength(6)
+      for (const letter of logo) {
+        expect([set, letter.length]).toEqual([set, logo[0]!.length])
+        for (const row of letter) {
+          expect([set, row, textWidth(row)]).toEqual([set, row, 3])
+          if (set === 'ascii') expect(row).toMatch(/^[ -~]*$/)
+        }
+      }
+    }
+  })
+
   test('Q still leaves a game while Claude needs you', () => {
     const s = playing('bricks')
     s.props = WAITING

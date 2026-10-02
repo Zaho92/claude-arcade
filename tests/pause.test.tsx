@@ -225,11 +225,15 @@ function textOf(el: Drawn | string): string {
   return typeof el === 'string' ? el : (el.children ?? []).map(textOf).join('')
 }
 
-/** The menu as drawn: the width of the list's box and its rows as plain text. */
-async function menu(ui: { drawn: (scope: { in: string }) => Promise<unknown> }): Promise<{ width: unknown; rows: string[] }> {
+/** The menu as drawn: the title's lines, the width of the list's box and its games as plain text. */
+async function menu(ui: { drawn: (scope: { in: string }) => Promise<unknown> }): Promise<{ title: string[]; width: unknown; rows: string[] }> {
   const root = (await ui.drawn({ in: 'arcade' })) as Drawn
   const list = (root.children ?? []).find((el): el is Drawn => typeof el !== 'string' && el.props?.borderStyle !== undefined)
-  return { width: list?.props?.width, rows: (list?.children ?? []).map(textOf) }
+  const all = (root.children ?? []).filter((el): el is Drawn => typeof el !== 'string')
+  const title = all.slice(0, list ? all.indexOf(list) : 0).map(textOf)
+  // Between two games stands a line of air.
+  const rows = (list?.children ?? []).map(textOf).filter(row => row.trim() !== '')
+  return { title, width: list?.props?.width, rows }
 }
 
 test('the menu: the title, the games in a frame, and under it what the chosen game is about', async ($, on) => {
@@ -239,7 +243,7 @@ test('the menu: the title, the games in a frame, and under it what the chosen ga
   await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
   await ui.advance(100)
 
-  expect(await shows(ui, /A R C A D E/)).toBeDefined()
+  expect((await menu(ui)).title).toEqual(['▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀', '█▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄'])
   expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe'])
   expect(await shows(ui, /Räum die Mauer ab/)).toBeDefined()
   expect(await shows(ui, /Fressen, wachsen/)).toBeUndefined()

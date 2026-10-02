@@ -68,7 +68,7 @@ function pauseLine(s: Host, glyphs: Glyphs, tr: Tr): string | undefined {
   return undefined
 }
 
-// The menu's own colors: the blocks beside the title, the chosen game and
+// The menu's own colors: one per letter of the title, the chosen game and
 // the bar it stands on.
 const TITLE_COLORS = ['#ff5f5f', '#ff9f43', '#ffd93d', '#6bcb77', '#4d96ff', '#b388ff']
 const CHOSEN_COLOR = '#ffd93d'
@@ -86,15 +86,14 @@ function drawMenu(s: Host, columns: number, glyphs: Glyphs, tr: Tr, { Box, Text 
   const nameW = Math.max(...names.map(textWidth))
   const bestW = Math.max(...bests.map(textWidth))
 
-  // The title with air between its letters, a row of blocks on either side.
-  const title = `  ${[...tr('title').toUpperCase()].join(' ')}  `
-  const half = TITLE_COLORS.length / 2
-  const blocks = (colors: string[]) => colors.map(color => <Text color={color}>{glyphs.block}</Text>)
+  // The title in large letters, a cell of air between them.
+  const titleRows = (glyphs.logo[0] ?? []).map((_, row) => glyphs.logo.map(letter => letter[row] ?? ''))
+  const titleW = textWidth((titleRows[0] ?? []).join(' '))
 
   // A row: pointer, sign, name, and the record at the right edge. The list
   // is as wide as its longest row, and never narrower than the title.
   const rowW = 2 + SIGN_W + 1 + nameW + (bestW > 0 ? 2 + bestW : 0)
-  const innerW = Math.max(rowW, textWidth(title) + TITLE_COLORS.length)
+  const innerW = Math.max(rowW, titleW)
   const nameCol = innerW - (2 + SIGN_W + 1) - bestW
   // Border and padding on both sides; a pane not laid out yet has no columns.
   const boxW = innerW + 4
@@ -103,20 +102,25 @@ function drawMenu(s: Host, columns: number, glyphs: Glyphs, tr: Tr, { Box, Text 
 
   return (
     <Box flexDirection="column">
-      <Box flexDirection="row" justifyContent="center" width={width}>
-        <Text wrap="truncate">
-          {blocks(TITLE_COLORS.slice(0, half))}
-          <Text bold color={CHOSEN_COLOR}>
-            {title}
+      {titleRows.map(letters => (
+        <Box flexDirection="row" justifyContent="center" width={width}>
+          <Text bold wrap="truncate">
+            {letters.map((letter, i) => (
+              <Text color={TITLE_COLORS[i % TITLE_COLORS.length]}>
+                {i > 0 ? ' ' : ''}
+                {letter}
+              </Text>
+            ))}
           </Text>
-          {blocks(TITLE_COLORS.slice(half))}
-        </Text>
-      </Box>
+        </Box>
+      ))}
       <Box flexDirection="column" borderStyle={glyphs.border} borderDimColor paddingX={1} width={width}>
         {GAMES.map((def, i) => {
           const isSelected = i === s.selected
           const best = bests[i] ?? ''
-          return (
+          return [
+            // A line of air between two games, so their signs do not run together.
+            i > 0 ? <Text> </Text> : null,
             <Text backgroundColor={isSelected ? CHOSEN_BG : undefined} wrap="truncate">
               <Text color={CHOSEN_COLOR}>{isSelected ? glyphs.pointer : ' '} </Text>
               {def.sign(glyphs).map(seg => (
@@ -132,8 +136,8 @@ function drawMenu(s: Host, columns: number, glyphs: Glyphs, tr: Tr, { Box, Text 
                 {' '.repeat(bestW - textWidth(best))}
                 {best}
               </Text>
-            </Text>
-          )
+            </Text>,
+          ]
         })}
       </Box>
       <Text wrap="truncate">

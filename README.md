@@ -65,12 +65,17 @@ claude --plugin-dir ./claude-arcade
    `Enter`.
 
    ```
-       ███  A R C A D E  ███
+      ▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀
+      █▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄
    ╭───────────────────────────╮
    │ ▶ ██ Bricks      Best 870 │
+   │                           │
    │   ██ Worm         Best 31 │
+   │                           │
    │      Merge                │
+   │                           │
    │   ✱  Mines                │
+   │                           │
    │   ●○ Bulls & Cows         │
    ╰───────────────────────────╯
     Clear the wall
