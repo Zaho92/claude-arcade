@@ -1,0 +1,34 @@
+name: Game idea
+description: A game that would suit the arcade.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: rules
+    attributes:
+      label: The game
+      description: Its rules in a few sentences, and how it would look in a terminal pane.
+    validations:
+      required: true
+  - type: textarea
+    id: origin
+    attributes:
+      label: Where it comes from
+      description: Your own idea, or a public-domain classic (board game, pencil-and-paper game)? Games that copy a protected game's name or look cannot be added; see "Original games only" in CONTRIBUTING.md.
+    validations:
+      required: true
+  - type: dropdown
+    id: pace
+    attributes:
+      label: Pace
+      description: Turn-based games suit the arcade best, because a pause never costs the player anything.
+      options:
+        - Turn-based (moves on keys alone)
+        - Real time (moves on a clock)
+    validations:
+      required: true
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Building it
+      options:
+        - label: I would like to build this myself

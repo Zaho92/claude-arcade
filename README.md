@@ -1,5 +1,9 @@
 # claude-arcade
 
+[![CI](https://github.com/Zaho92/claude-arcade/actions/workflows/ci.yml/badge.svg)](https://github.com/Zaho92/claude-arcade/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Zaho92/claude-arcade)](https://github.com/Zaho92/claude-arcade/releases)
+[![License](https://img.shields.io/github/license/Zaho92/claude-arcade)](LICENSE)
+
 Play retro games in a Claude Code pane while Claude works. The game freezes the
 moment Claude needs you and picks up again when Claude gets back to work.
 Speaks ten languages and follows the one you set for Claude Code.
@@ -113,7 +117,10 @@ Contributions are very welcome, translations and new games above all.
   only, no trademarks or look-alikes.
 - **Ideas and bugs:** open an issue.
 
-[CONTRIBUTING.md](CONTRIBUTING.md) has the details.
+[CONTRIBUTING.md](CONTRIBUTING.md) has the details, and how versions and
+releases work. What changed in each version is in
+[CHANGELOG.md](CHANGELOG.md); security problems go through
+[SECURITY.md](SECURITY.md).
 
 ## Develop
 

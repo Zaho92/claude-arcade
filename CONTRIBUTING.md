@@ -57,15 +57,94 @@ claude plugin validate .
 claude plugin test .
 ```
 
-Both must pass; CI runs them on every pull request. Work on a branch, keep a
-pull request to one topic, and describe what you tested by hand.
+Both must pass; CI runs them on every pull request. Work on a branch and keep
+a pull request to one topic.
 
-If you change what the plugin ships (`hooks/`, `sounds/`, `types/`,
-`.claude-plugin/`), raise `version` in `.claude-plugin/plugin.json` and add a
-`## <version>` section to `CHANGELOG.md`. Installed copies only update when
-the version goes up, so CI checks this too.
+- **Title:** one plain English sentence that says what happens, with the area
+  in front where it helps: "Mines: flags survive a pause". Pull requests are
+  squashed, so the title becomes the one commit on `main`.
+- **Description:** follow the template. Write it for someone who does not read
+  TypeScript: what changes for the player, what you tested, how to try it.
+- **Review:** the maintainer reads every pull request and is the only one who
+  merges. Code written with Claude Code gets a `/code-review` run before the
+  pull request is opened, with its findings in the description.
+
+## Versions and releases
+
+Installations follow `main`, and `claude plugin update` only picks up a
+higher version. So there is no "unreleased": **every merge that changes what
+the plugin ships is a release.** Shipped is everything under `hooks/`,
+`sounds/`, `types/` and `.claude-plugin/`. Tests, docs and CI are not, and
+need neither a version nor a changelog entry.
+
+A pull request that ships something does two things:
+
+1. It adds a section on top of `CHANGELOG.md`.
+2. It raises `version` in `.claude-plugin/plugin.json` by the step that
+   section calls for.
+
+### The changelog
+
+The changelog is for the person playing. Say what they will notice, not what
+the code does.
+
+```
+## 0.3.0 - 2026-10-05
+
+### Added
+
+- Mines: open the safe fields, flag the mines.
+
+### Fixed
+
+- Worm no longer turns back into itself on a fast double key.
+```
+
+- The heading is the version and the day the pull request was written.
+- Entries go under **Added**, **Changed** or **Fixed**, in that order; leave
+  out the groups you do not need.
+- A change that takes something away from the player starts with
+  `**Breaking:**`. That is: high scores are lost (the state contract in
+  `types/index.d.ts` changed), a game or a setting is gone, or a newer Claude
+  Code is required.
+- Released sections stay as they are. A mistake in one is corrected by an
+  entry in the next version.
+
+### The version
+
+The step follows from the section, and CI checks it:
+
+| The section has | Step | Example |
+|---|---|---|
+| only Fixed | patch | 0.2.0 → 0.2.1 |
+| Added or Changed | minor | 0.2.1 → 0.3.0 |
+| a `**Breaking:**` entry | major, from 1.0 on | 1.3.0 → 2.0.0 |
+
+Before 1.0 a breaking change is a minor. 1.0.0 itself is declared by the
+maintainer in a pull request of its own.
+
+Two open pull requests cannot both take the same version. The second one to
+merge is updated from `main` and takes the next.
+
+### After the merge
+
+Nothing is done by hand. A workflow tags the merged commit `v<version>` and
+publishes a GitHub release: the changelog section, then the list of pull
+requests since the last tag. Tags are never moved or deleted. A release that
+turns out broken is not withdrawn; the fix is the next patch version.
+
+### The Claude Code version
+
+CI runs on one pinned Claude Code version (`CLAUDE_CODE_VERSION` in
+`.github/workflows/ci.yml`), because the plugin API is early access. A weekly
+run tries the newest version and opens an issue when the checks fail there.
+Raising the pin is a pull request of its own. It is a release only if
+`hooks/` had to change for it, and a breaking one if older Claude Code
+versions stop working.
 
 ## Reporting bugs
 
-Open an issue with your Claude Code version (`claude --version`), your
-terminal, the language you use, and what happened. A copy of the screen helps.
+Open an issue with the bug form: it asks for your Claude Code version
+(`claude --version`), your terminal, the language you use, and what happened.
+A copy of the screen helps. Security problems go through
+[SECURITY.md](SECURITY.md), not a public issue.

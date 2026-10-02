@@ -1,0 +1,40 @@
+name: Bug
+description: Something in the arcade does not work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you saw instead. A copy of the screen helps.
+    validations:
+      required: true
+  - type: input
+    id: game
+    attributes:
+      label: Game
+      description: Which game, or "menu".
+  - type: input
+    id: arcade
+    attributes:
+      label: Arcade version
+      description: The version you have installed, if you know it. The newest one is on the Releases page.
+  - type: input
+    id: claude
+    attributes:
+      label: Claude Code version
+      description: The output of `claude --version`.
+    validations:
+      required: true
+  - type: input
+    id: terminal
+    attributes:
+      label: Terminal and system
+      placeholder: Windows Terminal on Windows 11
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language and glyphs
+      description: The arcade's language, and whether glyphs are set to unicode or ascii.
