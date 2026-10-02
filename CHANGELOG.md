@@ -12,6 +12,7 @@
 - High scores per game.
 - The ball-and-paddle game is now called Bricks.
 - CONTRIBUTING.md: how to translate and add games.
+- README: about this project, and a legal note with a contact path.
 
 ## 0.1.0
 

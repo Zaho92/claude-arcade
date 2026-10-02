@@ -137,6 +137,28 @@ plugin, and `tsc -p .` type-checks against them.
 
 More games are on the way. Have one in mind? Open an issue.
 
+## About this project
+
+claude-arcade is a hobby project. I am a software developer, but not a
+TypeScript developer: the code was written with AI (Claude Code) and reviewed
+by me to the best of my knowledge and belief. Expect rough edges, and please
+report them.
+
+## Legal
+
+Every game here is either original or based on a public-domain classic, with
+its own name and its own look. None of them knowingly uses trademarks,
+distinctive designs or assets of other games.
+
+This is an unofficial community project, not affiliated with or endorsed by
+Anthropic. Claude and Claude Code are trademarks of Anthropic and are named
+here only to say what the plugin works with.
+
+If you believe something in this repository infringes your rights, please get
+in touch, by opening an issue or through the contact on my GitHub profile. I
+will look into it right away and, when in doubt, take it down. Let's sort it
+out directly and quickly.
+
 ## License
 
 MIT
