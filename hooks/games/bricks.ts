@@ -260,6 +260,7 @@ export const bricks: GameDef<Game> = {
   name: 'bricks.name',
   blurb: 'bricks.blurb',
   help: 'bricks.help',
+  sign: glyphs => [{ text: glyphs.block, color: BRICK_COLORS[0] }, { text: glyphs.block, color: BRICK_COLORS[2] }],
   tickMs: 33,
   minW: MIN_W,
   minH: MIN_H,

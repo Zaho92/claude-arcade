@@ -46,6 +46,8 @@ export type GameDef<G = unknown> = {
   blurb: TextKey
   /** The game's own keys, shown under the field ("←/→ move · Space launch"). */
   help: TextKey
+  /** The game's mark in the menu: two cells wide, in its own glyphs and colors. */
+  sign(glyphs: Glyphs): Segment[]
   /** How often `tick` runs, in milliseconds; 0 for a game that only moves on keys. */
   tickMs: number
   /** The smallest field the game can be played on. */

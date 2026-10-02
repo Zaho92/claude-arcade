@@ -210,6 +210,7 @@ export const mines: GameDef<Mines> = {
   name: 'mines.name',
   blurb: 'mines.blurb',
   help: 'mines.help',
+  sign: glyphs => [{ text: glyphs.mine, color: MINE_COLOR }, { text: glyphs.empty }],
   tickMs: 0,
   minW: 8 * CELL_W,
   minH: 8,

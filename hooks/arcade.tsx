@@ -7,7 +7,7 @@ import type { ClientElements, ClientModule } from 'claude-code'
 
 import { GAMES } from './games'
 import type { Frame } from './games/types'
-import { GLYPHS, textWidth, withSep } from './glyphs'
+import { GLYPHS, padTo, textWidth, withSep } from './glyphs'
 import type { Glyphs } from './glyphs'
 import { CHECKPOINT_MS, FRAME_MS, checkpoint, commandFor, fits, frameTick, handle, newHost } from './host'
 import type { Host, Running } from './host'
@@ -57,7 +57,7 @@ const Arcade: ClientModule<ArcadeProps, Host> = (props, surface) => {
   // New props from the hooks module reach the running loop through here.
   s.props = props
 
-  if (!s.run) return drawMenu(s, glyphs, tr, surface.elements)
+  if (!s.run) return drawMenu(s, surface.columns, glyphs, tr, surface.elements)
   if (!fits(s.run, surface.columns)) return drawTooSmall(s.run, glyphs, tr, surface.elements)
   return drawGame(s, s.run, glyphs, tr, surface.elements)
 }
@@ -68,33 +68,83 @@ function pauseLine(s: Host, glyphs: Glyphs, tr: Tr): string | undefined {
   return undefined
 }
 
-function drawMenu(s: Host, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements) {
+// The menu's own colors: the blocks beside the title, the chosen game and
+// the bar it stands on.
+const TITLE_COLORS = ['#ff5f5f', '#ff9f43', '#ffd93d', '#6bcb77', '#4d96ff', '#b388ff']
+const CHOSEN_COLOR = '#ffd93d'
+const CHOSEN_BG = '#2b2f45'
+// A game's sign in the menu, in cells.
+const SIGN_W = 2
+
+function drawMenu(s: Host, columns: number, glyphs: Glyphs, tr: Tr, { Box, Text }: ClientElements) {
   const line = pauseLine(s, glyphs, tr)
+  const names = GAMES.map(def => tr(def.name))
+  const bests = GAMES.map(def => {
+    const n = s.props.best[def.id] ?? 0
+    return n > 0 ? tr('menu.best', { n }) : ''
+  })
+  const nameW = Math.max(...names.map(textWidth))
+  const bestW = Math.max(...bests.map(textWidth))
+
+  // The title with air between its letters, a row of blocks on either side.
+  const title = `  ${[...tr('title').toUpperCase()].join(' ')}  `
+  const half = TITLE_COLORS.length / 2
+  const blocks = (colors: string[]) => colors.map(color => <Text color={color}>{glyphs.block}</Text>)
+
+  // A row: pointer, sign, name, and the record at the right edge. The list
+  // is as wide as its longest row, and never narrower than the title.
+  const rowW = 2 + SIGN_W + 1 + nameW + (bestW > 0 ? 2 + bestW : 0)
+  const innerW = Math.max(rowW, textWidth(title) + TITLE_COLORS.length)
+  const nameCol = innerW - (2 + SIGN_W + 1) - bestW
+  // Border and padding on both sides; a pane not laid out yet has no columns.
+  const boxW = innerW + 4
+  const width = columns > 0 ? Math.min(boxW, columns) : boxW
+  const chosen = GAMES[s.selected]
+
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold>{tr('title')}</Text>
-      <Text> </Text>
-      {GAMES.map((def, i) => {
-        const isSelected = i === s.selected
-        const best = s.props.best[def.id] ?? 0
-        return (
-          <Box flexDirection="row" key={def.id}>
-            <Text color={isSelected ? '#ffd93d' : undefined} bold={isSelected}>
-              {isSelected ? glyphs.pointer : ' '} {tr(def.name)}
+    <Box flexDirection="column">
+      <Box flexDirection="row" justifyContent="center" width={width}>
+        <Text wrap="truncate">
+          {blocks(TITLE_COLORS.slice(0, half))}
+          <Text bold color={CHOSEN_COLOR}>
+            {title}
+          </Text>
+          {blocks(TITLE_COLORS.slice(half))}
+        </Text>
+      </Box>
+      <Box flexDirection="column" borderStyle={glyphs.border} borderDimColor paddingX={1} width={width}>
+        {GAMES.map((def, i) => {
+          const isSelected = i === s.selected
+          const best = bests[i] ?? ''
+          return (
+            <Text backgroundColor={isSelected ? CHOSEN_BG : undefined} wrap="truncate">
+              <Text color={CHOSEN_COLOR}>{isSelected ? glyphs.pointer : ' '} </Text>
+              {def.sign(glyphs).map(seg => (
+                <Text color={seg.color} backgroundColor={seg.bg}>
+                  {seg.text}
+                </Text>
+              ))}
+              <Text color={isSelected ? CHOSEN_COLOR : undefined} bold={isSelected}>
+                {' '}
+                {padTo(names[i] ?? '', nameCol)}
+              </Text>
+              <Text color={isSelected ? CHOSEN_COLOR : undefined} dimColor={!isSelected}>
+                {' '.repeat(bestW - textWidth(best))}
+                {best}
+              </Text>
             </Text>
-            <Text dimColor wrap="truncate">
-              {'   '}
-              {tr(def.blurb)}
-              {best > 0 ? `  ${glyphs.sep}  ${tr('menu.best', { n: best })}` : ''}
-            </Text>
-          </Box>
-        )
-      })}
-      <Text> </Text>
+          )
+        })}
+      </Box>
+      <Text wrap="truncate">
+        {' '}
+        {chosen ? tr(chosen.blurb) : ''}
+      </Text>
       <Text dimColor wrap="truncate">
+        {' '}
         {tr('menu.hint')}
       </Text>
-      {line ? <Text color="#ffd93d">{line}</Text> : null}
+      {line ? <Text color="#ffd93d"> {line}</Text> : null}
     </Box>
   )
 }

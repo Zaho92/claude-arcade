@@ -22,7 +22,8 @@ A game is one file of pure logic in `hooks/games/`, implementing `GameDef`
 from `hooks/games/types.ts`. The arcade does the rest: keys, menu, pause,
 drawing, high scores.
 
-1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame.
+1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame,
+   and its sign for the menu (two cells, in its own colors).
 2. Add its texts (name, one-line description, help line) to `hooks/i18n.ts`,
    in every language; a test checks that none is missing. For a language you
    do not speak, a careful machine translation is fine: say so in the pull

@@ -194,6 +194,7 @@ export const merge: GameDef<Merge> = {
   name: 'merge.name',
   blurb: 'merge.blurb',
   help: 'merge.help',
+  sign: glyphs => [{ text: glyphs.empty, bg: TILE_BG[512] }, { text: glyphs.empty, bg: TILE_BG[2048] }],
   tickMs: 0,
   minW: FIELD_W,
   minH: FIELD_H,
