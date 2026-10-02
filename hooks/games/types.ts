@@ -5,10 +5,10 @@ import type { Glyphs } from '../glyphs'
 import type { TextKey } from '../i18n'
 
 /** A key, already mapped from whatever layout typed it. */
-export type Action = 'left' | 'right' | 'up' | 'down' | 'primary'
+export type Action = 'left' | 'right' | 'up' | 'down' | 'primary' | 'secondary'
 
-/** A run of cells in one color; `color` absent is the terminal's default. */
-export type Segment = { text: string; color?: string }
+/** A run of cells in one color; absent colors are the terminal's default. */
+export type Segment = { text: string; color?: string; bg?: string }
 
 /** The field, one array of runs per row, every row exactly `w` cells wide. */
 export type Frame = Segment[][]
@@ -17,6 +17,8 @@ export type Status = 'ready' | 'play' | 'over'
 
 export type Hud = {
   score: number
+  /** A game's own counter in the score line, e.g. mines left. */
+  extra?: { key: TextKey; n: number }
   level?: number
   lives?: number
   maxLives?: number
@@ -48,6 +50,10 @@ export type GameDef<G = unknown> = {
   status(g: G): Status
   hud(g: G): Hud
   frame(g: G, glyphs: Glyphs): Frame
-  /** A line over the middle of the field while waiting, e.g. "Space: start". */
+  /**
+   * A line over the middle of the field: while waiting ("Space: start"), or
+   * the game's own ending ("All clear! {n} points"); `{n}` is the score.
+   * Left undefined at the end, the arcade shows its usual game-over line.
+   */
   banner(g: G): TextKey | undefined
 }

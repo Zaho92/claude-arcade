@@ -100,9 +100,9 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
   const hud = def.hud(g)
   const best = Math.max(s.props.best[def.id] ?? 0, hud.score)
 
-  const waiting = def.banner(g)
-  const banner =
-    pauseLine(s, glyphs, tr) ?? (def.status(g) === 'over' ? tr('over', { n: hud.score }) : waiting ? tr(waiting) : undefined)
+  const own = def.banner(g)
+  const line = own ?? (def.status(g) === 'over' ? 'over' : undefined)
+  const banner = pauseLine(s, glyphs, tr) ?? (line ? tr(line, { n: hud.score }) : undefined)
   if (banner) rows[Math.floor(rows.length / 2)] = [{ text: center(banner, w), color: '#ffffff' }]
   const isDim = s.props.isPaused || s.isManuallyPaused
 
@@ -111,7 +111,11 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
       ? ''
       : glyphs.life.repeat(Math.max(0, hud.lives)) +
         glyphs.lifeLost.repeat(Math.max(0, (hud.maxLives ?? hud.lives) - hud.lives))
-  const right = [hud.level === undefined ? '' : tr('hud.level', { n: hud.level }), tr('hud.best', { n: best })]
+  const right = [
+    hud.extra ? tr(hud.extra.key, { n: hud.extra.n }) : '',
+    hud.level === undefined ? '' : tr('hud.level', { n: hud.level }),
+    tr('hud.best', { n: best }),
+  ]
     .filter(Boolean)
     .join('  ')
   const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help)} · ${tr('help.common')}`
@@ -129,7 +133,15 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
       <Box flexDirection="column" borderStyle={glyphs.border} borderDimColor width={w + 2}>
         {rows.map(row => (
           <Text dimColor={isDim} wrap="truncate">
-            {row.map(seg => (seg.color ? <Text color={seg.color}>{seg.text}</Text> : seg.text))}
+            {row.map(seg =>
+              seg.color || seg.bg ? (
+                <Text color={seg.color} backgroundColor={seg.bg}>
+                  {seg.text}
+                </Text>
+              ) : (
+                seg.text
+              ),
+            )}
           </Text>
         ))}
       </Box>
