@@ -19,6 +19,9 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The release is the commit that raised the version, found in history.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 22
@@ -30,11 +33,18 @@ jobs:
             echo "${tag} exists: nothing to release."
             exit 0
           fi
+          # The commit that raised the version, not whichever merge this run
+          # belongs to: two runs racing for one version then agree on the tag.
+          target="$(git log -1 --format=%H -G'"version":' -- .claude-plugin/plugin.json)"
           # The changelog section first, then GitHub's list of the pull
           # requests since the last tag: tests, docs and CI show up there.
           node .github/scripts/release-notes.mjs "${version}" > "${RUNNER_TEMP}/notes.md"
-          gh release create "${tag}" \
-            --target "${GITHUB_SHA}" \
+          if ! gh release create "${tag}" \
+            --target "${target}" \
             --title "${tag}" \
             --notes-file "${RUNNER_TEMP}/notes.md" \
-            --generate-notes
+            --generate-notes; then
+            # Lost the race to another run: the release is there, all is well.
+            gh release view "${tag}" > /dev/null
+            echo "${tag} was released by another run."
+          fi
