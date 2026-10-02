@@ -18,6 +18,7 @@ export type Status = 'ready' | 'play' | 'over'
 export type Hud = {
   score: number
   level?: number
+  lines?: number
   lives?: number
   maxLives?: number
 }

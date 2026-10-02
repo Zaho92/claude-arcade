@@ -17,6 +17,7 @@ const en = {
   'menu.best': 'Best {n}',
   'hud.score': 'Score {n}',
   'hud.level': 'Level {n}',
+  'hud.lines': 'Lines {n}',
   'hud.best': 'Best {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
@@ -40,6 +41,9 @@ const en = {
   'snake.name': 'Snake',
   'snake.blurb': 'Eat, grow, never bite yourself',
   'snake.help': '←↑↓→ steer',
+  'blocks.name': 'Blocks',
+  'blocks.blurb': 'Stack them, clear lines',
+  'blocks.help': '←/→ move · ↑ turn · ↓ faster · Space drop',
 }
 
 export type TextKey = keyof typeof en
@@ -50,6 +54,7 @@ const de: Table = {
   'menu.best': 'Rekord {n}',
   'hud.score': 'Punkte {n}',
   'hud.level': 'Level {n}',
+  'hud.lines': 'Reihen {n}',
   'hud.best': 'Rekord {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
@@ -71,6 +76,8 @@ const de: Table = {
   'breakout.help': '←/→ bewegen · Leertaste abschießen',
   'snake.blurb': 'Fressen, wachsen, nicht beißen',
   'snake.help': '←↑↓→ lenken',
+  'blocks.blurb': 'Stapeln, Reihen abräumen',
+  'blocks.help': '←/→ schieben · ↑ drehen · ↓ schneller · Leertaste fallen lassen',
 }
 
 const fr: Table = {
@@ -78,6 +85,7 @@ const fr: Table = {
   'menu.best': 'Record {n}',
   'hud.score': 'Score {n}',
   'hud.level': 'Niveau {n}',
+  'hud.lines': 'Lignes {n}',
   'hud.best': 'Record {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
@@ -99,6 +107,9 @@ const fr: Table = {
   'breakout.help': '←/→ déplacer · Espace lancer',
   'snake.blurb': 'Mange, grandis, ne te mords pas',
   'snake.help': '←↑↓→ diriger',
+  'blocks.name': 'Blocs',
+  'blocks.blurb': 'Empile et complète des lignes',
+  'blocks.help': '←/→ déplacer · ↑ tourner · ↓ accélérer · Espace lâcher',
 }
 
 const es: Table = {
@@ -106,6 +117,7 @@ const es: Table = {
   'menu.best': 'Récord {n}',
   'hud.score': 'Puntos {n}',
   'hud.level': 'Nivel {n}',
+  'hud.lines': 'Líneas {n}',
   'hud.best': 'Récord {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
@@ -127,6 +139,9 @@ const es: Table = {
   'breakout.help': '←/→ mover · Espacio lanzar',
   'snake.blurb': 'Come, crece y no te muerdas',
   'snake.help': '←↑↓→ girar',
+  'blocks.name': 'Bloques',
+  'blocks.blurb': 'Apila y completa líneas',
+  'blocks.help': '←/→ mover · ↑ girar · ↓ acelerar · Espacio soltar',
 }
 
 const pt: Table = {
@@ -134,6 +149,7 @@ const pt: Table = {
   'menu.best': 'Recorde {n}',
   'hud.score': 'Pontos {n}',
   'hud.level': 'Nível {n}',
+  'hud.lines': 'Linhas {n}',
   'hud.best': 'Recorde {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
@@ -155,6 +171,9 @@ const pt: Table = {
   'breakout.help': '←/→ mover · Espaço lançar',
   'snake.blurb': 'Coma, cresça e não se morda',
   'snake.help': '←↑↓→ virar',
+  'blocks.name': 'Blocos',
+  'blocks.blurb': 'Empilhe e complete linhas',
+  'blocks.help': '←/→ mover · ↑ girar · ↓ acelerar · Espaço soltar',
 }
 
 const it: Table = {
@@ -162,6 +181,7 @@ const it: Table = {
   'menu.best': 'Record {n}',
   'hud.score': 'Punti {n}',
   'hud.level': 'Livello {n}',
+  'hud.lines': 'Righe {n}',
   'hud.best': 'Record {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
@@ -183,6 +203,9 @@ const it: Table = {
   'breakout.help': '←/→ muovi · Spazio lancia',
   'snake.blurb': 'Mangia, cresci, non morderti',
   'snake.help': '←↑↓→ sterza',
+  'blocks.name': 'Blocchi',
+  'blocks.blurb': 'Impila e completa le righe',
+  'blocks.help': '←/→ sposta · ↑ ruota · ↓ accelera · Spazio lascia cadere',
 }
 
 const ja: Table = {
@@ -190,6 +213,7 @@ const ja: Table = {
   'menu.best': 'ベスト {n}',
   'hud.score': 'スコア {n}',
   'hud.level': 'レベル {n}',
+  'hud.lines': 'ライン {n}',
   'hud.best': 'ベスト {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
@@ -213,6 +237,9 @@ const ja: Table = {
   'snake.name': 'スネーク',
   'snake.blurb': '食べて伸びよう。自分をかまないで',
   'snake.help': '←↑↓→ 方向転換',
+  'blocks.name': 'ブロック',
+  'blocks.blurb': '積んでラインを消そう',
+  'blocks.help': '←/→ 移動 · ↑ 回転 · ↓ 加速 · Space 落下',
 }
 
 const zh: Table = {
@@ -220,6 +247,7 @@ const zh: Table = {
   'menu.best': '最高 {n}',
   'hud.score': '得分 {n}',
   'hud.level': '关卡 {n}',
+  'hud.lines': '行数 {n}',
   'hud.best': '最高 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
@@ -243,6 +271,9 @@ const zh: Table = {
   'snake.name': '贪吃蛇',
   'snake.blurb': '吃东西变长，别咬到自己',
   'snake.help': '←↑↓→ 转向',
+  'blocks.name': '方块',
+  'blocks.blurb': '堆叠方块，消除整行',
+  'blocks.help': '←/→ 移动 · ↑ 旋转 · ↓ 加速 · 空格 落下',
 }
 
 const ko: Table = {
@@ -250,6 +281,7 @@ const ko: Table = {
   'menu.best': '최고 {n}',
   'hud.score': '점수 {n}',
   'hud.level': '레벨 {n}',
+  'hud.lines': '줄 {n}',
   'hud.best': '최고 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
@@ -273,6 +305,9 @@ const ko: Table = {
   'snake.name': '스네이크',
   'snake.blurb': '먹고 자라고, 자기 몸은 물지 마세요',
   'snake.help': '←↑↓→ 방향 전환',
+  'blocks.name': '블록',
+  'blocks.blurb': '쌓아서 줄을 지우세요',
+  'blocks.help': '←/→ 이동 · ↑ 회전 · ↓ 가속 · Space 낙하',
 }
 
 const ru: Table = {
@@ -280,6 +315,7 @@ const ru: Table = {
   'menu.best': 'Рекорд {n}',
   'hud.score': 'Очки {n}',
   'hud.level': 'Уровень {n}',
+  'hud.lines': 'Линии {n}',
   'hud.best': 'Рекорд {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
@@ -303,6 +339,9 @@ const ru: Table = {
   'snake.name': 'Змейка',
   'snake.blurb': 'Ешь, расти и не кусай себя',
   'snake.help': '←↑↓→ поворот',
+  'blocks.name': 'Блоки',
+  'blocks.blurb': 'Складывай и убирай линии',
+  'blocks.help': '←/→ двигать · ↑ вращать · ↓ быстрее · Пробел сбросить',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

@@ -3,6 +3,10 @@
 ## 0.2.0 (unreleased)
 
 - Snake.
+- Blocks: falling blocks with a 7-bag, wall kicks, landing preview and
+  next piece.
+- The help line wraps instead of being cut off, and the score line widens
+  for narrow games.
 - Game menu: pick a game with ↑/↓ and Enter, Q or Backspace leaves a game.
 - Ten languages (en, de, fr, es, pt, it, ja, zh, ko, ru), chosen from the
   plugin setting, Claude Code's `language` setting or the system locale.

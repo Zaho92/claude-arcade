@@ -18,6 +18,10 @@ export type Glyphs = {
   snakeHead: string
   snakeBody: string
   food: string
+  /** A Tetris block and its landing preview, two cells wide. */
+  tile: string
+  ghost: string
+  wall: string
   empty: string
   dot: string
   border: 'round' | 'classic'
@@ -35,6 +39,9 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     snakeHead: '██',
     snakeBody: '▓▓',
     food: '()',
+    tile: '██',
+    ghost: '░░',
+    wall: '│',
     empty: ' ',
     dot: '·',
     border: 'round',
@@ -50,6 +57,9 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     snakeHead: '@@',
     snakeBody: 'oo',
     food: '()',
+    tile: '[]',
+    ghost: '::',
+    wall: '|',
     empty: ' ',
     dot: '.',
     border: 'classic',

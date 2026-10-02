@@ -7,7 +7,7 @@ import type { ClientElements, ClientModule } from 'claude-code'
 
 import { GAMES } from './games'
 import type { Frame } from './games/types'
-import { GLYPHS, center, clip, textWidth } from './glyphs'
+import { GLYPHS, center, textWidth } from './glyphs'
 import type { Glyphs } from './glyphs'
 import { FRAME_MS, commandFor, frameTick, handle, newHost } from './host'
 import type { Host, Running } from './host'
@@ -111,15 +111,22 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
       ? ''
       : glyphs.life.repeat(Math.max(0, hud.lives)) +
         glyphs.lifeLost.repeat(Math.max(0, (hud.maxLives ?? hud.lives) - hud.lives))
-  const right = [hud.level === undefined ? '' : tr('hud.level', { n: hud.level }), tr('hud.best', { n: best })]
+  const right = [
+    hud.lines === undefined ? '' : tr('hud.lines', { n: hud.lines }),
+    hud.level === undefined ? '' : tr('hud.level', { n: hud.level }),
+    tr('hud.best', { n: best }),
+  ]
     .filter(Boolean)
     .join('  ')
   const help = s.props.isPaused ? tr('help.paused') : `${tr(def.help)} · ${tr('help.common')}`
+  const score = tr('hud.score', { n: hud.score })
+  // As wide as the field, or wider when a narrow game's score line needs it.
+  const hudW = Math.max(w + 2, textWidth(score) + textWidth(lives) + textWidth(right) + 6)
 
   return (
     <Box flexDirection="column">
-      <Box flexDirection="row" justifyContent="space-between" width={w + 2}>
-        <Text bold> {tr('hud.score', { n: hud.score })}</Text>
+      <Box flexDirection="row" justifyContent="space-between" width={hudW}>
+        <Text bold> {score}</Text>
         <Text color="#ff5f5f">{lives}</Text>
         <Text dimColor>{right} </Text>
       </Box>
@@ -130,9 +137,9 @@ function drawGame(s: Host, run: Running, glyphs: Glyphs, tr: Tr, { Box, Text }: 
           </Text>
         ))}
       </Box>
-      <Text dimColor wrap="truncate">
+      <Text dimColor wrap="wrap">
         {' '}
-        {clip(help, Math.max(10, w + 1))}
+        {help}
       </Text>
     </Box>
   )
