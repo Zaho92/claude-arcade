@@ -24,8 +24,17 @@ export type Glyphs = {
   /** Bulls & Cows: a right digit in the right place, and in the wrong one. */
   bull: string
   cow: string
+  /** Around the field or digit the keys act on, so it shows without colors. */
+  cursorLeft: string
+  cursorRight: string
+  /** After a try's number, and before the answer at the end. */
+  ordinal: string
+  answer: string
   empty: string
+  /** A closed field and an empty slot. */
   dot: string
+  /** Between two parts of a line ("P pause · Q menu"). */
+  sep: string
   border: 'round' | 'classic'
   pointer: string
   pause: string
@@ -45,8 +54,13 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '✱',
     bull: '●',
     cow: '○',
+    cursorLeft: '[',
+    cursorRight: ']',
+    ordinal: '.',
+    answer: '=',
     empty: ' ',
     dot: '·',
+    sep: '·',
     border: 'round',
     pointer: '▶',
     pause: '⏸',
@@ -64,12 +78,25 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '*',
     bull: '+',
     cow: 'o',
+    cursorLeft: '[',
+    cursorRight: ']',
+    ordinal: '.',
+    answer: '=',
     empty: ' ',
     dot: '.',
+    sep: '|',
     border: 'classic',
     pointer: '>',
     pause: '||',
   },
+}
+
+// The texts write the mark between two parts of a line as a middle dot.
+const TEXT_SEP = '·'
+
+/** A text with its separators in the glyph set's own mark. */
+export function withSep(text: string, glyphs: Glyphs): string {
+  return glyphs.sep === TEXT_SEP ? text : text.replaceAll(TEXT_SEP, glyphs.sep)
 }
 
 /** True for a code point a terminal draws two cells wide (East Asian Wide/Fullwidth, emoji). */
@@ -102,23 +129,7 @@ export function textWidth(text: string): number {
   return w
 }
 
-/** Cuts a string to at most `width` cells. */
-export function clip(text: string, width: number): string {
-  let out = ''
-  let w = 0
-  for (const ch of text) {
-    const cw = textWidth(ch)
-    if (w + cw > width) break
-    out += ch
-    w += cw
-  }
-  return out
-}
-
-/** Centers text in `width` cells, padded with spaces on both sides. */
-export function center(text: string, width: number): string {
-  const t = clip(text, width)
-  const left = Math.max(0, Math.floor((width - textWidth(t)) / 2))
-  const right = Math.max(0, width - left - textWidth(t))
-  return ' '.repeat(left) + t + ' '.repeat(right)
+/** Fills text up to `width` cells with spaces on the right. */
+export function padTo(text: string, width: number): string {
+  return text + ' '.repeat(Math.max(0, width - textWidth(text)))
 }

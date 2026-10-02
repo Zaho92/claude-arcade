@@ -2,10 +2,10 @@
 // a new tile comes after every move that changed something. No clock: it
 // moves on keys alone, so pausing mid-game never costs anything.
 
+import { padTo, textWidth } from '../glyphs'
 import type { Glyphs } from '../glyphs'
-import type { Action, Frame, GameDef, Segment, TickResult } from './types'
+import type { Action, Dir, Frame, GameDef, Segment, TickResult } from './types'
 
-export type Dir = 'left' | 'right' | 'up' | 'down'
 export type Phase = 'play' | 'over'
 
 export type Merge = {
@@ -147,8 +147,10 @@ export function canMove(g: Merge): boolean {
 
 export function press(g: Merge, action: Action): boolean {
   if (g.phase === 'over' || action === 'primary' || action === 'secondary') return false
+  // The note about the goal goes with the next key, moved or not.
+  const hadNote = g.isJustWon
   g.isJustWon = false
-  if (!slide(g, action)) return false
+  if (!slide(g, action)) return hadNote
   spawn(g)
   if (!g.hasWon && g.grid.some(v => v >= GOAL)) {
     g.hasWon = true
@@ -161,8 +163,8 @@ export function press(g: Merge, action: Action): boolean {
 function tileText(v: number): string {
   if (v === 0) return ' '.repeat(TILE_W)
   const s = String(v)
-  const left = Math.floor((TILE_W - s.length) / 2)
-  return (' '.repeat(left) + s).padEnd(TILE_W)
+  const left = Math.floor((TILE_W - textWidth(s)) / 2)
+  return padTo(' '.repeat(left) + s, TILE_W)
 }
 
 export function frame(g: Merge, glyphs: Glyphs): Frame {
@@ -203,5 +205,6 @@ export const merge: GameDef<Merge> = {
   status: g => g.phase,
   hud: g => ({ score: g.score }),
   frame,
-  banner: g => (g.isJustWon ? 'merge.won' : undefined),
+  // A move that reaches the goal and leaves no other is the end, not a note to play on.
+  banner: g => (g.isJustWon && g.phase !== 'over' ? 'merge.won' : undefined),
 }

@@ -3,6 +3,53 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 0.3.0 - 2026-10-02
+
+### Added
+
+- A pane too narrow for a game says so, instead of drawing a field cut off on
+  the right. The game waits and comes back when the pane is wide again.
+- Worm: filling the whole board is a win, with a line of its own.
+
+### Changed
+
+- The line that says why a game stands still (Claude is done, has a question,
+  waits for your approval; "Space: start"; game over) is now under the field
+  and shown in full. It used to cover the field's middle row and was cut off
+  in the narrow games.
+- A finished game takes two keys only: Space starts the next one, Q goes back
+  to the menu.
+- Bricks: the ball stops getting faster after a few levels, at a pace the
+  paddle can still meet.
+- Merge: the texts speak of the gold tile instead of naming its number.
+- `/arcade` says why the pane cannot be shown, instead of always blaming the
+  width of the terminal.
+
+### Fixed
+
+- High scores: leaving a game with Q no longer loses what was scored, and a
+  new record is stored while the game still runs, so closing the pane in the
+  middle of a game keeps it.
+- High scores: in Bricks, starting again with ↑ after a game over left the
+  next game's score unrecorded.
+- High scores: two Claude Code sessions open at once no longer overwrite
+  each other's records.
+- A permission dialog kept the game frozen only until any tool finished, a
+  subagent's for example. Now it is the tool the dialog was for.
+- A question or a permission dialog answered while Claude is idle no longer
+  sets the game running.
+- A permission that a settings hook answers by itself, so that no dialog
+  opens, no longer freezes the game until the tool has run.
+- With the ascii glyphs, the mark between the parts of a line ("P pause |
+  Q menu") is a plain character too.
+- Worm: the worm is visible before the game starts.
+- Bulls & Cows and Mines: the end of a game no longer hides a row of the
+  board.
+- Merge: reaching the goal with the last possible move shows the game-over
+  line, not "Keep going".
+- With the chime switched on, a dialog no longer waits for the sound to
+  finish.
+
 ## 0.2.0 - 2026-10-02
 
 ### Added

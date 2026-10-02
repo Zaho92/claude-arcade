@@ -3,6 +3,7 @@
 // the right place, a cow a right digit in the wrong place. Entered with the
 // arrows alone (digits need Shift on some layouts); no clock.
 
+import { padTo, textWidth } from '../glyphs'
 import type { Glyphs } from '../glyphs'
 import type { Action, Frame, GameDef, Segment, TickResult } from './types'
 
@@ -22,10 +23,11 @@ export type Cows = {
   slot: number
   phase: 'play' | 'over'
   isWon: boolean
-  random: () => number
 }
 
 export const FIELD_W = 30
+// The try's number, or the mark in front of the input and the answer.
+const LABEL_W = 7
 // A blank row, one per try, a blank row, the input row, a blank row.
 export const FIELD_H = TRIES + 4
 
@@ -52,7 +54,6 @@ export function newCows(_w: number, _h: number, random: () => number = Math.rand
     slot: 0,
     phase: 'play',
     isWon: false,
-    random,
   }
 }
 
@@ -110,7 +111,7 @@ export function press(g: Cows, action: Action): boolean {
 }
 
 function pad(cells: Segment[], w: number): Segment[] {
-  const used = cells.reduce((n, s) => n + s.text.length, 0)
+  const used = cells.reduce((n, s) => n + textWidth(s.text), 0)
   if (used < w) cells.push({ text: ' '.repeat(w - used) })
   return cells
 }
@@ -119,15 +120,15 @@ export function frame(g: Cows, glyphs: Glyphs): Frame {
   const rows: Frame = [pad([], FIELD_W)]
   for (let i = 0; i < TRIES; i++) {
     const guess = g.guesses[i]
-    const no = String(i + 1).padStart(4)
+    const no = `${String(i + 1).padStart(4)}${glyphs.ordinal}  `
     if (!guess) {
-      rows.push(pad([{ text: `${no}.  `, color: DIM }, { text: `${glyphs.dot}  `.repeat(DIGITS), color: DIM }], FIELD_W))
+      rows.push(pad([{ text: no, color: DIM }, { text: `${glyphs.dot}  `.repeat(DIGITS), color: DIM }], FIELD_W))
       continue
     }
     rows.push(
       pad(
         [
-          { text: `${no}.  `, color: DIM },
+          { text: no, color: DIM },
           { text: guess.digits.map(d => `${d}  `).join(''), color: DIGIT_COLOR },
           { text: ' ' },
           { text: glyphs.bull.repeat(guess.bulls), color: BULL_COLOR },
@@ -139,11 +140,12 @@ export function frame(g: Cows, glyphs: Glyphs): Frame {
   }
   rows.push(pad([], FIELD_W))
   if (g.phase === 'over') {
-    rows.push(pad([{ text: '    =  ', color: DIM }, { text: g.secret.map(d => `${d}  `).join(''), color: SECRET_COLOR }], FIELD_W))
+    rows.push(pad([{ text: padTo(`    ${glyphs.answer}`, LABEL_W), color: DIM }, { text: g.secret.map(d => `${d}  `).join(''), color: SECRET_COLOR }], FIELD_W))
   } else {
-    const cells: Segment[] = [{ text: `    ${glyphs.pointer}  `.slice(0, 7), color: SLOT_COLOR }]
+    const cells: Segment[] = [{ text: padTo(`    ${glyphs.pointer}`, LABEL_W), color: SLOT_COLOR }]
     g.input.forEach((d, i) => {
-      cells.push(i === g.slot ? { text: `[${d}]`, color: SLOT_COLOR } : { text: ` ${d} `, color: DIGIT_COLOR })
+      const text = i === g.slot ? `${glyphs.cursorLeft}${d}${glyphs.cursorRight}` : ` ${d} `
+      cells.push({ text, color: i === g.slot ? SLOT_COLOR : DIGIT_COLOR })
     })
     rows.push(pad(cells, FIELD_W))
   }

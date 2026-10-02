@@ -6,8 +6,10 @@ that run while Claude works and freeze when Claude needs the person.
 ## Layout
 
 - `hooks/register.tsx`: hooks module. `/arcade`, the pane, the language, and
-  the pause state from Claude's turn events (`turn.start`, `turn.complete`,
-  `AskUserQuestion`, `classic.PermissionRequest`).
+  what the games wait for, kept per cause (`Waiting`): the main turn
+  (`turn.start`, `turn.complete`), each open question (`AskUserQuestion`)
+  and each permission dialog (`tool.check`, `classic.PermissionRequest`,
+  ended by its `tool.call`). The pause state is derived from it.
 - `hooks/arcade.tsx`: the one surface module. Runs on the drawing thread and
   draws menu and game. No `$` there; it talks to the hooks module only
   through props and `surface.post`.
@@ -17,7 +19,8 @@ that run while Claude works and freeze when Claude needs the person.
 - `hooks/i18n.ts`: every text, ten languages. `hooks/glyphs.ts`: characters
   (unicode and ascii) and on-screen text width.
 - `types/index.d.ts`: state contract (`PluginState['arcade']`).
-- `tests/`: `claude plugin test` suites.
+- `tests/`: `claude plugin test` suites. `tests/frames.ts` checks a game's
+  frame in both glyph sets.
 - `.github/scripts/`: the release rules CI checks, with their own tests
   (`node --test ".github/scripts/*.test.mjs"`).
 

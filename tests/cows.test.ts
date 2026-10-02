@@ -3,6 +3,7 @@ import { describe, expect, test } from 'claude-code/testing'
 import { DIGITS, FIELD_H, FIELD_W, TRIES, cows, judge, newCows, press, score } from '../hooks/games/cows'
 import type { Cows } from '../hooks/games/cows'
 import { GLYPHS } from '../hooks/glyphs'
+import { expectFrames, lines } from './frames'
 
 function withSecret(secret: number[]): Cows {
   const g = newCows(0, 0)
@@ -74,21 +75,23 @@ describe('bulls & cows', () => {
     expect(g.isWon).toBe(false)
     expect(score(g)).toBe(0)
     expect(press(g, 'up')).toBe(false)
-    const text = cows
-      .frame(g, GLYPHS.unicode)
-      .map(r => r.map(s => s.text).join(''))
-      .join('\n')
-    expect(text).toContain('5  0  9  2')
+    const text = lines(cows.frame(g, GLYPHS.unicode))
+    expect(text.join('\n')).toContain(`${GLYPHS.unicode.answer}  5  0  9  2`)
+    // Every try stays on the board for the player to read back.
+    for (let i = 1; i <= TRIES; i++) expect(text[i]).toContain('1  2  3  4')
+    expectFrames(glyphs => cows.frame(g, glyphs), FIELD_W, FIELD_H)
   })
 
   test('every row is as wide as the field, in both glyph sets', () => {
+    const g = withSecret([5, 0, 9, 2])
+    enter(g, [5, 9, 1, 2])
+    press(g, 'primary')
+    expectFrames(glyphs => cows.frame(g, glyphs), FIELD_W, FIELD_H)
     for (const glyphs of [GLYPHS.unicode, GLYPHS.ascii]) {
-      const g = withSecret([5, 0, 9, 2])
-      enter(g, [5, 9, 1, 2])
-      press(g, 'primary')
-      const rows = cows.frame(g, glyphs)
-      expect(rows).toHaveLength(FIELD_H)
-      for (const row of rows) expect(row.map(s => s.text).join('').length).toBe(FIELD_W)
+      const text = lines(cows.frame(g, glyphs))
+      expect(text[1]).toContain(`1${glyphs.ordinal}  5  9  1  2`)
+      // The digit the keys act on stands in the cursor's brackets.
+      expect(text[FIELD_H - 2]).toContain(`${glyphs.pointer}  ${glyphs.cursorLeft}${g.input[0]}${glyphs.cursorRight}`)
     }
   })
 })

@@ -2,11 +2,10 @@
 // board looks square; the host feeds it actions and ticks.
 
 import type { Glyphs } from '../glyphs'
-import type { Action, Frame, GameDef, Segment, TickResult } from './types'
+import { put } from './types'
+import type { Action, Dir, Frame, GameDef, Segment, Status, TickResult } from './types'
 
-export type Dir = 'left' | 'right' | 'up' | 'down'
 export type Cell = { x: number; y: number }
-export type Phase = 'ready' | 'play' | 'over'
 
 export type Worm = {
   /** Field size in terminal cells. */
@@ -23,7 +22,9 @@ export type Worm = {
   food: Cell
   score: number
   level: number
-  phase: Phase
+  phase: Status
+  /** True once the worm fills the whole board: nothing left to eat. */
+  isWon: boolean
   /** Frames of the host's clock left before the next step. */
   wait: number
   random: () => number
@@ -63,6 +64,7 @@ export function newWorm(w: number, h: number, random: () => number = Math.random
     score: 0,
     level: 1,
     phase: 'ready',
+    isWon: false,
     wait: START_FRAMES,
     random,
   }
@@ -70,7 +72,7 @@ export function newWorm(w: number, h: number, random: () => number = Math.random
   return g
 }
 
-function framesPerStep(g: Worm): number {
+export function framesPerStep(g: Worm): number {
   return Math.max(MIN_FRAMES, START_FRAMES - (g.level - 1))
 }
 
@@ -131,6 +133,7 @@ export function step(g: Worm): TickResult {
   g.level = 1 + Math.floor(eaten / FOOD_PER_LEVEL)
   const food = placeFood(g)
   if (!food) {
+    g.isWon = true
     g.phase = 'over'
     return 'over'
   }
@@ -151,16 +154,11 @@ export function frame(g: Worm, glyphs: Glyphs): Frame {
   const head = g.body[0]
   for (let y = 0; y < g.rows; y++) {
     const cells: Segment[] = []
-    const put = (text: string, color?: string) => {
-      const last = cells[cells.length - 1]
-      if (last && last.color === color) last.text += text
-      else cells.push({ text, color })
-    }
     for (let x = 0; x < g.cols; x++) {
-      if (head && head.x === x && head.y === y) put(glyphs.wormHead, HEAD_COLOR)
-      else if (isOn(g.body, { x, y })) put(glyphs.wormBody, BODY_COLOR)
-      else if (g.food.x === x && g.food.y === y) put(glyphs.food, FOOD_COLOR)
-      else put(glyphs.empty.repeat(CELL_W))
+      if (head && head.x === x && head.y === y) put(cells, glyphs.wormHead, HEAD_COLOR)
+      else if (isOn(g.body, { x, y })) put(cells, glyphs.wormBody, BODY_COLOR)
+      else if (g.food.x === x && g.food.y === y) put(cells, glyphs.food, FOOD_COLOR)
+      else put(cells, glyphs.empty.repeat(CELL_W))
     }
     rows.push(cells)
   }
@@ -183,5 +181,5 @@ export const worm: GameDef<Worm> = {
   status: g => g.phase,
   hud: g => ({ score: g.score, level: g.level }),
   frame,
-  banner: g => (g.phase === 'ready' ? 'start' : undefined),
+  banner: g => (g.phase === 'ready' ? 'start' : g.isWon ? 'worm.won' : undefined),
 }

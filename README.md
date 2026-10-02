@@ -32,7 +32,9 @@ Speaks ten languages and follows the one you set for Claude Code.
 | waits for a permission | freezes until the tool has run |
 | runs a subagent that finishes | keeps running (only the main turn counts) |
 
-Each game keeps its high score across sessions.
+The line under the field says why it stands still. Each game keeps its high
+score across sessions, also when you leave a game with `Q` or close the pane
+in the middle of one.
 
 ## Install
 
@@ -82,7 +84,7 @@ game region yet and show a note instead.
 |---|---|
 | Bricks | Clear the wall with ball and paddle |
 | Worm | Eat, grow, never bite yourself; faster every five bites |
-| Merge | Slide and merge number tiles up to 2048; turn-based, so a pause never costs anything |
+| Merge | Slide and merge number tiles up to the gold tile and beyond; turn-based, so a pause never costs anything |
 | Mines | Open every safe field, flag the mines; the first field is always safe |
 | Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
 
