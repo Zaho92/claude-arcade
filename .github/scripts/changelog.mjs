@@ -4,9 +4,9 @@
 const GROUPS = ['Added', 'Changed', 'Fixed']
 const HEADING = /^## (\d+\.\d+\.\d+) - (\d{4}-\d{2}-\d{2})$/
 const BREAKING = '**Breaking:**'
-// An entry that opens with the word and a colon, however it is dressed
-// ("Breaking:", "*BREAKING:*"), or the word in bold anywhere.
-const BREAKING_LIKE = /^- [^A-Za-z0-9]*breaking( change)?[^A-Za-z0-9 ]*:|\*\*\s*breaking/i
+// An entry that opens with the word as a label, however it is dressed
+// ("Breaking:", "*BREAKING CHANGES:*", "[breaking]"), or has it in bold.
+const BREAKING_LIKE = /^- [^A-Za-z0-9]*breaking([ -]changes?)?[^A-Za-z0-9]*:|^- \[breaking\]|\*\*\s*breaking/i
 
 export function parseVersion(version) {
   const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(version)

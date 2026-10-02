@@ -118,6 +118,10 @@ test('a mistyped breaking marker is a problem, not an ordinary entry', () => {
     '- BREAKING CHANGE: scores start over.',
     '- *Breaking:* scores start over.',
     '- __Breaking:__ scores start over.',
+    '- Breaking changes: scores start over.',
+    '- BREAKING-CHANGE: scores start over.',
+    '- Breaking : scores start over.',
+    '- [BREAKING] scores start over.',
   ]) {
     assert.match(problems(entry)[0], /starts with "- \*\*Breaking:\*\* "/)
   }
