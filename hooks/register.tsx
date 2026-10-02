@@ -150,13 +150,19 @@ export const register: Register = (on, options) => {
     const state = await read($, pause)
     const record = await read($, best)
 
+    // Docked, the region is as tall as the pane's body: a click anywhere in
+    // the pane then lands in it and gives the game the keys. A percentage is
+    // not enough there, the region would end below the last row drawn. Inline
+    // the pane is as tall as what is drawn, so its body rows must not size it.
+    const height = e.props.placement === 'dock' ? e.props.scroll.bodyRows : '100%'
+
     return (
       <Client
         key="arcade"
         module="./arcade.tsx"
         props={{ ...state, ...shown, best: record }}
         width="100%"
-        height="100%"
+        height={height}
       />
     )
   })

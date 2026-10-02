@@ -97,6 +97,22 @@ test('the game freezes when Claude is done and runs while Claude works', async (
   }
 })
 
+test('docked, the game region fills the pane, so a click anywhere in it gives the game the keys', async ($, on) => {
+  engine(on)
+  await $.session.start(SESSION)
+  const scroll = { offset: 0, bodyRows: 40 }
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const docked = await $.ui.mount({ surface, ...PANE, props: { ...PANE.props, placement: 'dock', scroll } })
+    expect((await docked.find({ type: 'Client' }))?.props.height).toBe(40)
+    await docked.unmount()
+
+    // Inline the pane takes its height from what is drawn, never the reverse.
+    const inline = await $.ui.mount({ surface, ...PANE, props: { ...PANE.props, placement: 'inline', scroll } })
+    expect((await inline.find({ type: 'Client' }))?.props.height).toBe('100%')
+    await inline.unmount()
+  }
+})
+
 test('without any language setting the arcade speaks English', async ($, on) => {
   const world = engine(on)
   await $.session.start(SESSION)
