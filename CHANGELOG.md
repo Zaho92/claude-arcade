@@ -17,6 +17,8 @@
 - The ball-and-paddle game is now called Bricks.
 - CONTRIBUTING.md: how to translate and add games.
 - README: about this project, and a legal note with a contact path.
+- Fixed: in a docked pane only a click on the rows the game drew gave it the
+  keys; a click anywhere in the pane does now.
 
 ## 0.1.0
 
