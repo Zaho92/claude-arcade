@@ -1,11 +1,56 @@
 {
   "name": "arcade",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Retro games in a Claude Code pane that run while Claude works and freeze the moment it needs you.",
-  "author": { "name": "zaho92" },
+  "author": {
+    "name": "zaho92"
+  },
   "homepage": "https://github.com/zaho92/claude-arcade",
   "repository": "https://github.com/zaho92/claude-arcade",
   "license": "MIT",
-  "keywords": ["game", "breakout", "arcade", "fun"],
-  "types": "./types/index.d.ts"
+  "keywords": [
+    "game",
+    "bricks",
+    "arcade",
+    "fun"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "description": "Language of the arcade. auto follows Claude Code's language setting, then the system locale.",
+      "default": "auto",
+      "options": [
+        "auto",
+        "en",
+        "de",
+        "fr",
+        "es",
+        "pt",
+        "it",
+        "ja",
+        "zh",
+        "ko",
+        "ru"
+      ]
+    },
+    "glyphs": {
+      "type": "string",
+      "title": "Glyphs",
+      "description": "unicode draws with block symbols; ascii keeps every cell one column wide (for CJK terminals). auto picks ascii for Chinese, Japanese and Korean.",
+      "default": "auto",
+      "options": [
+        "auto",
+        "unicode",
+        "ascii"
+      ]
+    },
+    "sound": {
+      "type": "boolean",
+      "title": "Sound on pause",
+      "description": "Chime when Claude needs you while the arcade is open (macOS only).",
+      "default": false
+    }
+  }
 }

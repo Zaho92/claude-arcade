@@ -1,5 +1,8 @@
-// Breakout as pure logic: no drawing, no input, no clock. The surface module
-// (breakout.tsx) feeds it keys and ticks; the tests drive it directly.
+// Bricks (ball and paddle) as pure logic: no drawing, no input, no clock. The arcade host
+// feeds it actions and ticks; the tests drive it directly.
+
+import type { Glyphs } from '../glyphs'
+import type { Action, Frame, GameDef, Segment, TickResult } from './types'
 
 export type Phase = 'ready' | 'play' | 'over'
 
@@ -21,7 +24,6 @@ export type Game = {
   score: number
   level: number
   phase: Phase
-  isManuallyPaused: boolean
 }
 
 export const BRICK_W = 4
@@ -63,7 +65,6 @@ export function newGame(w: number, h: number): Game {
     score: 0,
     level: 1,
     phase: 'ready',
-    isManuallyPaused: false,
   }
   g.paddleX = Math.floor((width - g.paddleW) / 2)
   buildWall(g)
@@ -110,19 +111,11 @@ export function brickAt(g: Game, col: number, row: number): number {
   return r * g.brickCols + c
 }
 
-export type Key = { key: string; ctrl?: true }
-
-/** Applies one key press; true when something changed. */
-export function press(g: Game, k: Key): boolean {
-  const key = k.key.toLowerCase()
-  if (key === 'p') {
-    g.isManuallyPaused = !g.isManuallyPaused
-    return true
-  }
-  if (g.isManuallyPaused) return false
-  if (key === 'left' || key === 'a' || key === 'h') return movePaddle(g, -PADDLE_STEP)
-  if (key === 'right' || key === 'd' || key === 'l') return movePaddle(g, PADDLE_STEP)
-  if (key === ' ' || key === 'space' || key === 'return' || key === 'up' || key === 'w') {
+/** Applies one action; true when something changed. */
+export function press(g: Game, action: Action): boolean {
+  if (action === 'left') return movePaddle(g, -PADDLE_STEP)
+  if (action === 'right') return movePaddle(g, PADDLE_STEP)
+  if (action === 'primary' || action === 'up') {
     if (g.phase === 'ready') {
       launch(g)
       return true
@@ -143,11 +136,11 @@ function movePaddle(g: Game, dx: number): boolean {
   return true
 }
 
-export type TickResult = 'none' | 'moved' | 'lost' | 'over' | 'cleared'
+export type StepResult = 'none' | 'moved' | 'lost' | 'over' | 'cleared'
 
 /** Advances the ball one frame. */
-export function tick(g: Game): TickResult {
-  if (g.phase !== 'play' || g.isManuallyPaused) return 'none'
+export function tick(g: Game): StepResult {
+  if (g.phase !== 'play') return 'none'
   for (let i = 0; i < SUBSTEPS; i++) {
     const r = step(g, 1 / SUBSTEPS)
     if (r !== 'moved') return r
@@ -155,7 +148,7 @@ export function tick(g: Game): TickResult {
   return 'moved'
 }
 
-function step(g: Game, dt: number): TickResult {
+function step(g: Game, dt: number): StepResult {
   const prevCol = Math.floor(g.ballX)
   const prevRow = Math.floor(g.ballY)
   g.ballX += g.vx * dt
@@ -226,30 +219,28 @@ export const BRICK_COLORS = ['#ff5f5f', '#ff9f43', '#ffd93d', '#6bcb77', '#4d96f
 export const PADDLE_COLOR = '#e0e0e0'
 export const BALL_COLOR = '#ffffff'
 
-export type Segment = { text: string; color?: string }
-
-/** The field as rows of colored runs, ready for Text elements. */
-export function frame(g: Game): Segment[][] {
-  const rows: Segment[][] = []
+/** The field as rows of colored runs. */
+export function frame(g: Game, glyphs: Glyphs): Frame {
+  const rows: Frame = []
   const pr = paddleRow(g)
   const ballCol = Math.floor(g.ballX)
   const ballRow = Math.floor(g.ballY)
   for (let y = 0; y < g.h; y++) {
     const cells: Segment[] = []
     for (let x = 0; x < g.w; x++) {
-      let ch = ' '
+      let ch = glyphs.empty
       let color: string | undefined
       if (g.phase !== 'over' && x === ballCol && y === ballRow) {
-        ch = '●'
+        ch = glyphs.ball
         color = BALL_COLOR
       } else if (y === pr && x >= g.paddleX && x < g.paddleX + g.paddleW) {
-        ch = '▀'
+        ch = glyphs.paddle
         color = PADDLE_COLOR
       } else {
         const b = brickAt(g, x, y)
         const v = b >= 0 ? (g.bricks[b] ?? 0) : 0
         if (v > 0) {
-          ch = '█'
+          ch = glyphs.block
           color = BRICK_COLORS[(v - 1) % BRICK_COLORS.length]
         }
       }
@@ -260,4 +251,29 @@ export function frame(g: Game): Segment[][] {
     rows.push(cells)
   }
   return rows
+}
+
+function toTick(r: StepResult): TickResult {
+  if (r === 'none') return 'none'
+  if (r === 'over') return 'over'
+  return 'changed'
+}
+
+export const bricks: GameDef<Game> = {
+  id: 'bricks',
+  name: 'bricks.name',
+  blurb: 'bricks.blurb',
+  help: 'bricks.help',
+  tickMs: 33,
+  minW: MIN_W,
+  minH: MIN_H,
+  maxW: 70,
+  maxH: 24,
+  create: newGame,
+  key: press,
+  tick: g => toTick(tick(g)),
+  status: g => g.phase,
+  hud: g => ({ score: g.score, level: g.level, lives: g.lives, maxLives: START_LIVES }),
+  frame,
+  banner: g => (g.phase === 'ready' ? (g.score === 0 && g.level === 1 ? 'start' : 'continue') : undefined),
 }
