@@ -18,12 +18,16 @@ export type Glyphs = {
   wormHead: string
   wormBody: string
   food: string
-  /** Meteors: the ship and a bonus, one cell each; rocks one, two and three cells wide. */
+  /**
+   * Meteors: the ship and a bonus, one cell each; rocks one, two and three
+   * cells wide, and one cell of the trail a rock leaves behind.
+   */
   ship: string
   bonus: string
   rockSmall: string
   rockMid: string
   rockBig: string
+  rockTrail: string
   /** Mines: a marked field and a mine. */
   flag: string
   mine: string
@@ -60,9 +64,10 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     food: '()',
     ship: '▲',
     bonus: '◆',
-    rockSmall: '░',
-    rockMid: '▒▒',
-    rockBig: '▓▓▓',
+    rockSmall: '●',
+    rockMid: '▜▛',
+    rockBig: '▜█▛',
+    rockTrail: '░',
     flag: 'F',
     mine: '✱',
     bull: '●',
@@ -100,6 +105,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     rockSmall: 'o',
     rockMid: 'OO',
     rockBig: '@@@',
+    rockTrail: ':',
     flag: 'F',
     mine: '*',
     bull: '+',

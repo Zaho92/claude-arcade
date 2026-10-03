@@ -2,22 +2,24 @@ import { describe, expect, test } from 'claude-code/testing'
 
 import {
   BONUS_SCORE,
-  LANE_HALF,
   MIN_FRAMES,
-  ROW_GAP,
+  SCORE_PER_LEVEL,
+  SHIP_STEP,
+  SPAWN_GAP,
+  SPAWN_ROWS,
   START_LIVES,
-  fall,
   frame,
-  framesPerFall,
-  laneReach,
+  framesPerRow,
   meteors,
   newMeteors,
   press,
   shipRow,
-  spawnRow,
+  spawn,
+  spawnEvery,
   tick,
+  trailOf,
 } from '../hooks/games/meteors'
-import type { Meteors } from '../hooks/games/meteors'
+import type { Meteors, Rock, Size } from '../hooks/games/meteors'
 import { GLYPHS } from '../hooks/glyphs'
 import { expectFrames, lines } from './frames'
 
@@ -30,27 +32,43 @@ function seeded(seed: number): () => number {
   }
 }
 
-// Never rolls below 0.99: no empty rows, no bonus, no rocks at any level.
-const never = () => 0.99
-
-function playing(w = 40, h = 16, random: () => number = never): Meteors {
-  const g = newMeteors(w, h, random)
+/** A game under way with an empty sky: nothing appears unless the test puts it there. */
+function playing(w = 40, h = 16): Meteors {
+  const g = newMeteors(w, h, seeded(1))
   press(g, 'primary')
+  g.spawnIn = 1e9
   return g
+}
+
+/** A rock that moves on the very next tick. */
+function rock(x: number, y: number, size: Size = 1): Rock {
+  return { x, y, size, every: 1, wait: 1 }
 }
 
 /** The shortest way to be hit: a rock one row above the ship, right over it. */
 function dropOnShip(g: Meteors): void {
-  g.rocks = [{ x: g.shipX, y: shipRow(g) - 1, size: 1 }]
+  g.rocks = [rock(g.shipX, shipRow(g) - 1)]
+}
+
+/** Frames until a rock stands on the ship's row over `x`; Infinity when none will. */
+function threat(g: Meteors, x: number): number {
+  let soonest = Infinity
+  for (const r of g.rocks) {
+    if (x < r.x || x >= r.x + r.size) continue
+    const rows = shipRow(g) - r.y
+    soonest = Math.min(soonest, rows <= 0 ? 0 : (rows - 1) * r.every + r.wait)
+  }
+  return soonest
 }
 
 describe('meteors', () => {
   test('waits for Space with the ship in the middle of the bottom row', () => {
-    const g = newMeteors(40, 16, never)
+    const g = newMeteors(40, 16, seeded(1))
     expect(g.phase).toBe('ready')
     expect(g.shipX).toBe(20)
     expect(g.lives).toBe(START_LIVES)
     expect(tick(g)).toBe('none')
+    expect(g.rocks).toHaveLength(0)
     expect(meteors.banner(g)).toBe('start')
     expect(press(g, 'up')).toBe(false)
     expect(press(g, 'primary')).toBe(true)
@@ -59,10 +77,10 @@ describe('meteors', () => {
     expect(meteors.banner(g)).toBeUndefined()
   })
 
-  test('the ship slides one cell a key and stays inside the field', () => {
+  test('the ship slides two cells a key and stays inside the field', () => {
     const g = playing()
     press(g, 'left')
-    expect(g.shipX).toBe(19)
+    expect(g.shipX).toBe(20 - SHIP_STEP)
     for (let i = 0; i < 100; i++) press(g, 'left')
     expect(g.shipX).toBe(0)
     expect(press(g, 'left')).toBe(false)
@@ -72,26 +90,39 @@ describe('meteors', () => {
   })
 
   test('the ship also moves while waiting, but nothing falls', () => {
-    const g = newMeteors(40, 16, never)
+    const g = newMeteors(40, 16, seeded(1))
     expect(press(g, 'right')).toBe(true)
-    expect(g.shipX).toBe(21)
+    expect(g.shipX).toBe(20 + SHIP_STEP)
     expect(tick(g)).toBe('none')
   })
 
-  test('rocks fall one row per fall, on the clock of the level', () => {
+  test('each rock falls at its own pace', () => {
     const g = playing()
-    g.rocks = [{ x: 3, y: 4, size: 2 }]
-    g.wait = framesPerFall(g)
-    let frames = 1
-    while (tick(g) === 'none') frames++
-    expect(frames).toBe(framesPerFall(g))
-    expect(g.rocks[0]?.y).toBe(5)
+    g.rocks = [
+      { x: 3, y: 0, size: 1, every: 2, wait: 2 },
+      { x: 9, y: 0, size: 3, every: 5, wait: 5 },
+    ]
+    expect(tick(g)).toBe('none')
+    expect(tick(g)).toBe('changed')
+    expect(g.rocks.map(r => r.y)).toEqual([1, 0])
+    for (let i = 0; i < 8; i++) tick(g)
+    expect(g.rocks.map(r => r.y)).toEqual([5, 2])
+  })
+
+  test('small rocks are faster than big ones, and all get faster with the level', () => {
+    const g = playing()
+    expect([1, 2, 3].map(size => framesPerRow(g, size as Size))).toEqual([6, 7, 8])
+    g.level = 3
+    expect(framesPerRow(g, 2)).toBe(6)
+    g.level = 100
+    expect(framesPerRow(g, 2)).toBe(MIN_FRAMES)
+    expect(framesPerRow(g, 1)).toBe(MIN_FRAMES - 1)
   })
 
   test('a rock that passes the bottom row scores a point', () => {
     const g = playing()
-    g.rocks = [{ x: 0, y: shipRow(g), size: 3 }]
-    expect(fall(g)).toBe('changed')
+    g.rocks = [rock(0, shipRow(g), 3)]
+    expect(tick(g)).toBe('changed')
     expect(g.rocks).toHaveLength(0)
     expect(g.score).toBe(1)
   })
@@ -99,9 +130,9 @@ describe('meteors', () => {
   test('a rock that lands on the ship costs a life and clears the field', () => {
     const g = playing()
     dropOnShip(g)
-    g.rocks.push({ x: 0, y: 3, size: 3 })
-    g.bonuses = [{ x: 9, y: 2 }]
-    expect(fall(g)).toBe('changed')
+    g.rocks.push(rock(0, 3, 3))
+    g.bonuses = [{ x: 9, y: 2, every: 1, wait: 1 }]
+    expect(tick(g)).toBe('changed')
     expect(g.lives).toBe(START_LIVES - 1)
     expect(g.rocks).toHaveLength(0)
     expect(g.bonuses).toHaveLength(0)
@@ -113,34 +144,45 @@ describe('meteors', () => {
     expect(g.phase).toBe('play')
   })
 
-  test('a wide rock hits with any of its cells', () => {
+  test('a wide rock hits with any of its cells, its trail with none', () => {
     const g = playing()
-    g.rocks = [{ x: g.shipX - 2, y: shipRow(g) - 1, size: 3 }]
-    fall(g)
+    g.rocks = [rock(g.shipX - 2, shipRow(g) - 1, 3)]
+    tick(g)
     expect(g.lives).toBe(START_LIVES - 1)
     const h = playing()
-    h.rocks = [{ x: h.shipX - 3, y: shipRow(h) - 1, size: 3 }]
-    fall(h)
+    h.rocks = [rock(h.shipX - 3, shipRow(h) - 1, 3)]
+    tick(h)
     expect(h.lives).toBe(START_LIVES)
+    // A rock just past the ship's row is gone, and so is the trail behind it.
+    const t = playing()
+    t.rocks = [rock(t.shipX, shipRow(t))]
+    tick(t)
+    expect(t.lives).toBe(START_LIVES)
+    expect(lines(frame(t, GLYPHS.ascii)).join('')).not.toContain(GLYPHS.ascii.rockTrail)
   })
 
-  test('sliding into a rock on the bottom row is a hit too', () => {
+  test('sliding into a rock on the bottom row is a hit, and the ship cannot jump one', () => {
     const g = playing()
-    g.rocks = [{ x: g.shipX + 1, y: shipRow(g), size: 1 }]
+    g.rocks = [{ x: g.shipX + SHIP_STEP, y: shipRow(g), size: 1, every: 9, wait: 9 }]
     expect(press(g, 'right')).toBe(true)
     expect(g.lives).toBe(START_LIVES - 1)
     expect(g.phase).toBe('ready')
+    const h = playing()
+    h.rocks = [{ x: h.shipX - 1, y: shipRow(h), size: 1, every: 9, wait: 9 }]
+    press(h, 'left')
+    expect(h.lives).toBe(START_LIVES - 1)
   })
 
   test('the third hit ends the game, and the game says so on its own key', () => {
     const g = playing()
     for (let i = 0; i < START_LIVES - 1; i++) {
       dropOnShip(g)
-      fall(g)
+      tick(g)
       press(g, 'primary')
+      g.spawnIn = 1e9
     }
     dropOnShip(g)
-    expect(fall(g)).toBe('over')
+    expect(tick(g)).toBe('over')
     expect(g.lives).toBe(0)
     expect(meteors.status(g)).toBe('over')
     // The arcade's usual game-over line.
@@ -150,173 +192,172 @@ describe('meteors', () => {
     expect(tick(g)).toBe('none')
   })
 
-  test('a hit by sliding can end the game as well', () => {
-    const g = playing()
-    g.lives = 1
-    g.rocks = [{ x: g.shipX - 1, y: shipRow(g), size: 1 }]
-    expect(press(g, 'left')).toBe(true)
-    expect(g.phase).toBe('over')
-  })
-
   test('a bonus caught by the ship scores extra and is gone', () => {
     const g = playing()
-    g.bonuses = [{ x: g.shipX, y: shipRow(g) - 1 }]
-    fall(g)
+    g.bonuses = [{ x: g.shipX, y: shipRow(g) - 1, every: 1, wait: 1 }]
+    tick(g)
     expect(g.score).toBe(BONUS_SCORE)
     expect(g.bonuses).toHaveLength(0)
     expect(g.lives).toBe(START_LIVES)
   })
 
-  test('a bonus can be caught by sliding under it, and one that is missed scores nothing', () => {
+  test('a bonus can be caught by sliding over it, and one that is missed scores nothing', () => {
     const g = playing()
-    g.bonuses = [{ x: g.shipX + 1, y: shipRow(g) }]
+    g.bonuses = [{ x: g.shipX + 1, y: shipRow(g), every: 9, wait: 9 }]
     press(g, 'right')
     expect(g.score).toBe(BONUS_SCORE)
-    g.bonuses = [{ x: 0, y: shipRow(g) - 1 }]
-    fall(g)
-    fall(g)
+    g.bonuses = [{ x: 0, y: shipRow(g) - 1, every: 1, wait: 1 }]
+    tick(g)
+    tick(g)
     expect(g.bonuses).toHaveLength(0)
     expect(g.score).toBe(BONUS_SCORE)
   })
 
-  test('the level rises with the score: faster falls, fuller rows', () => {
+  test('the level rises with the score, and rocks then come sooner', () => {
     const g = playing()
     expect(g.level).toBe(1)
-    expect(framesPerFall(g)).toBe(6)
-    g.bonuses = [{ x: g.shipX, y: shipRow(g) - 1 }]
-    fall(g)
-    g.bonuses = [{ x: g.shipX, y: shipRow(g) - 1 }]
-    fall(g)
-    expect(g.score).toBe(2 * BONUS_SCORE)
+    const first = spawnEvery(g)
+    g.score = SCORE_PER_LEVEL - 1
+    g.rocks = [rock(0, shipRow(g))]
+    tick(g)
     expect(g.level).toBe(2)
-    expect(framesPerFall(g)).toBe(5)
-    g.score = 1000
-    g.level = 101
-    expect(framesPerFall(g)).toBe(MIN_FRAMES)
-    // Rows hold more rocks at a higher level.
-    const count = (level: number) => {
-      const h = newMeteors(60, 16, seeded(7))
-      h.level = level
-      let n = 0
-      for (let i = 0; i < 200; i++) {
-        h.rocks = []
-        spawnRow(h)
-        n += h.rocks.length
-      }
-      return n
-    }
-    expect(count(8)).toBeGreaterThan(count(1))
+    expect(spawnEvery(g)).toBeLessThan(first)
+    g.level = 100
+    expect(spawnEvery(g)).toBeGreaterThanOrEqual(2)
+    // A wider field gets its rocks sooner, so every column sees the same.
+    g.level = 1
+    expect(spawnEvery(newMeteors(60, 16))).toBeLessThan(spawnEvery(g))
   })
 
-  test('every row keeps a free lane three cells wide, within reach of the lane before it', () => {
-    const broken: string[] = []
+  test('the sky starts almost empty: a handful of rocks, far apart', () => {
     for (const w of [25, 40, 60]) {
-      for (let seed = 1; seed <= 4; seed++) {
-        const g = newMeteors(w, 16, seeded(seed))
-        for (const level of [1, 3, 6, 12, 40]) {
-          g.level = level
-          let lane = g.lane
-          for (let i = 0; i < 120; i++) {
-            g.rocks = []
-            g.bonuses = []
-            spawnRow(g)
-            if (g.rocks.length === 0 && g.lane === lane) continue
-            const at = `w${w} seed${seed} level${level} row${i}`
-            if (g.lane - LANE_HALF < 0 || g.lane + LANE_HALF >= w) broken.push(`${at}: lane outside the field`)
-            for (let x = g.lane - LANE_HALF; x <= g.lane + LANE_HALF; x++) {
-              if (g.rocks.some(r => x >= r.x && x < r.x + r.size)) broken.push(`${at}: rock in the lane`)
-            }
-            if (Math.abs(g.lane - lane) > laneReach(g)) broken.push(`${at}: lane jumped`)
-            for (const r of g.rocks) if (r.x < 0 || r.x + r.size > w) broken.push(`${at}: rock outside the field`)
-            lane = g.lane
-          }
+      const g = newMeteors(w, 16, seeded(w))
+      press(g, 'primary')
+      let most = 0
+      let covered = 0
+      const frames = 1500
+      for (let i = 0; i < frames; i++) {
+        // Stays on the first level and out of the way: only the sky is watched.
+        g.score = 0
+        g.level = 1
+        g.shipX = 0
+        g.rocks = g.rocks.filter(r => !(r.x === 0 && r.y >= shipRow(g) - 1))
+        tick(g)
+        most = Math.max(most, g.rocks.length)
+        covered += g.rocks.reduce((n, r) => n + r.size, 0)
+      }
+      expect(g.lives).toBe(START_LIVES)
+      // On average not even one cell in twenty of the field holds a rock.
+      expect([w, covered / frames / (g.w * g.h) < 0.05]).toEqual([w, true])
+      expect([w, most > 2]).toEqual([w, true])
+    }
+  })
+
+  test('a new rock never appears right next to one that has just appeared', () => {
+    const g = newMeteors(30, 16, seeded(9))
+    g.level = 12
+    let spawned = 0
+    for (let i = 0; i < 2000; i++) {
+      const before = g.rocks.length
+      spawn(g)
+      const fresh = g.rocks[before]
+      if (fresh) {
+        spawned++
+        for (const r of g.rocks.slice(0, before)) {
+          if (r.y >= SPAWN_ROWS) continue
+          const gap = fresh.x >= r.x + r.size ? fresh.x - (r.x + r.size) : r.x - (fresh.x + fresh.size)
+          expect(gap).toBeGreaterThanOrEqual(SPAWN_GAP)
         }
+        expect(fresh.x).toBeGreaterThanOrEqual(0)
+        expect(fresh.x + fresh.size).toBeLessThanOrEqual(g.w)
       }
+      // The rocks sink now and then, as they do in play.
+      if (i % 3 === 0) for (const r of g.rocks) r.y += 1
+      g.rocks = g.rocks.filter(r => r.y < g.h)
     }
-    expect(broken).toEqual([])
+    expect(spawned).toBeGreaterThan(500)
   })
 
-  test('the reach fits the time between rows at every speed', () => {
-    const g = newMeteors(40, 16, never)
-    for (let level = 1; level <= 40; level++) {
-      g.level = level
-      const frames = (ROW_GAP - 1) * framesPerFall(g)
-      // The ship slides at least a cell per three frames; the lane may move
-      // no further than that, and a lane three wide leaves a cell to spare.
-      expect(laneReach(g)).toBeLessThanOrEqual(Math.max(1, Math.floor(frames / 3)))
-    }
-  })
-
-  test('a ship that follows the lanes at the pace the spawning counts on is never hit, for a whole game', () => {
-    const g = newMeteors(30, 16, seeded(42))
-    press(g, 'primary')
-    // Each row of rocks with its lane and the fall on which it reaches the ship.
-    const rows: { lane: number; arrives: number }[] = []
-    let falls = 0
-    for (let frames = 0; frames < 60000 && g.phase === 'play'; frames++) {
-      const next = rows.find(r => r.arrives >= falls)
-      // One cell per three frames: the slowest slide the lane reach allows for.
-      if (next && frames % 3 === 0 && Math.abs(next.lane - g.shipX) > LANE_HALF) press(g, next.lane < g.shipX ? 'left' : 'right')
-      tick(g)
-      if (g.wait === framesPerFall(g) && g.phase === 'play') {
-        falls++
-        if (g.rocks.some(r => r.y === 0)) rows.push({ lane: g.lane, arrives: falls + shipRow(g) })
+  test('a ship that just steps aside survives the first minute', () => {
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const g = newMeteors(40, 16, seeded(seed))
+      press(g, 'primary')
+      for (let frames = 0; frames < 1800 && g.phase === 'play'; frames++) {
+        // One key every third frame, and only when a rock is about to land.
+        if (frames % 3 === 0 && threat(g, g.shipX) < 30) {
+          const left = Math.max(0, g.shipX - SHIP_STEP)
+          const right = Math.min(g.w - 1, g.shipX + SHIP_STEP)
+          const to = threat(g, left) > threat(g, right) ? left : right
+          const between = (to + g.shipX) / 2
+          if (threat(g, to) > 0 && threat(g, Math.round(between)) > 0) press(g, to < g.shipX ? 'left' : 'right')
+        }
+        tick(g)
       }
+      expect([seed, g.lives]).toEqual([seed, START_LIVES])
+      expect(g.score).toBeGreaterThan(SCORE_PER_LEVEL)
     }
-    expect(g.lives).toBe(START_LIVES)
-    expect(g.score).toBeGreaterThan(100)
   })
 
-  test('a bonus never sits inside a rock', () => {
+  test('now and then a bonus falls instead of a rock', () => {
     const g = newMeteors(40, 16, seeded(3))
-    let bonuses = 0
-    for (let i = 0; i < 400; i++) {
-      g.rocks = []
-      g.bonuses = []
-      spawnRow(g)
-      for (const b of g.bonuses) {
-        bonuses++
-        expect(g.rocks.some(r => b.x >= r.x && b.x < r.x + r.size)).toBe(false)
-      }
-    }
-    expect(bonuses).toBeGreaterThan(0)
+    for (let i = 0; i < 400; i++) spawn(g)
+    expect(g.bonuses.length).toBeGreaterThan(0)
+    expect(g.bonuses.length).toBeLessThan(80)
+    for (const b of g.bonuses) expect(b.x >= 0 && b.x < g.w).toBe(true)
+  })
+
+  test('a rock leaves a trail behind it that hides nothing', () => {
+    expect(trailOf(rock(5, 4, 1))).toEqual([{ x: 5, y: 3, age: 0 }, { x: 5, y: 2, age: 1 }])
+    expect(trailOf(rock(5, 4, 2))).toEqual([{ x: 5, y: 3, age: 0 }, { x: 6, y: 3, age: 0 }])
+    expect(trailOf(rock(5, 4, 3)).at(-1)).toEqual({ x: 6, y: 2, age: 1 })
+    const g = newMeteors(25, 14, seeded(1))
+    const glyphs = GLYPHS.ascii
+    // A rock right behind another, a bonus and the ship in a trail: all still shown.
+    g.rocks = [rock(4, 5), rock(4, 4), rock(g.shipX, shipRow(g) + 1), rock(9, 5)]
+    g.bonuses = [{ x: 9, y: 4, every: 1, wait: 1 }]
+    const text = lines(frame(g, glyphs))
+    expect(text[5]?.[4]).toBe(glyphs.rockSmall)
+    expect(text[4]?.[4]).toBe(glyphs.rockSmall)
+    expect(text[3]?.[4]).toBe(glyphs.rockTrail)
+    expect(text[2]?.[4]).toBe(glyphs.rockTrail)
+    expect(text[4]?.[9]).toBe(glyphs.bonus)
+    expect(text[shipRow(g)]?.[g.shipX]).toBe(glyphs.ship)
   })
 
   test('frames are as wide as the field in both glyph sets', () => {
-    const g = playing(40, 16, seeded(5))
-    for (let i = 0; i < 40; i++) {
-      g.wait = 1
-      tick(g)
-    }
-    g.bonuses.push({ x: 4, y: 3 })
-    g.rocks.push({ x: 0, y: 0, size: 1 }, { x: 2, y: 1, size: 2 }, { x: 6, y: 2, size: 3 })
-    expect(g.rocks.length).toBeGreaterThanOrEqual(3)
+    const g = newMeteors(40, 16, seeded(5))
+    press(g, 'primary')
+    for (let i = 0; i < 300 && g.phase === 'play'; i++) tick(g)
+    g.bonuses.push({ x: 4, y: 3, every: 1, wait: 1 })
+    g.rocks.push(rock(0, 0), rock(2, 1, 2), rock(37, 2, 3))
     expectFrames(glyphs => meteors.frame(g, glyphs), g.w, g.h)
-    const small = newMeteors(10, 5, never)
+    const small = newMeteors(10, 5, seeded(1))
     expect([small.w, small.h]).toEqual([25, 14])
     expectFrames(glyphs => frame(small, glyphs), 25, 14)
   })
 
-  test('ship, the three rocks and the bonus look different without colors, in both sets', () => {
+  test('ship, the three rocks, the trail and the bonus look different without colors, in both sets', () => {
     for (const set of ['unicode', 'ascii'] as const) {
       const glyphs = GLYPHS[set]
-      const all = [glyphs.ship, glyphs.rockSmall, glyphs.rockMid, glyphs.rockBig, glyphs.bonus]
-      expect([set, new Set(all).size]).toEqual([set, 5])
+      const all = [glyphs.ship, glyphs.rockSmall, glyphs.rockMid, glyphs.rockBig, glyphs.rockTrail, glyphs.bonus]
+      expect([set, new Set(all).size]).toEqual([set, all.length])
       expect([set, Array.from(glyphs.rockSmall).length]).toEqual([set, 1])
       expect([set, Array.from(glyphs.rockMid).length]).toEqual([set, 2])
       expect([set, Array.from(glyphs.rockBig).length]).toEqual([set, 3])
+      expect([set, Array.from(glyphs.rockTrail).length]).toEqual([set, 1])
     }
   })
 
   test('the frame draws each thing where it is', () => {
-    const g = newMeteors(25, 14, never)
-    g.rocks = [{ x: 1, y: 0, size: 1 }, { x: 3, y: 1, size: 2 }, { x: 7, y: 2, size: 3 }]
-    g.bonuses = [{ x: 12, y: 3 }]
+    const g = newMeteors(25, 14, seeded(1))
+    g.rocks = [rock(1, 0), rock(3, 1, 2), rock(7, 2, 3)]
+    g.bonuses = [{ x: 12, y: 3, every: 1, wait: 1 }]
     const glyphs = GLYPHS.ascii
     const text = lines(frame(g, glyphs))
     expect(text[0]?.slice(1, 2)).toBe(glyphs.rockSmall)
     expect(text[1]?.slice(3, 5)).toBe(glyphs.rockMid)
     expect(text[2]?.slice(7, 10)).toBe(glyphs.rockBig)
+    expect(text[1]?.slice(7, 10)).toBe(glyphs.rockTrail.repeat(3))
     expect(text[3]?.[12]).toBe(glyphs.bonus)
     expect(text[13]?.[g.shipX]).toBe(glyphs.ship)
   })

@@ -274,7 +274,7 @@ test('the menu: the title, the games in a frame, and under it what the chosen ga
   await ui.advance(100)
 
   expect((await menu(ui)).title).toEqual(['▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀', '█▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄'])
-  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', '░▲ Meteoriten', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe'])
+  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', '●▲ Meteoriten', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe'])
   expect(await shows(ui, /Räum die Mauer ab/)).toBeDefined()
   expect(await shows(ui, /Fressen, wachsen/)).toBeUndefined()
 
