@@ -3,6 +3,12 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Meteors: rocks of three sizes fall from the top, and you slide your ship along the bottom row with ← and →. Every rock that gets past you scores a point, and the more you score, the faster and the denser they fall. Now and then a bonus falls among the rocks; catch it for extra points. You have three lives: a hit costs one, clears the field, and Space sends the next ship. Like Bricks and Worm, it waits for P when Claude has interrupted it.
+
 ## 1.0.1 - 2026-10-03
 
 ### Fixed
