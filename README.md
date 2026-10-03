@@ -109,6 +109,7 @@ the game region yet and show a note instead.
 | Mines | Open every safe field, flag the mines; the first field is always safe |
 | Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
 | Fifteen | Slide the tiles into order, 1 to 15; the fewer moves, the higher the score; turn-based, so a pause never costs anything |
+| Lamps | Switch every lamp off; pressing a lamp flips it and its four neighbours, and fewer presses score more; turn-based |
 
 ## Settings
 

@@ -30,6 +30,9 @@ export type Glyphs = {
   /** Bulls & Cows: a right digit in the right place, and in the wrong one. */
   bull: string
   cow: string
+  /** Lamps: a lit and a dark lamp, two cells wide. */
+  lampOn: string
+  lampOff: string
   /** Around the field or digit the keys act on, so it shows without colors. */
   cursorLeft: string
   cursorRight: string
@@ -67,6 +70,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '✱',
     bull: '●',
     cow: '○',
+    lampOn: '██',
+    lampOff: '░░',
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',
@@ -104,6 +109,8 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '*',
     bull: '+',
     cow: 'o',
+    lampOn: '##',
+    lampOff: '..',
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',

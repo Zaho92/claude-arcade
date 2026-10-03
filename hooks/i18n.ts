@@ -21,6 +21,7 @@ const en = {
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Tries {n}',
   'hud.moves': 'Moves {n}',
+  'hud.presses': 'Presses {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
   'pause.asking': 'Claude has a question for you',
@@ -61,6 +62,10 @@ const en = {
   'fifteen.blurb': 'Slide the tiles into order',
   'fifteen.help': '←↑↓→ slide a tile',
   'fifteen.won': 'Solved! {n} points · Space',
+  'lamps.name': 'Lamps',
+  'lamps.blurb': 'Switch off all lamps, neighbours flip too',
+  'lamps.help': '←↑↓→ move · Space press',
+  'lamps.solved': 'Board dark! Next level · {n} points',
 }
 
 export type TextKey = keyof typeof en
@@ -76,6 +81,7 @@ const de: Table = {
   'hud.minesLeft': 'Minen {n}',
   'hud.triesLeft': 'Versuche {n}',
   'hud.moves': 'Züge {n}',
+  'hud.presses': 'Züge {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
   'pause.asking': 'Claude hat eine Frage an dich',
@@ -116,6 +122,10 @@ const de: Table = {
   'fifteen.blurb': 'Schiebe die Kacheln in die Reihenfolge',
   'fifteen.help': '←↑↓→ Kachel schieben',
   'fifteen.won': 'Gelöst! {n} Punkte · Leertaste',
+  'lamps.name': 'Lampen',
+  'lamps.blurb': 'Alle Lampen ausschalten, Nachbarn schalten mit',
+  'lamps.help': '←↑↓→ bewegen · Leertaste drücken',
+  'lamps.solved': 'Alles dunkel! Nächste Stufe · {n} Punkte',
 }
 
 const fr: Table = {
@@ -128,6 +138,7 @@ const fr: Table = {
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Essais {n}',
   'hud.moves': 'Coups {n}',
+  'hud.presses': 'Appuis {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
   'pause.asking': 'Claude a une question pour toi',
@@ -168,6 +179,10 @@ const fr: Table = {
   'fifteen.blurb': 'Fais glisser les tuiles dans l’ordre',
   'fifteen.help': '←↑↓→ glisser une tuile',
   'fifteen.won': 'Résolu ! {n} points · Espace',
+  'lamps.name': 'Lampes',
+  'lamps.blurb': 'Éteins toutes les lampes, les voisines basculent aussi',
+  'lamps.help': '←↑↓→ déplacer · Espace appuyer',
+  'lamps.solved': 'Tout éteint ! Niveau suivant · {n} points',
 }
 
 const es: Table = {
@@ -180,6 +195,7 @@ const es: Table = {
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Intentos {n}',
   'hud.moves': 'Movimientos {n}',
+  'hud.presses': 'Pulsos {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
   'pause.asking': 'Claude tiene una pregunta para ti',
@@ -220,6 +236,10 @@ const es: Table = {
   'fifteen.blurb': 'Desliza las fichas hasta ordenarlas',
   'fifteen.help': '←↑↓→ deslizar una ficha',
   'fifteen.won': '¡Resuelto! {n} puntos · Espacio',
+  'lamps.name': 'Lámparas',
+  'lamps.blurb': 'Apaga todas las lámparas, las vecinas también cambian',
+  'lamps.help': '←↑↓→ mover · Espacio pulsar',
+  'lamps.solved': '¡Todo apagado! Siguiente nivel · {n} puntos',
 }
 
 const pt: Table = {
@@ -232,6 +252,7 @@ const pt: Table = {
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Tentativas {n}',
   'hud.moves': 'Jogadas {n}',
+  'hud.presses': 'Toques {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
   'pause.asking': 'O Claude tem uma pergunta para você',
@@ -272,6 +293,10 @@ const pt: Table = {
   'fifteen.blurb': 'Deslize as peças até ficarem em ordem',
   'fifteen.help': '←↑↓→ deslizar uma peça',
   'fifteen.won': 'Resolvido! {n} pontos · Espaço',
+  'lamps.name': 'Lâmpadas',
+  'lamps.blurb': 'Apague todas as lâmpadas, as vizinhas também mudam',
+  'lamps.help': '←↑↓→ mover · Espaço apertar',
+  'lamps.solved': 'Tudo apagado! Próximo nível · {n} pontos',
 }
 
 const it: Table = {
@@ -284,6 +309,7 @@ const it: Table = {
   'hud.minesLeft': 'Mine {n}',
   'hud.triesLeft': 'Tentativi {n}',
   'hud.moves': 'Mosse {n}',
+  'hud.presses': 'Pressioni {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
   'pause.asking': 'Claude ha una domanda per te',
@@ -324,6 +350,10 @@ const it: Table = {
   'fifteen.blurb': 'Scorri le tessere nell’ordine giusto',
   'fifteen.help': '←↑↓→ scorri una tessera',
   'fifteen.won': 'Risolto! {n} punti · Spazio',
+  'lamps.name': 'Lampade',
+  'lamps.blurb': 'Spegni tutte le lampade, anche le vicine cambiano',
+  'lamps.help': '←↑↓→ muovi · Spazio premi',
+  'lamps.solved': 'Tutto spento! Livello successivo · {n} punti',
 }
 
 const ja: Table = {
@@ -336,6 +366,7 @@ const ja: Table = {
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '残り {n}',
   'hud.moves': '手数 {n}',
+  'hud.presses': '回数 {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
   'pause.asking': 'Claude から質問があります',
@@ -376,6 +407,10 @@ const ja: Table = {
   'fifteen.blurb': 'タイルをスライドして順番に並べよう',
   'fifteen.help': '←↑↓→ タイルを動かす',
   'fifteen.won': '完成！ {n} 点 · Space',
+  'lamps.name': 'ランプ',
+  'lamps.blurb': 'すべてのランプを消そう、隣も切り替わる',
+  'lamps.help': '←↑↓→ 移動 · Space 押す',
+  'lamps.solved': '全部消えた！次のレベルへ · {n} 点',
 }
 
 const zh: Table = {
@@ -388,6 +423,7 @@ const zh: Table = {
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '剩余 {n}',
   'hud.moves': '步数 {n}',
+  'hud.presses': '步数 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
   'pause.asking': 'Claude 有问题要问你',
@@ -428,6 +464,10 @@ const zh: Table = {
   'fifteen.blurb': '滑动方块，按顺序排好',
   'fifteen.help': '←↑↓→ 滑动方块',
   'fifteen.won': '完成！{n} 分 · 空格',
+  'lamps.name': '关灯',
+  'lamps.blurb': '关掉所有的灯，相邻的灯也会切换',
+  'lamps.help': '←↑↓→ 移动 · 空格 按下',
+  'lamps.solved': '全灭了！下一关 · {n} 分',
 }
 
 const ko: Table = {
@@ -440,6 +480,7 @@ const ko: Table = {
   'hud.minesLeft': '지뢰 {n}',
   'hud.triesLeft': '남은 기회 {n}',
   'hud.moves': '이동 {n}',
+  'hud.presses': '누른 횟수 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
   'pause.asking': 'Claude가 질문이 있어요',
@@ -480,6 +521,10 @@ const ko: Table = {
   'fifteen.blurb': '타일을 밀어 순서대로 맞춰요',
   'fifteen.help': '←↑↓→ 타일 밀기',
   'fifteen.won': '완성! {n}점 · Space',
+  'lamps.name': '전등 끄기',
+  'lamps.blurb': '모든 전등을 끄세요, 이웃한 전등도 바뀝니다',
+  'lamps.help': '←↑↓→ 이동 · Space 누르기',
+  'lamps.solved': '모두 껐어요! 다음 레벨 · {n}점',
 }
 
 const ru: Table = {
@@ -492,6 +537,7 @@ const ru: Table = {
   'hud.minesLeft': 'Мины {n}',
   'hud.triesLeft': 'Попыток {n}',
   'hud.moves': 'Ходов {n}',
+  'hud.presses': 'Нажатий {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
   'pause.asking': 'У Claude есть вопрос к тебе',
@@ -532,6 +578,10 @@ const ru: Table = {
   'fifteen.blurb': 'Сдвигай плитки, пока они не встанут по порядку',
   'fifteen.help': '←↑↓→ сдвинуть плитку',
   'fifteen.won': 'Собрано! {n} очк. · Пробел',
+  'lamps.name': 'Лампы',
+  'lamps.blurb': 'Погаси все лампы, соседние тоже переключаются',
+  'lamps.help': '←↑↓→ ход · Пробел нажать',
+  'lamps.solved': 'Всё погасло! Следующий уровень · {n} очк.',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
