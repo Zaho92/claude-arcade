@@ -143,6 +143,18 @@ export function ended(w: Waiting, agent: string, tool: string, call: string): Wa
   return { ...w, running, permission }
 }
 
+/**
+ * Something beneath answered a permission request of `tool` in the loop
+ * `agent` in the person's place: no dialog opens, and the newest entry of
+ * that tool in that loop goes. Not the entry as it was put down: a call
+ * ending in the meantime may have shortened it.
+ */
+export function answered(w: Waiting, agent: string, tool: string): Waiting {
+  const ofTool = `${agent}:${tool}#`
+  const i = w.permission.findLastIndex(p => p.startsWith(ofTool))
+  return i < 0 ? w : { ...w, permission: [...w.permission.slice(0, i), ...w.permission.slice(i + 1)] }
+}
+
 /** A loop's turn ends: whatever dialog or call of its own is still down has gone with it. */
 export function loopEnds(w: Waiting, agent: string): Waiting {
   const others = (list: string[]) => list.filter(entry => !entry.startsWith(`${agent}:`))
@@ -170,12 +182,17 @@ export function highest(a: Record<string, number>, b: Record<string, number>): R
   return out
 }
 
+/** What the games wait for, as stored. A session that began on an older version may hold a list less. */
+function whole(w: Waiting): Waiting {
+  return w.running ? w : { ...IDLE, ...w }
+}
+
 /** Changes what the games wait for. Resolves the state before and after. */
 async function settle($: EngineInterface, change: (w: Waiting) => Waiting): Promise<{ before: Waiting; after: Waiting }> {
   let before = IDLE
   const after = await update($, waiting, w => {
-    before = w
-    return change(w)
+    before = whole(w)
+    return change(before)
   })
   return { before, after }
 }
@@ -204,8 +221,6 @@ export const register: Register = (on, options) => {
 
     const stored = scores(await $.store.get(BEST_KEY))
     await update($, best, now => highest(now, stored))
-    // A session that began on an older version may hold a list less.
-    await update($, waiting, w => ({ ...IDLE, ...w }))
 
     return next(e)
   })
@@ -254,10 +269,9 @@ export const register: Register = (on, options) => {
   // the game runs again, and only a dialog that does open chimes.
   on('classic.PermissionRequest', async ($, e, next) => {
     const agent = e.agent_id ?? ''
-    const { before, after } = await settle($, w => dialog(w, agent, e.tool_name, digest(e.tool_input)))
-    const entry = after.permission[after.permission.length - 1]
+    const { before } = await settle($, w => dialog(w, agent, e.tool_name, digest(e.tool_input)))
     const answer = await next(e)
-    if (answer.decision) await settle($, w => ({ ...w, permission: without(w.permission, entry) }))
+    if (answer.decision) await settle($, w => answered(w, agent, e.tool_name))
     else if (!pauseOf(before).isPaused) await chime($, isSoundOn)
 
     return answer
@@ -273,7 +287,7 @@ export const register: Register = (on, options) => {
     try {
       return await next(e)
     } finally {
-      const now = await read($, waiting)
+      const now = whole(await read($, waiting))
       if (ended(now, agent, e.tool, call) !== now) await settle($, w => ended(w, agent, e.tool, call))
     }
   })
