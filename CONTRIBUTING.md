@@ -5,30 +5,30 @@ contributions, but bug reports, ideas and fixes of any size are too.
 
 ## Translations
 
-All texts live in `hooks/i18n.ts`: about fifty short lines per language.
+All texts live in `plugin/hooks/i18n.ts`: about fifty short lines per language.
 
 - **Fix a translation:** edit the line and open a pull request. Say which
   language you speak natively; that is all the review needs.
 - **Add a language:** copy the `en` block, translate it, and follow the steps
   in the comment at the top of the file (the language code goes into
-  `LOCALES`, `types/index.d.ts` and the `language` options in
-  `.claude-plugin/plugin.json`). Keep placeholders like `{n}` as they are; a
+  `LOCALES`, `plugin/types/index.d.ts` and the `language` description in
+  `plugin/.claude-plugin/plugin.json`). Keep placeholders like `{n}` as they are; a
   test checks them.
 - Keep the tone short and friendly, the way a game talks to its player.
 
 ## New games
 
-A game is one file of pure logic in `hooks/games/`, implementing `GameDef`
-from `hooks/games/types.ts`. The arcade does the rest: keys, menu, pause,
+A game is one file of pure logic in `plugin/hooks/games/`, implementing `GameDef`
+from `plugin/hooks/games/types.ts`. The arcade does the rest: keys, menu, pause,
 drawing, high scores.
 
-1. Write `hooks/games/<game>.ts`: create, key, tick, status, hud, frame,
+1. Write `plugin/hooks/games/<game>.ts`: create, key, tick, status, hud, frame,
    and its sign for the menu (two cells, in its own colors).
-2. Add its texts (name, one-line description, help line) to `hooks/i18n.ts`,
+2. Add its texts (name, one-line description, help line) to `plugin/hooks/i18n.ts`,
    in every language; a test checks that none is missing. For a language you
    do not speak, a careful machine translation is fine: say so in the pull
    request, and a native speaker can correct it later.
-3. Add it to `GAMES` in `hooks/games/index.ts`.
+3. Add it to `GAMES` in `plugin/hooks/games/index.ts`.
 4. Add `tests/<game>.test.ts` covering its rules and that every row of its
    frame is exactly as wide as the field in both glyph sets (`expectFrames`
    in `tests/frames.ts` does the measuring).
@@ -61,10 +61,13 @@ When in doubt, open an issue and ask before building.
 
 ```
 claude plugin validate .
-claude plugin test .
+claude plugin validate plugin
+node scripts/test.mjs
 ```
 
-Both must pass; CI runs them on every pull request. Work on a branch and keep
+The first checks the marketplace, the second the plugin, the third runs the
+tests (it copies `tests/` into the plugin folder for the run, because
+`claude plugin test` looks for them there). All three must pass; CI runs them on every pull request. Work on a branch and keep
 a pull request to one topic.
 
 - **Title:** one plain English sentence that says what happens, with the area
@@ -80,14 +83,14 @@ a pull request to one topic.
 
 Installations follow `main`, and `claude plugin update` only picks up a
 higher version. So there is no "unreleased": **every merge that changes what
-the plugin ships is a release.** Shipped is everything under `hooks/`,
-`sounds/`, `types/` and `.claude-plugin/`. Tests, docs and CI are not, and
+the plugin ships is a release.** Shipped is everything under `plugin/`,
+and the marketplace in `.claude-plugin/`. Tests, docs and CI are not, and
 need neither a version nor a changelog entry.
 
 A pull request that ships something does two things:
 
 1. It adds a section on top of `CHANGELOG.md`.
-2. It raises `version` in `.claude-plugin/plugin.json` by the step that
+2. It raises `version` in `plugin/.claude-plugin/plugin.json` by the step that
    section calls for.
 
 ### The changelog
@@ -112,7 +115,7 @@ the code does.
   out the groups you do not need.
 - A change that takes something away from the player starts with
   `**Breaking:**`. That is: high scores are lost (the state contract in
-  `types/index.d.ts` changed), a game or a setting is gone, or a newer Claude
+  `plugin/types/index.d.ts` changed), a game or a setting is gone, or a newer Claude
   Code is required.
 - Released sections stay as they are. A mistake in one is corrected by an
   entry in the next version.
@@ -143,7 +146,7 @@ CI runs on one pinned Claude Code version (`CLAUDE_CODE_VERSION` in
 `.github/workflows/ci.yml`), because the plugin API is early access. A weekly
 run tries the newest version and opens an issue when the checks fail there.
 Raising the pin is a pull request of its own. It is a release only if
-`hooks/` had to change for it, and a breaking one if older Claude Code
+`plugin/hooks/` had to change for it, and a breaking one if older Claude Code
 versions stop working.
 
 ## Reporting bugs

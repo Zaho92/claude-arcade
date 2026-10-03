@@ -22,11 +22,15 @@ export type Waiting = {
   turn: '' | 'idle' | 'done'
   /** The open questions, one entry per call, as `<agent id>:<call id>`. */
   asking: string[]
-  /** Calls the engine put to its decider, as `<tool>#<call id>`: a dialog may follow. */
-  asked: string[]
+  /**
+   * The tool calls under way, as `<agent id>:<tool>#<call id>@<digest>`, the
+   * digest standing for the call's arguments: a dialog may follow for one.
+   */
+  running: string[]
   /**
    * The open permission dialogs, one entry each, as
-   * `<agent id>:<tool>#<call id>`; the call id is empty when it is not known.
+   * `<agent id>:<tool>#<call id>,<call id>...`: the calls the dialog can be
+   * for, none when they are not known.
    */
   permission: string[]
 }

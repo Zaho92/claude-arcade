@@ -1,6 +1,6 @@
 {
   "name": "arcade",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Retro games in a Claude Code pane that run while Claude works and freeze the moment it needs you.",
   "author": {
     "name": "zaho92"
@@ -19,32 +19,14 @@
     "language": {
       "type": "string",
       "title": "Language",
-      "description": "Language of the arcade. auto follows Claude Code's language setting, then the system locale.",
-      "default": "auto",
-      "options": [
-        "auto",
-        "en",
-        "de",
-        "fr",
-        "es",
-        "pt",
-        "it",
-        "ja",
-        "zh",
-        "ko",
-        "ru"
-      ]
+      "description": "Language of the arcade: auto, en, de, fr, es, pt, it, ja, zh, ko or ru. auto follows Claude Code's language setting, then the system locale; so does a value that is none of these.",
+      "default": "auto"
     },
     "glyphs": {
       "type": "string",
       "title": "Glyphs",
-      "description": "unicode draws with block symbols; ascii keeps every cell one column wide (for CJK terminals). auto picks ascii for Chinese, Japanese and Korean.",
-      "default": "auto",
-      "options": [
-        "auto",
-        "unicode",
-        "ascii"
-      ]
+      "description": "auto, unicode or ascii. unicode draws with block symbols; ascii keeps every cell one column wide (for CJK terminals). auto picks ascii for Chinese, Japanese and Korean; so does a value that is none of these.",
+      "default": "auto"
     },
     "sound": {
       "type": "boolean",

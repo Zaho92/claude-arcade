@@ -1,6 +1,6 @@
 name: Release
 
-# Every merge that raises the version in .claude-plugin/plugin.json is a
+# Every merge that raises the version in plugin/.claude-plugin/plugin.json is a
 # release: installations follow main. This marks it with a tag and a GitHub
 # release, so "what was 0.3.0" has an answer.
 
@@ -27,7 +27,7 @@ jobs:
           node-version: 22
       - name: Tag and release a version that has no tag yet
         run: |
-          version="$(node -p "require('./.claude-plugin/plugin.json').version")"
+          version="$(node -p "require('./plugin/.claude-plugin/plugin.json').version")"
           tag="v${version}"
           if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${tag}" --silent 2>/dev/null; then
             echo "${tag} exists: nothing to release."
@@ -35,7 +35,7 @@ jobs:
           fi
           # The commit that raised the version, not whichever merge this run
           # belongs to: two runs racing for one version then agree on the tag.
-          target="$(git log -1 --format=%H -G'"version":' -- .claude-plugin/plugin.json)"
+          target="$(git log -1 --format=%H -G'"version":' -- plugin/.claude-plugin/plugin.json)"
           # The changelog section first, then GitHub's list of the pull
           # requests since the last tag: tests, docs and CI show up there.
           node .github/scripts/release-notes.mjs "${version}" > "${RUNNER_TEMP}/notes.md"

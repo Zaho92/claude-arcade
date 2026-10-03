@@ -22,8 +22,8 @@ main ("Mines: flags survive a pause").
 
 ## Checklist
 
-- [ ] `claude plugin validate .` and `claude plugin test .` pass
+- [ ] `claude plugin validate .`, `claude plugin validate plugin` and `node scripts/test.mjs` pass
 - [ ] Every behaviour change has a test
-- [ ] Every text the player sees is a key in `hooks/i18n.ts`, in all ten languages
+- [ ] Every text the player sees is a key in `plugin/hooks/i18n.ts`, in all ten languages
 - [ ] No trademarks and no look-alikes of protected games, in names, looks and code
-- [ ] If `hooks/`, `sounds/`, `types/` or `.claude-plugin/` changed: the version is raised and `CHANGELOG.md` has its section, written for the player
+- [ ] If `plugin/` or `.claude-plugin/` changed: the version is raised and `CHANGELOG.md` has its section, written for the player

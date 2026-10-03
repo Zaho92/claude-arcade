@@ -1,4 +1,4 @@
-// The rules for CHANGELOG.md and for the version in .claude-plugin/plugin.json,
+// The rules for CHANGELOG.md and for the version in plugin/.claude-plugin/plugin.json,
 // as pure logic: text in, problems out. check-version.mjs feeds it from git.
 
 const GROUPS = ['Added', 'Changed', 'Fixed']

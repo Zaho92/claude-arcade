@@ -350,6 +350,26 @@ test('the glyphs setting wins over what the language would pick', { options: { l
   await ui.unmount()
 })
 
+test('a language and glyphs the arcade does not know count as auto', { options: { language: 'klingon', glyphs: 'round' } }, async ($, on) => {
+  engine(on, { language: 'japanese' })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  // Claude Code's language instead, and the glyphs that language picks.
+  expect(await shows(ui, /ブロック崩し/)).toBeDefined()
+  expect(await shows(ui, /^> /)).toBeDefined()
+  await ui.unmount()
+})
+
+test('the glyphs setting may be written in capitals', { options: { language: 'en', glyphs: ' ASCII ' } }, async ($, on) => {
+  engine(on)
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  expect(await shows(ui, /^> /)).toBeDefined()
+  await ui.unmount()
+})
+
 test('/arcade opens the pane and says how to play', async ($, on) => {
   const world = engine(on, { language: 'german' })
   await $.session.start(SESSION)
@@ -523,6 +543,39 @@ test('a permission dialog freezes the game until the tool it is for has run', as
   expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
 
   await $.tool.call({ tool: 'Bash', command: 'ls' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
+  await ui.unmount()
+})
+
+test('a call that needed no permission does not end the dialog of another call of the same tool', async ($, on) => {
+  engine(on, { language: 'german' })
+  // Two Bash calls side by side: `ls` just runs, `rm a` waits for its dialog.
+  const done: Record<string, () => void> = {}
+  on('tool.call', async (_$, e) => {
+    const command = (e as { command?: string }).command ?? ''
+    if (command === 'rm a') await $.classic.PermissionRequest({ tool_name: 'Bash', tool_input: { command } } as never)
+    await new Promise<void>(resolve => (done[command] = resolve))
+    return { result: { text: 'ok' } } as never
+  })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 't1' })
+
+  const ls = $.tool.call({ tool: 'Bash', command: 'ls', tool_use_id: 'c1' } as never)
+  const rm = $.tool.call({ tool: 'Bash', command: 'rm a', tool_use_id: 'c2' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+
+  done.ls?.()
+  await ls
+  await ui.advance(100)
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+
+  done['rm a']?.()
+  await rm
   await ui.advance(100)
   expect(await shows(ui, /⏸/)).toBeUndefined()
   await ui.unmount()

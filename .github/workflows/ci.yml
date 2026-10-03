@@ -36,6 +36,6 @@ jobs:
       - name: Validate manifest, marketplace and hooks
         run: |
           claude plugin validate .
-          claude plugin validate .claude-plugin/plugin.json
+          claude plugin validate plugin
       - name: Test
-        run: claude plugin test .
+        run: node scripts/test.mjs
