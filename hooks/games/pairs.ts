@@ -63,8 +63,8 @@ export const MAX_W = LAST[0] * CELL_W
 export const MAX_H = LAST[1] * CELL_H
 
 // One color per symbol, our own: no two alike, so even without the shapes the
-// pairs differ.
-const SYMBOL_COLORS = [
+// pairs differ. All bright, so the faces they are drawn on are dark.
+export const SYMBOL_COLORS = [
   '#ff7b9c',
   '#ff5f5f',
   '#ff9f43',
@@ -84,8 +84,9 @@ const SYMBOL_COLORS = [
 ]
 const BACK_BG = '#4a5070'
 const BACK_DOT = '#9aa0c0'
-const UP_BG = '#e8ecf8'
-const DONE_BG = '#2b2f45'
+// An open card is the darkest thing on the board, darker than a found pair.
+export const UP_BG = '#12141c'
+export const DONE_BG = '#2b2f45'
 const CURSOR_COLOR = '#ffffff'
 
 /** The boards that fit a field of w × h cells; the smallest always does. */
