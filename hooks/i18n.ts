@@ -20,6 +20,7 @@ const en = {
   'hud.best': 'Best {n}',
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Tries {n}',
+  'hud.moves': 'Moves {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
   'pause.asking': 'Claude has a question for you',
@@ -56,6 +57,10 @@ const en = {
   'cows.blurb': 'Crack the four-digit code in ten tries',
   'cows.help': '←/→ digit · ↑/↓ change · Space guess · {bull} right place · {cow} wrong place',
   'cows.won': 'Cracked! {n} points · Space',
+  'fifteen.name': 'Fifteen',
+  'fifteen.blurb': 'Slide the tiles into order',
+  'fifteen.help': '←↑↓→ slide a tile',
+  'fifteen.won': 'Solved! {n} points · Space',
 }
 
 export type TextKey = keyof typeof en
@@ -70,6 +75,7 @@ const de: Table = {
   'hud.best': 'Rekord {n}',
   'hud.minesLeft': 'Minen {n}',
   'hud.triesLeft': 'Versuche {n}',
+  'hud.moves': 'Züge {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
   'pause.asking': 'Claude hat eine Frage an dich',
@@ -106,6 +112,10 @@ const de: Table = {
   'cows.blurb': 'Knack den vierstelligen Code in zehn Versuchen',
   'cows.help': '←/→ Stelle · ↑/↓ ändern · Leertaste raten · {bull} richtig · {cow} falsche Stelle',
   'cows.won': 'Geknackt! {n} Punkte · Leertaste',
+  'fifteen.name': 'Fünfzehn',
+  'fifteen.blurb': 'Schiebe die Kacheln in die Reihenfolge',
+  'fifteen.help': '←↑↓→ Kachel schieben',
+  'fifteen.won': 'Gelöst! {n} Punkte · Leertaste',
 }
 
 const fr: Table = {
@@ -117,6 +127,7 @@ const fr: Table = {
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Essais {n}',
+  'hud.moves': 'Coups {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
   'pause.asking': 'Claude a une question pour toi',
@@ -153,6 +164,10 @@ const fr: Table = {
   'cows.blurb': 'Trouve le code à quatre chiffres en dix essais',
   'cows.help': '←/→ chiffre · ↑/↓ changer · Espace proposer · {bull} bien placé · {cow} mal placé',
   'cows.won': 'Trouvé ! {n} points · Espace',
+  'fifteen.name': 'Taquin',
+  'fifteen.blurb': 'Fais glisser les tuiles dans l’ordre',
+  'fifteen.help': '←↑↓→ glisser une tuile',
+  'fifteen.won': 'Résolu ! {n} points · Espace',
 }
 
 const es: Table = {
@@ -164,6 +179,7 @@ const es: Table = {
   'hud.best': 'Récord {n}',
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Intentos {n}',
+  'hud.moves': 'Movimientos {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
   'pause.asking': 'Claude tiene una pregunta para ti',
@@ -200,6 +216,10 @@ const es: Table = {
   'cows.blurb': 'Descifra el código de cuatro cifras en diez intentos',
   'cows.help': '←/→ cifra · ↑/↓ cambiar · Espacio probar · {bull} en su sitio · {cow} fuera de sitio',
   'cows.won': '¡Descifrado! {n} puntos · Espacio',
+  'fifteen.name': 'Quince',
+  'fifteen.blurb': 'Desliza las fichas hasta ordenarlas',
+  'fifteen.help': '←↑↓→ deslizar una ficha',
+  'fifteen.won': '¡Resuelto! {n} puntos · Espacio',
 }
 
 const pt: Table = {
@@ -211,6 +231,7 @@ const pt: Table = {
   'hud.best': 'Recorde {n}',
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Tentativas {n}',
+  'hud.moves': 'Jogadas {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
   'pause.asking': 'O Claude tem uma pergunta para você',
@@ -247,6 +268,10 @@ const pt: Table = {
   'cows.blurb': 'Descubra o código de quatro dígitos em dez tentativas',
   'cows.help': '←/→ dígito · ↑/↓ mudar · Espaço chutar · {bull} lugar certo · {cow} lugar errado',
   'cows.won': 'Descoberto! {n} pontos · Espaço',
+  'fifteen.name': 'Quinze',
+  'fifteen.blurb': 'Deslize as peças até ficarem em ordem',
+  'fifteen.help': '←↑↓→ deslizar uma peça',
+  'fifteen.won': 'Resolvido! {n} pontos · Espaço',
 }
 
 const it: Table = {
@@ -258,6 +283,7 @@ const it: Table = {
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mine {n}',
   'hud.triesLeft': 'Tentativi {n}',
+  'hud.moves': 'Mosse {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
   'pause.asking': 'Claude ha una domanda per te',
@@ -294,6 +320,10 @@ const it: Table = {
   'cows.blurb': 'Scopri il codice di quattro cifre in dieci tentativi',
   'cows.help': '←/→ cifra · ↑/↓ cambia · Spazio prova · {bull} al posto giusto · {cow} al posto sbagliato',
   'cows.won': 'Trovato! {n} punti · Spazio',
+  'fifteen.name': 'Quindici',
+  'fifteen.blurb': 'Scorri le tessere nell’ordine giusto',
+  'fifteen.help': '←↑↓→ scorri una tessera',
+  'fifteen.won': 'Risolto! {n} punti · Spazio',
 }
 
 const ja: Table = {
@@ -305,6 +335,7 @@ const ja: Table = {
   'hud.best': 'ベスト {n}',
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '残り {n}',
+  'hud.moves': '手数 {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
   'pause.asking': 'Claude から質問があります',
@@ -341,6 +372,10 @@ const ja: Table = {
   'cows.blurb': '4桁の数字を10回以内で当てよう',
   'cows.help': '←/→ 桁 · ↑/↓ 変更 · Space 決定 · {bull} 位置も正解 · {cow} 数字だけ正解',
   'cows.won': '正解！ {n} 点 · Space',
+  'fifteen.name': '15パズル',
+  'fifteen.blurb': 'タイルをスライドして順番に並べよう',
+  'fifteen.help': '←↑↓→ タイルを動かす',
+  'fifteen.won': '完成！ {n} 点 · Space',
 }
 
 const zh: Table = {
@@ -352,6 +387,7 @@ const zh: Table = {
   'hud.best': '最高 {n}',
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '剩余 {n}',
+  'hud.moves': '步数 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
   'pause.asking': 'Claude 有问题要问你',
@@ -388,6 +424,10 @@ const zh: Table = {
   'cows.blurb': '十次之内猜出四位数密码',
   'cows.help': '←/→ 选位 · ↑/↓ 改数 · 空格 猜 · {bull} 位置正确 · {cow} 位置错误',
   'cows.won': '猜中了！{n} 分 · 空格',
+  'fifteen.name': '十五数码',
+  'fifteen.blurb': '滑动方块，按顺序排好',
+  'fifteen.help': '←↑↓→ 滑动方块',
+  'fifteen.won': '完成！{n} 分 · 空格',
 }
 
 const ko: Table = {
@@ -399,6 +439,7 @@ const ko: Table = {
   'hud.best': '최고 {n}',
   'hud.minesLeft': '지뢰 {n}',
   'hud.triesLeft': '남은 기회 {n}',
+  'hud.moves': '이동 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
   'pause.asking': 'Claude가 질문이 있어요',
@@ -435,6 +476,10 @@ const ko: Table = {
   'cows.blurb': '네 자리 숫자를 열 번 안에 맞히세요',
   'cows.help': '←/→ 자리 · ↑/↓ 바꾸기 · Space 확인 · {bull} 스트라이크 · {cow} 볼',
   'cows.won': '정답! {n}점 · Space',
+  'fifteen.name': '열다섯 퍼즐',
+  'fifteen.blurb': '타일을 밀어 순서대로 맞춰요',
+  'fifteen.help': '←↑↓→ 타일 밀기',
+  'fifteen.won': '완성! {n}점 · Space',
 }
 
 const ru: Table = {
@@ -446,6 +491,7 @@ const ru: Table = {
   'hud.best': 'Рекорд {n}',
   'hud.minesLeft': 'Мины {n}',
   'hud.triesLeft': 'Попыток {n}',
+  'hud.moves': 'Ходов {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
   'pause.asking': 'У Claude есть вопрос к тебе',
@@ -482,6 +528,10 @@ const ru: Table = {
   'cows.blurb': 'Угадай код из четырёх цифр за десять попыток',
   'cows.help': '←/→ цифра · ↑/↓ сменить · Пробел ход · {bull} на месте · {cow} не на месте',
   'cows.won': 'Угадал! {n} очк. · Пробел',
+  'fifteen.name': 'Пятнашки',
+  'fifteen.blurb': 'Сдвигай плитки, пока они не встанут по порядку',
+  'fifteen.help': '←↑↓→ сдвинуть плитку',
+  'fifteen.won': 'Собрано! {n} очк. · Пробел',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
