@@ -96,8 +96,8 @@ claude --plugin-dir ./claude-arcade
 The letter keys also work on a Russian layout. When the game freezes, press
 `Esc`, answer Claude, then click back into the pane (and press `P` in Bricks and Worm).
 
-It runs in the terminal and the desktop app. Mobile and VS Code cannot draw the
-game region yet and show a note instead.
+It runs in the Claude Code CLI in a terminal. Mobile and VS Code cannot draw
+the game region yet and show a note instead.
 
 ## Games
 
