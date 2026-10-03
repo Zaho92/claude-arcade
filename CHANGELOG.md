@@ -3,6 +3,15 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Lamps: a new game. A board of 5 x 5 lamps, some of them lit. Press a lamp
+  and it switches, and so do the four next to it. Get every lamp dark to
+  reach the next level, which starts with more lamps to undo. The fewer
+  presses a board takes, the more points it scores.
+
 ## 1.0.1 - 2026-10-03
 
 ### Fixed
