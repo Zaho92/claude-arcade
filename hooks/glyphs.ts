@@ -12,6 +12,12 @@ export type Glyphs = {
   ball: string
   paddle: string
   block: string
+  /** Bricks: the bonuses (an extra life is drawn as `life`) and the bar of a running effect. */
+  powerBall: string
+  powerWide: string
+  powerSlow: string
+  barOn: string
+  barOff: string
   life: string
   lifeLost: string
   /** Two cells wide, so a square on the grid looks square on screen. */
@@ -47,6 +53,11 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     ball: '●',
     paddle: '▀',
     block: '█',
+    powerBall: '⊕',
+    powerWide: '↔',
+    powerSlow: '◔',
+    barOn: '▰',
+    barOff: '▱',
     life: '♥',
     lifeLost: '·',
     wormHead: '██',
@@ -79,6 +90,11 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     ball: 'o',
     paddle: '=',
     block: '#',
+    powerBall: '8',
+    powerWide: '<',
+    powerSlow: '@',
+    barOn: '+',
+    barOff: '.',
     life: '*',
     lifeLost: '-',
     wormHead: '@@',
