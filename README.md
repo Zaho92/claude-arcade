@@ -8,19 +8,7 @@ Play retro games in a Claude Code pane while Claude works. The game freezes the
 moment Claude needs you and picks up again when Claude gets back to work.
 Speaks ten languages and follows the one you set for Claude Code.
 
-```
- Score 120                  ♥♥·                   Level 1  Best 870
-╭────────────────────────────────────────────────────────────────╮
-│  ████ ████ ████ ████ ████ ████ ████ ████ ████ ████ ████ ████   │
-│  ████ ████ ████ ████ ████      ████ ████ ████ ████ ████ ████   │
-│  ████ ████ ████           ████ ████ ████      ████ ████ ████   │
-│                                                                │
-│                         ●                                      │
-│                                                                │
-│                      ▀▀▀▀▀▀▀▀▀▀                                │
-╰────────────────────────────────────────────────────────────────╯
- ←/→ move · Space launch · P pause · Q menu · Esc prompt
-```
+   ![Arcade runs while Claude works and freezes the moment Claude is done](docs/arcade-demo.gif)
 
 ## What it does
 
