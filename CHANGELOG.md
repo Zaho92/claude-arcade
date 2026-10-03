@@ -3,7 +3,7 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
-## 1.1.0 - 2026-10-03
+## 1.4.0 - 2026-10-03
 
 ### Added
 
@@ -12,6 +12,42 @@ CI are in the pull requests, not here.
   does what it says. Fewer tries give more points. Each cleared board leads
   to one with more cards, as far as the pane has room. Nothing runs on a
   clock, so a pause never hides or reveals anything.
+
+## 1.3.0 - 2026-10-03
+
+### Added
+
+- Lamps: a new game. A board of 5 x 5 lamps, some of them lit. Press a lamp
+  and it switches, and so do the four next to it. Get every lamp dark to
+  reach the next level, which starts with more lamps to undo. The fewer
+  presses a board takes, the more points it scores.
+
+## 1.2.0 - 2026-10-03
+
+### Added
+
+- Fifteen: the old sliding puzzle. Slide the numbered tiles into order, 1 to
+  15, with the gap in the last corner. An arrow slides the tile next to the
+  gap in that direction. Tiles already in their place turn green, the score
+  line counts your moves, and the fewer moves you need, the higher the
+  score. Space starts a new shuffle. Turn-based, so a pause never costs
+  anything.
+
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Bricks: now and then a broken brick drops a bonus. It falls straight down;
+  catch it with the paddle to switch it on, miss it and it just falls out.
+  There are four, each with its own sign: an extra ball (a life is only lost
+  when the last ball is gone), a wide paddle for a while, a slow ball for a
+  while (back to the first wall's speed) and an extra life (only while you
+  have fewer than three).
+- Bricks: a running wide paddle or slow ball shows in the bottom corner of
+  the field, with a bar that runs down as the time runs out. Pausing stops
+  the bonuses and the bars together with the ball.
+- Bricks: a lost life or a cleared wall ends the running bonuses and drops
+  the ones still falling.
 
 ## 1.0.1 - 2026-10-03
 
