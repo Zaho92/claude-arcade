@@ -3,6 +3,17 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Fifteen: the old sliding puzzle. Slide the numbered tiles into order, 1 to
+  15, with the gap in the last corner. An arrow slides the tile next to the
+  gap in that direction. Tiles already in their place turn green, the score
+  line counts your moves, and the fewer moves you need, the higher the
+  score. Space starts a new shuffle. Turn-based, so a pause never costs
+  anything.
+
 ## 1.0.1 - 2026-10-03
 
 ### Fixed
