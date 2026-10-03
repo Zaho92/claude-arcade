@@ -3,6 +3,14 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.0.1 - 2026-10-03
+
+### Fixed
+
+- Where the arcade cannot be shown, such as VS Code or mobile, its note now
+  says it needs the terminal, and no longer names the desktop app, where
+  Arcade has not been tried.
+
 ## 1.0.0 - 2026-10-02
 
 ### Changed
