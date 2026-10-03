@@ -156,6 +156,25 @@ happens in your session. This is all of them, and all they do:
   set, the file `sounds/pause.wav` that comes with the plugin chimes when the
   game freezes. It is off by default.
 
+## Privacy
+
+- **No personal data, no network.** The arcade collects nothing about you and
+  makes no network calls. Nothing leaves your machine.
+- **What it reads.** Claude Code's settings, for the `language` set there, and
+  the locale variables `LC_ALL`, `LC_MESSAGES` and `LANG`, to pick a language.
+- **What it stores.** Your high scores, one number per game, locally in
+  Claude Code's own store for the plugin. Nothing else outlasts the session.
+- **Your conversation.** It does not read your prompts or Claude's answers.
+  It only notices when Claude starts, finishes, asks a question or waits for
+  a permission, to pause the game. To tell which tool call a permission is
+  for, it keeps the tool's name, the call's id and a short checksum of its
+  arguments, in memory, until the call has ended; the arguments themselves
+  are not kept.
+- **Permissions.** It never answers a permission request.
+
+Questions about any of this: open an
+[issue](https://github.com/Zaho92/claude-arcade/issues).
+
 ## Contributing
 
 Contributions are very welcome, translations and new games above all.
