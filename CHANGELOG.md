@@ -3,6 +3,12 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.7.2 - 2026-10-04
+
+### Fixed
+
+- Nothing you will notice while playing: the plugin now names where to find its privacy notes, its documentation and help.
+
 ## 1.7.1 - 2026-10-04
 
 ### Fixed
