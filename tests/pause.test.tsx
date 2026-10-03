@@ -244,7 +244,7 @@ test('the menu: the title, the games in a frame, and under it what the chosen ga
   await ui.advance(100)
 
   expect((await menu(ui)).title).toEqual(['▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀', '█▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄'])
-  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe', '██ Lampen'])
+  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe', 'Fünfzehn', '██ Lampen'])
   expect(await shows(ui, /Räum die Mauer ab/)).toBeDefined()
   expect(await shows(ui, /Fressen, wachsen/)).toBeUndefined()
 
@@ -265,7 +265,7 @@ for (const language of ['en', 'de', 'ja', 'zh', 'ru'] as const) {
     await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
     await ui.advance(100)
     const { width, rows } = await menu(ui)
-    expect(rows).toHaveLength(6)
+    expect(rows).toHaveLength(7)
     // The frame's border and padding take two cells on either side.
     for (const row of rows) expect([row, textWidth(row) + 4]).toEqual([row, width])
     expect(rows[0]).toMatch(/ 300$/)
