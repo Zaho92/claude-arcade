@@ -56,6 +56,9 @@ const en = {
   'cows.blurb': 'Crack the four-digit code in ten tries',
   'cows.help': '←/→ digit · ↑/↓ change · Space guess · {bull} right place · {cow} wrong place',
   'cows.won': 'Cracked! {n} points · Space',
+  'meteors.name': 'Meteors',
+  'meteors.blurb': 'Dodge the falling rocks',
+  'meteors.help': '←/→ move · catch {bonus}',
 }
 
 export type TextKey = keyof typeof en
@@ -106,6 +109,9 @@ const de: Table = {
   'cows.blurb': 'Knack den vierstelligen Code in zehn Versuchen',
   'cows.help': '←/→ Stelle · ↑/↓ ändern · Leertaste raten · {bull} richtig · {cow} falsche Stelle',
   'cows.won': 'Geknackt! {n} Punkte · Leertaste',
+  'meteors.name': 'Meteoriten',
+  'meteors.blurb': 'Weich den fallenden Felsen aus',
+  'meteors.help': '←/→ bewegen · {bonus} fangen',
 }
 
 const fr: Table = {
@@ -153,6 +159,9 @@ const fr: Table = {
   'cows.blurb': 'Trouve le code à quatre chiffres en dix essais',
   'cows.help': '←/→ chiffre · ↑/↓ changer · Espace proposer · {bull} bien placé · {cow} mal placé',
   'cows.won': 'Trouvé ! {n} points · Espace',
+  'meteors.name': 'Météores',
+  'meteors.blurb': 'Esquive les rochers qui tombent',
+  'meteors.help': '←/→ déplacer · attrape {bonus}',
 }
 
 const es: Table = {
@@ -200,6 +209,9 @@ const es: Table = {
   'cows.blurb': 'Descifra el código de cuatro cifras en diez intentos',
   'cows.help': '←/→ cifra · ↑/↓ cambiar · Espacio probar · {bull} en su sitio · {cow} fuera de sitio',
   'cows.won': '¡Descifrado! {n} puntos · Espacio',
+  'meteors.name': 'Meteoros',
+  'meteors.blurb': 'Esquiva las rocas que caen',
+  'meteors.help': '←/→ mover · atrapa {bonus}',
 }
 
 const pt: Table = {
@@ -247,6 +259,9 @@ const pt: Table = {
   'cows.blurb': 'Descubra o código de quatro dígitos em dez tentativas',
   'cows.help': '←/→ dígito · ↑/↓ mudar · Espaço chutar · {bull} lugar certo · {cow} lugar errado',
   'cows.won': 'Descoberto! {n} pontos · Espaço',
+  'meteors.name': 'Meteoros',
+  'meteors.blurb': 'Desvie das pedras que caem',
+  'meteors.help': '←/→ mover · pegue {bonus}',
 }
 
 const it: Table = {
@@ -294,6 +309,9 @@ const it: Table = {
   'cows.blurb': 'Scopri il codice di quattro cifre in dieci tentativi',
   'cows.help': '←/→ cifra · ↑/↓ cambia · Spazio prova · {bull} al posto giusto · {cow} al posto sbagliato',
   'cows.won': 'Trovato! {n} punti · Spazio',
+  'meteors.name': 'Meteoriti',
+  'meteors.blurb': 'Schiva le rocce che cadono',
+  'meteors.help': '←/→ muovi · prendi {bonus}',
 }
 
 const ja: Table = {
@@ -341,6 +359,9 @@ const ja: Table = {
   'cows.blurb': '4桁の数字を10回以内で当てよう',
   'cows.help': '←/→ 桁 · ↑/↓ 変更 · Space 決定 · {bull} 位置も正解 · {cow} 数字だけ正解',
   'cows.won': '正解！ {n} 点 · Space',
+  'meteors.name': 'メテオ',
+  'meteors.blurb': '落ちてくる岩をよけよう',
+  'meteors.help': '←/→ 移動 · {bonus} を取る',
 }
 
 const zh: Table = {
@@ -388,6 +409,9 @@ const zh: Table = {
   'cows.blurb': '十次之内猜出四位数密码',
   'cows.help': '←/→ 选位 · ↑/↓ 改数 · 空格 猜 · {bull} 位置正确 · {cow} 位置错误',
   'cows.won': '猜中了！{n} 分 · 空格',
+  'meteors.name': '流星雨',
+  'meteors.blurb': '躲开坠落的岩石',
+  'meteors.help': '←/→ 移动 · 接住 {bonus}',
 }
 
 const ko: Table = {
@@ -435,6 +459,9 @@ const ko: Table = {
   'cows.blurb': '네 자리 숫자를 열 번 안에 맞히세요',
   'cows.help': '←/→ 자리 · ↑/↓ 바꾸기 · Space 확인 · {bull} 스트라이크 · {cow} 볼',
   'cows.won': '정답! {n}점 · Space',
+  'meteors.name': '메테오',
+  'meteors.blurb': '떨어지는 바위를 피하세요',
+  'meteors.help': '←/→ 이동 · {bonus} 받기',
 }
 
 const ru: Table = {
@@ -482,6 +509,9 @@ const ru: Table = {
   'cows.blurb': 'Угадай код из четырёх цифр за десять попыток',
   'cows.help': '←/→ цифра · ↑/↓ сменить · Пробел ход · {bull} на месте · {cow} не на месте',
   'cows.won': 'Угадал! {n} очк. · Пробел',
+  'meteors.name': 'Метеориты',
+  'meteors.blurb': 'Уворачивайся от падающих камней',
+  'meteors.help': '←/→ двигать · лови {bonus}',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
