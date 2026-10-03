@@ -50,8 +50,8 @@ export function pressesFor(level: number): number {
 }
 
 /** What a board solved in `presses` presses earns: fewer is more. */
-export function pointsFor(level: number, par: number, presses: number): number {
-  return Math.max(MIN_POINTS, BASE_POINTS + POINTS_PER_PAR * par + level - POINTS_PER_PRESS * presses)
+export function pointsFor(par: number, presses: number): number {
+  return Math.max(MIN_POINTS, BASE_POINTS + POINTS_PER_PAR * par - POINTS_PER_PRESS * presses)
 }
 
 /** Switches the lamp at (x, y) and the four next to it. */
@@ -124,7 +124,7 @@ export function press(g: Lamps, action: Action): boolean {
       flip(g.lit, c.x, c.y)
       g.presses++
       if (!g.lit.some(Boolean)) {
-        g.score += pointsFor(g.level, g.par, g.presses)
+        g.score += pointsFor(g.par, g.presses)
         g.level++
         const next = board(g.level, g.random)
         g.lit = next.lit

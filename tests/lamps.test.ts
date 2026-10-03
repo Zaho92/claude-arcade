@@ -92,7 +92,7 @@ describe('lamps', () => {
     expect(g.level).toBe(2)
     expect(g.presses).toBe(0)
     expect(g.lit.some(Boolean)).toBe(true)
-    expect(g.score).toBe(pointsFor(1, 1, 1))
+    expect(g.score).toBe(pointsFor(1, 1))
     expect(lamps.banner(g)).toBe('lamps.solved')
     press(g, 'right')
     expect(lamps.banner(g)).toBeUndefined()
@@ -100,9 +100,9 @@ describe('lamps', () => {
   })
 
   test('fewer presses score more, and a board is always worth something', () => {
-    expect(pointsFor(1, 4, 3)).toBeGreaterThan(pointsFor(1, 4, 4))
-    expect(pointsFor(1, 4, 4)).toBeGreaterThan(pointsFor(1, 4, 9))
-    expect(pointsFor(1, 4, 500)).toBeGreaterThan(0)
+    expect(pointsFor(4, 3)).toBeGreaterThan(pointsFor(4, 4))
+    expect(pointsFor(4, 4)).toBeGreaterThan(pointsFor(4, 9))
+    expect(pointsFor(4, 500)).toBeGreaterThan(0)
   })
 
   test('the score line shows the presses, the level and the score', () => {
