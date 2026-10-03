@@ -24,6 +24,8 @@ export type Glyphs = {
   /** Bulls & Cows: a right digit in the right place, and in the wrong one. */
   bull: string
   cow: string
+  /** Pairs: the symbols on the cards, one cell wide each and all different. */
+  cards: string[]
   /** Around the field or digit the keys act on, so it shows without colors. */
   cursorLeft: string
   cursorRight: string
@@ -56,6 +58,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '✱',
     bull: '●',
     cow: '○',
+    cards: ['♠', '♥', '♦', '♣', '★', '●', '▲', '■', '◆', '♪', '☾', '✿', '✚', '▼', '◐', '✦'],
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',
@@ -88,6 +91,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     mine: '*',
     bull: '+',
     cow: 'o',
+    cards: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'],
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',
