@@ -47,6 +47,11 @@ stay outside it.
 - `userConfig` fields list no `options` (the directory refuses them): the
   allowed values stand in the description, and the code takes any other value
   as `auto`.
+- The `Client` element in `register.tsx` keeps its shape: tag and
+  `module="./arcade.tsx"` on one line, and no `const { Client } = ...` line.
+  The plugin directory's check flagged the `const { Client }` line
+  (`MOD_IMPORT_DYNAMIC_COMPUTED`); the element's name stands nowhere else in
+  that file, comments included.
 - A function that takes `$` is declared at the top level of its file; the
   validator refuses `$` handed to a closure.
 - The state contract (`plugin/types/index.d.ts`) is self-contained: no imports.
