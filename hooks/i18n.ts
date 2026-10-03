@@ -20,6 +20,7 @@ const en = {
   'hud.best': 'Best {n}',
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Tries {n}',
+  'hud.tries': 'Tries {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
   'pause.asking': 'Claude has a question for you',
@@ -56,6 +57,11 @@ const en = {
   'cows.blurb': 'Crack the four-digit code in ten tries',
   'cows.help': '←/→ digit · ↑/↓ change · Space guess · {bull} right place · {cow} wrong place',
   'cows.won': 'Cracked! {n} points · Space',
+  'pairs.name': 'Pairs',
+  'pairs.blurb': 'Find the matching cards in as few tries as you can',
+  'pairs.help': '←↑↓→ move · Space turn card',
+  'pairs.cleared': 'Cleared! {n} points · Space: next board',
+  'pairs.won': 'All boards cleared! {n} points · Space',
 }
 
 export type TextKey = keyof typeof en
@@ -70,6 +76,7 @@ const de: Table = {
   'hud.best': 'Rekord {n}',
   'hud.minesLeft': 'Minen {n}',
   'hud.triesLeft': 'Versuche {n}',
+  'hud.tries': 'Versuche {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
   'pause.asking': 'Claude hat eine Frage an dich',
@@ -106,6 +113,11 @@ const de: Table = {
   'cows.blurb': 'Knack den vierstelligen Code in zehn Versuchen',
   'cows.help': '←/→ Stelle · ↑/↓ ändern · Leertaste raten · {bull} richtig · {cow} falsche Stelle',
   'cows.won': 'Geknackt! {n} Punkte · Leertaste',
+  'pairs.name': 'Paare',
+  'pairs.blurb': 'Finde die passenden Karten mit möglichst wenigen Versuchen',
+  'pairs.help': '←↑↓→ bewegen · Leertaste Karte umdrehen',
+  'pairs.cleared': 'Geschafft! {n} Punkte · Leertaste: nächstes Brett',
+  'pairs.won': 'Alle Bretter gelöst! {n} Punkte · Leertaste',
 }
 
 const fr: Table = {
@@ -117,6 +129,7 @@ const fr: Table = {
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mines {n}',
   'hud.triesLeft': 'Essais {n}',
+  'hud.tries': 'Essais {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
   'pause.asking': 'Claude a une question pour toi',
@@ -153,6 +166,11 @@ const fr: Table = {
   'cows.blurb': 'Trouve le code à quatre chiffres en dix essais',
   'cows.help': '←/→ chiffre · ↑/↓ changer · Espace proposer · {bull} bien placé · {cow} mal placé',
   'cows.won': 'Trouvé ! {n} points · Espace',
+  'pairs.name': 'Paires',
+  'pairs.blurb': 'Trouve les cartes identiques en un minimum d’essais',
+  'pairs.help': '←↑↓→ déplacer · Espace retourner',
+  'pairs.cleared': 'Réussi ! {n} points · Espace : plateau suivant',
+  'pairs.won': 'Tous les plateaux résolus ! {n} points · Espace',
 }
 
 const es: Table = {
@@ -164,6 +182,7 @@ const es: Table = {
   'hud.best': 'Récord {n}',
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Intentos {n}',
+  'hud.tries': 'Intentos {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
   'pause.asking': 'Claude tiene una pregunta para ti',
@@ -200,6 +219,11 @@ const es: Table = {
   'cows.blurb': 'Descifra el código de cuatro cifras en diez intentos',
   'cows.help': '←/→ cifra · ↑/↓ cambiar · Espacio probar · {bull} en su sitio · {cow} fuera de sitio',
   'cows.won': '¡Descifrado! {n} puntos · Espacio',
+  'pairs.name': 'Parejas',
+  'pairs.blurb': 'Encuentra las cartas iguales con los menos intentos posibles',
+  'pairs.help': '←↑↓→ mover · Espacio girar carta',
+  'pairs.cleared': '¡Hecho! {n} puntos · Espacio: siguiente tablero',
+  'pairs.won': '¡Todos los tableros resueltos! {n} puntos · Espacio',
 }
 
 const pt: Table = {
@@ -211,6 +235,7 @@ const pt: Table = {
   'hud.best': 'Recorde {n}',
   'hud.minesLeft': 'Minas {n}',
   'hud.triesLeft': 'Tentativas {n}',
+  'hud.tries': 'Tentativas {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
   'pause.asking': 'O Claude tem uma pergunta para você',
@@ -247,6 +272,11 @@ const pt: Table = {
   'cows.blurb': 'Descubra o código de quatro dígitos em dez tentativas',
   'cows.help': '←/→ dígito · ↑/↓ mudar · Espaço chutar · {bull} lugar certo · {cow} lugar errado',
   'cows.won': 'Descoberto! {n} pontos · Espaço',
+  'pairs.name': 'Pares',
+  'pairs.blurb': 'Encontre as cartas iguais com o mínimo de tentativas',
+  'pairs.help': '←↑↓→ mover · Espaço virar carta',
+  'pairs.cleared': 'Feito! {n} pontos · Espaço: próximo tabuleiro',
+  'pairs.won': 'Todos os tabuleiros resolvidos! {n} pontos · Espaço',
 }
 
 const it: Table = {
@@ -258,6 +288,7 @@ const it: Table = {
   'hud.best': 'Record {n}',
   'hud.minesLeft': 'Mine {n}',
   'hud.triesLeft': 'Tentativi {n}',
+  'hud.tries': 'Tentativi {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
   'pause.asking': 'Claude ha una domanda per te',
@@ -294,6 +325,11 @@ const it: Table = {
   'cows.blurb': 'Scopri il codice di quattro cifre in dieci tentativi',
   'cows.help': '←/→ cifra · ↑/↓ cambia · Spazio prova · {bull} al posto giusto · {cow} al posto sbagliato',
   'cows.won': 'Trovato! {n} punti · Spazio',
+  'pairs.name': 'Coppie',
+  'pairs.blurb': 'Trova le carte uguali con meno tentativi possibile',
+  'pairs.help': '←↑↓→ muovi · Spazio gira carta',
+  'pairs.cleared': 'Fatto! {n} punti · Spazio: tavolo successivo',
+  'pairs.won': 'Tutti i tavoli risolti! {n} punti · Spazio',
 }
 
 const ja: Table = {
@@ -305,6 +341,7 @@ const ja: Table = {
   'hud.best': 'ベスト {n}',
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '残り {n}',
+  'hud.tries': '手数 {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
   'pause.asking': 'Claude から質問があります',
@@ -341,6 +378,11 @@ const ja: Table = {
   'cows.blurb': '4桁の数字を10回以内で当てよう',
   'cows.help': '←/→ 桁 · ↑/↓ 変更 · Space 決定 · {bull} 位置も正解 · {cow} 数字だけ正解',
   'cows.won': '正解！ {n} 点 · Space',
+  'pairs.name': 'ペア探し',
+  'pairs.blurb': '同じカードを少ない手数で見つけよう',
+  'pairs.help': '←↑↓→ 移動 · Space めくる',
+  'pairs.cleared': 'クリア！ {n} 点 · Space: 次の盤面',
+  'pairs.won': '全盤面クリア！ {n} 点 · Space',
 }
 
 const zh: Table = {
@@ -352,6 +394,7 @@ const zh: Table = {
   'hud.best': '最高 {n}',
   'hud.minesLeft': '地雷 {n}',
   'hud.triesLeft': '剩余 {n}',
+  'hud.tries': '步数 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
   'pause.asking': 'Claude 有问题要问你',
@@ -388,6 +431,11 @@ const zh: Table = {
   'cows.blurb': '十次之内猜出四位数密码',
   'cows.help': '←/→ 选位 · ↑/↓ 改数 · 空格 猜 · {bull} 位置正确 · {cow} 位置错误',
   'cows.won': '猜中了！{n} 分 · 空格',
+  'pairs.name': '配对',
+  'pairs.blurb': '用尽量少的步数找出相同的牌',
+  'pairs.help': '←↑↓→ 移动 · Space 翻牌',
+  'pairs.cleared': '过关！{n} 分 · Space：下一局',
+  'pairs.won': '全部过关！{n} 分 · Space',
 }
 
 const ko: Table = {
@@ -399,6 +447,7 @@ const ko: Table = {
   'hud.best': '최고 {n}',
   'hud.minesLeft': '지뢰 {n}',
   'hud.triesLeft': '남은 기회 {n}',
+  'hud.tries': '시도 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
   'pause.asking': 'Claude가 질문이 있어요',
@@ -435,6 +484,11 @@ const ko: Table = {
   'cows.blurb': '네 자리 숫자를 열 번 안에 맞히세요',
   'cows.help': '←/→ 자리 · ↑/↓ 바꾸기 · Space 확인 · {bull} 스트라이크 · {cow} 볼',
   'cows.won': '정답! {n}점 · Space',
+  'pairs.name': '짝 맞추기',
+  'pairs.blurb': '같은 카드를 최대한 적은 시도로 찾으세요',
+  'pairs.help': '←↑↓→ 이동 · Space 뒤집기',
+  'pairs.cleared': '성공! {n}점 · Space: 다음 판',
+  'pairs.won': '모두 성공! {n}점 · Space',
 }
 
 const ru: Table = {
@@ -446,6 +500,7 @@ const ru: Table = {
   'hud.best': 'Рекорд {n}',
   'hud.minesLeft': 'Мины {n}',
   'hud.triesLeft': 'Попыток {n}',
+  'hud.tries': 'Ходов {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
   'pause.asking': 'У Claude есть вопрос к тебе',
@@ -482,6 +537,11 @@ const ru: Table = {
   'cows.blurb': 'Угадай код из четырёх цифр за десять попыток',
   'cows.help': '←/→ цифра · ↑/↓ сменить · Пробел ход · {bull} на месте · {cow} не на месте',
   'cows.won': 'Угадал! {n} очк. · Пробел',
+  'pairs.name': 'Пары',
+  'pairs.blurb': 'Найдите одинаковые карты за как можно меньше ходов',
+  'pairs.help': '←↑↓→ двигаться · Пробел открыть',
+  'pairs.cleared': 'Готово! {n} очков · Пробел: следующее поле',
+  'pairs.won': 'Все поля пройдены! {n} очков · Пробел',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

@@ -3,6 +3,16 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Pairs: find the matching cards. Move the cursor, turn two cards per try;
+  a match stays open, a miss stays shown until your next key, which then
+  does what it says. Fewer tries give more points. Each cleared board leads
+  to one with more cards, as far as the pane has room. Nothing runs on a
+  clock, so a pause never hides or reveals anything.
+
 ## 1.0.1 - 2026-10-03
 
 ### Fixed

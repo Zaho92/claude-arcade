@@ -77,6 +77,8 @@ claude --plugin-dir ./claude-arcade
    │   ✱  Mines                │
    │                           │
    │   ●○ Bulls & Cows         │
+   │                           │
+   │   ♥★ Pairs                │
    ╰───────────────────────────╯
     Clear the wall
     ↑/↓ choose · Enter play · Esc prompt
@@ -108,6 +110,7 @@ the game region yet and show a note instead.
 | Merge | Slide and merge number tiles up to the gold tile and beyond; turn-based, so a pause never costs anything |
 | Mines | Open every safe field, flag the mines; the first field is always safe |
 | Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
+| Pairs | Find the matching cards in as few tries as you can; bigger boards as the pane allows; turn-based |
 
 ## Settings
 
