@@ -33,6 +33,8 @@ export type Glyphs = {
   /** Lamps: a lit and a dark lamp, two cells wide. */
   lampOn: string
   lampOff: string
+  /** Pairs: the symbols on the cards, one cell wide each and all different. */
+  cards: string[]
   /** Around the field or digit the keys act on, so it shows without colors. */
   cursorLeft: string
   cursorRight: string
@@ -72,6 +74,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     cow: '○',
     lampOn: '██',
     lampOff: '░░',
+    cards: ['♠', '♥', '♦', '♣', '★', '●', '▲', '■', '◆', '♪', '☾', '✿', '✚', '▼', '◐', '✦'],
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',
@@ -111,6 +114,7 @@ export const GLYPHS: Record<GlyphSet, Glyphs> = {
     cow: 'o',
     lampOn: '##',
     lampOff: '..',
+    cards: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'],
     cursorLeft: '[',
     cursorRight: ']',
     ordinal: '.',

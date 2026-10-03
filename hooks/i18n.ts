@@ -22,6 +22,7 @@ const en = {
   'hud.triesLeft': 'Tries {n}',
   'hud.moves': 'Moves {n}',
   'hud.presses': 'Presses {n}',
+  'hud.tries': 'Tries {n}',
   'pause.idle': 'Starts as soon as Claude is working',
   'pause.done': 'Claude is done – your turn',
   'pause.asking': 'Claude has a question for you',
@@ -66,6 +67,11 @@ const en = {
   'lamps.blurb': 'Switch off all lamps, neighbours flip too',
   'lamps.help': '←↑↓→ move · Space press',
   'lamps.solved': 'Board dark! Next level · {n} points',
+  'pairs.name': 'Pairs',
+  'pairs.blurb': 'Find the matching cards in as few tries as you can',
+  'pairs.help': '←↑↓→ move · Space turn card',
+  'pairs.cleared': 'Cleared! {n} points · Space: next board',
+  'pairs.won': 'All boards cleared! {n} points · Space',
 }
 
 export type TextKey = keyof typeof en
@@ -82,6 +88,7 @@ const de: Table = {
   'hud.triesLeft': 'Versuche {n}',
   'hud.moves': 'Züge {n}',
   'hud.presses': 'Züge {n}',
+  'hud.tries': 'Versuche {n}',
   'pause.idle': 'Läuft, sobald Claude arbeitet',
   'pause.done': 'Claude ist fertig – du bist dran',
   'pause.asking': 'Claude hat eine Frage an dich',
@@ -126,6 +133,11 @@ const de: Table = {
   'lamps.blurb': 'Alle Lampen ausschalten, Nachbarn schalten mit',
   'lamps.help': '←↑↓→ bewegen · Leertaste drücken',
   'lamps.solved': 'Alles dunkel! Nächste Stufe · {n} Punkte',
+  'pairs.name': 'Paare',
+  'pairs.blurb': 'Finde die passenden Karten mit möglichst wenigen Versuchen',
+  'pairs.help': '←↑↓→ bewegen · Leertaste Karte umdrehen',
+  'pairs.cleared': 'Geschafft! {n} Punkte · Leertaste: nächstes Brett',
+  'pairs.won': 'Alle Bretter gelöst! {n} Punkte · Leertaste',
 }
 
 const fr: Table = {
@@ -139,6 +151,7 @@ const fr: Table = {
   'hud.triesLeft': 'Essais {n}',
   'hud.moves': 'Coups {n}',
   'hud.presses': 'Appuis {n}',
+  'hud.tries': 'Essais {n}',
   'pause.idle': 'Démarre dès que Claude travaille',
   'pause.done': 'Claude a terminé – à toi de jouer',
   'pause.asking': 'Claude a une question pour toi',
@@ -183,6 +196,11 @@ const fr: Table = {
   'lamps.blurb': 'Éteins toutes les lampes, les voisines basculent aussi',
   'lamps.help': '←↑↓→ déplacer · Espace appuyer',
   'lamps.solved': 'Tout éteint ! Niveau suivant · {n} points',
+  'pairs.name': 'Paires',
+  'pairs.blurb': 'Trouve les cartes identiques en un minimum d’essais',
+  'pairs.help': '←↑↓→ déplacer · Espace retourner',
+  'pairs.cleared': 'Réussi ! {n} points · Espace : plateau suivant',
+  'pairs.won': 'Tous les plateaux résolus ! {n} points · Espace',
 }
 
 const es: Table = {
@@ -196,6 +214,7 @@ const es: Table = {
   'hud.triesLeft': 'Intentos {n}',
   'hud.moves': 'Movimientos {n}',
   'hud.presses': 'Pulsos {n}',
+  'hud.tries': 'Intentos {n}',
   'pause.idle': 'Empieza en cuanto Claude trabaje',
   'pause.done': 'Claude ha terminado: te toca',
   'pause.asking': 'Claude tiene una pregunta para ti',
@@ -240,6 +259,11 @@ const es: Table = {
   'lamps.blurb': 'Apaga todas las lámparas, las vecinas también cambian',
   'lamps.help': '←↑↓→ mover · Espacio pulsar',
   'lamps.solved': '¡Todo apagado! Siguiente nivel · {n} puntos',
+  'pairs.name': 'Parejas',
+  'pairs.blurb': 'Encuentra las cartas iguales con los menos intentos posibles',
+  'pairs.help': '←↑↓→ mover · Espacio girar carta',
+  'pairs.cleared': '¡Hecho! {n} puntos · Espacio: siguiente tablero',
+  'pairs.won': '¡Todos los tableros resueltos! {n} puntos · Espacio',
 }
 
 const pt: Table = {
@@ -253,6 +277,7 @@ const pt: Table = {
   'hud.triesLeft': 'Tentativas {n}',
   'hud.moves': 'Jogadas {n}',
   'hud.presses': 'Toques {n}',
+  'hud.tries': 'Tentativas {n}',
   'pause.idle': 'Começa assim que o Claude estiver trabalhando',
   'pause.done': 'O Claude terminou – sua vez',
   'pause.asking': 'O Claude tem uma pergunta para você',
@@ -297,6 +322,11 @@ const pt: Table = {
   'lamps.blurb': 'Apague todas as lâmpadas, as vizinhas também mudam',
   'lamps.help': '←↑↓→ mover · Espaço apertar',
   'lamps.solved': 'Tudo apagado! Próximo nível · {n} pontos',
+  'pairs.name': 'Pares',
+  'pairs.blurb': 'Encontre as cartas iguais com o mínimo de tentativas',
+  'pairs.help': '←↑↓→ mover · Espaço virar carta',
+  'pairs.cleared': 'Feito! {n} pontos · Espaço: próximo tabuleiro',
+  'pairs.won': 'Todos os tabuleiros resolvidos! {n} pontos · Espaço',
 }
 
 const it: Table = {
@@ -310,6 +340,7 @@ const it: Table = {
   'hud.triesLeft': 'Tentativi {n}',
   'hud.moves': 'Mosse {n}',
   'hud.presses': 'Pressioni {n}',
+  'hud.tries': 'Tentativi {n}',
   'pause.idle': 'Parte appena Claude lavora',
   'pause.done': 'Claude ha finito – tocca a te',
   'pause.asking': 'Claude ha una domanda per te',
@@ -354,6 +385,11 @@ const it: Table = {
   'lamps.blurb': 'Spegni tutte le lampade, anche le vicine cambiano',
   'lamps.help': '←↑↓→ muovi · Spazio premi',
   'lamps.solved': 'Tutto spento! Livello successivo · {n} punti',
+  'pairs.name': 'Coppie',
+  'pairs.blurb': 'Trova le carte uguali con meno tentativi possibile',
+  'pairs.help': '←↑↓→ muovi · Spazio gira carta',
+  'pairs.cleared': 'Fatto! {n} punti · Spazio: tavolo successivo',
+  'pairs.won': 'Tutti i tavoli risolti! {n} punti · Spazio',
 }
 
 const ja: Table = {
@@ -367,6 +403,7 @@ const ja: Table = {
   'hud.triesLeft': '残り {n}',
   'hud.moves': '手数 {n}',
   'hud.presses': '回数 {n}',
+  'hud.tries': '手数 {n}',
   'pause.idle': 'Claude が作業を始めると開始します',
   'pause.done': 'Claude の作業が完了しました',
   'pause.asking': 'Claude から質問があります',
@@ -411,6 +448,11 @@ const ja: Table = {
   'lamps.blurb': 'すべてのランプを消そう、隣も切り替わる',
   'lamps.help': '←↑↓→ 移動 · Space 押す',
   'lamps.solved': '全部消えた！次のレベルへ · {n} 点',
+  'pairs.name': 'ペア探し',
+  'pairs.blurb': '同じカードを少ない手数で見つけよう',
+  'pairs.help': '←↑↓→ 移動 · Space めくる',
+  'pairs.cleared': 'クリア！ {n} 点 · Space: 次の盤面',
+  'pairs.won': '全盤面クリア！ {n} 点 · Space',
 }
 
 const zh: Table = {
@@ -424,6 +466,7 @@ const zh: Table = {
   'hud.triesLeft': '剩余 {n}',
   'hud.moves': '步数 {n}',
   'hud.presses': '步数 {n}',
+  'hud.tries': '步数 {n}',
   'pause.idle': 'Claude 开始工作后自动开始',
   'pause.done': 'Claude 已完成，轮到你了',
   'pause.asking': 'Claude 有问题要问你',
@@ -468,6 +511,11 @@ const zh: Table = {
   'lamps.blurb': '关掉所有的灯，相邻的灯也会切换',
   'lamps.help': '←↑↓→ 移动 · 空格 按下',
   'lamps.solved': '全灭了！下一关 · {n} 分',
+  'pairs.name': '配对',
+  'pairs.blurb': '用尽量少的步数找出相同的牌',
+  'pairs.help': '←↑↓→ 移动 · Space 翻牌',
+  'pairs.cleared': '过关！{n} 分 · Space：下一局',
+  'pairs.won': '全部过关！{n} 分 · Space',
 }
 
 const ko: Table = {
@@ -481,6 +529,7 @@ const ko: Table = {
   'hud.triesLeft': '남은 기회 {n}',
   'hud.moves': '이동 {n}',
   'hud.presses': '누른 횟수 {n}',
+  'hud.tries': '시도 {n}',
   'pause.idle': 'Claude가 작업을 시작하면 시작됩니다',
   'pause.done': 'Claude가 작업을 마쳤어요. 이제 당신 차례예요',
   'pause.asking': 'Claude가 질문이 있어요',
@@ -525,6 +574,11 @@ const ko: Table = {
   'lamps.blurb': '모든 전등을 끄세요, 이웃한 전등도 바뀝니다',
   'lamps.help': '←↑↓→ 이동 · Space 누르기',
   'lamps.solved': '모두 껐어요! 다음 레벨 · {n}점',
+  'pairs.name': '짝 맞추기',
+  'pairs.blurb': '같은 카드를 최대한 적은 시도로 찾으세요',
+  'pairs.help': '←↑↓→ 이동 · Space 뒤집기',
+  'pairs.cleared': '성공! {n}점 · Space: 다음 판',
+  'pairs.won': '모두 성공! {n}점 · Space',
 }
 
 const ru: Table = {
@@ -538,6 +592,7 @@ const ru: Table = {
   'hud.triesLeft': 'Попыток {n}',
   'hud.moves': 'Ходов {n}',
   'hud.presses': 'Нажатий {n}',
+  'hud.tries': 'Ходов {n}',
   'pause.idle': 'Запустится, как только Claude начнёт работать',
   'pause.done': 'Claude закончил – твой ход',
   'pause.asking': 'У Claude есть вопрос к тебе',
@@ -582,6 +637,11 @@ const ru: Table = {
   'lamps.blurb': 'Погаси все лампы, соседние тоже переключаются',
   'lamps.help': '←↑↓→ ход · Пробел нажать',
   'lamps.solved': 'Всё погасло! Следующий уровень · {n} очк.',
+  'pairs.name': 'Пары',
+  'pairs.blurb': 'Найдите одинаковые карты за как можно меньше ходов',
+  'pairs.help': '←↑↓→ двигаться · Пробел открыть',
+  'pairs.cleared': 'Готово! {n} очков · Пробел: следующее поле',
+  'pairs.won': 'Все поля пройдены! {n} очков · Пробел',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }
