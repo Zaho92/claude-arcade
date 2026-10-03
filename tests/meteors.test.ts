@@ -324,6 +324,17 @@ describe('meteors', () => {
     expect(text[shipRow(g)]?.[g.shipX]).toBe(glyphs.ship)
   })
 
+  test('a rock on the same cell as a bonus is the one shown, because it is the one that hits', () => {
+    const g = playing()
+    g.rocks = [rock(g.shipX, shipRow(g) - 1)]
+    g.bonuses = [{ x: g.shipX, y: shipRow(g) - 1, every: 1, wait: 1 }]
+    const glyphs = GLYPHS.ascii
+    expect(lines(frame(g, glyphs))[shipRow(g) - 1]?.[g.shipX]).toBe(glyphs.rockSmall)
+    tick(g)
+    expect(g.lives).toBe(START_LIVES - 1)
+    expect(g.score).toBe(0)
+  })
+
   test('frames are as wide as the field in both glyph sets', () => {
     const g = newMeteors(40, 16, seeded(5))
     press(g, 'primary')

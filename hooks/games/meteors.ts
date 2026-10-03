@@ -237,12 +237,13 @@ export function frame(g: Meteors, glyphs: Glyphs): Frame {
   }
   // Trails first: a trail never hides a rock, a bonus or the ship.
   for (const r of g.rocks) for (const t of trailOf(r)) set(t.x, t.y, glyphs.rockTrail, TRAIL_COLORS[t.age])
+  // Rocks over bonuses: what would hit the ship is always the thing shown.
+  for (const b of g.bonuses) set(b.x, b.y, glyphs.bonus, BONUS_COLOR)
   const glyphOf: Record<Size, string> = { 1: glyphs.rockSmall, 2: glyphs.rockMid, 3: glyphs.rockBig }
   for (const r of g.rocks) {
     const chars = Array.from(glyphOf[r.size])
     for (let i = 0; i < r.size; i++) set(r.x + i, r.y, chars[i] ?? chars[0] ?? glyphs.empty, ROCK_COLORS[r.size])
   }
-  for (const b of g.bonuses) set(b.x, b.y, glyphs.bonus, BONUS_COLOR)
   set(g.shipX, shipRow(g), glyphs.ship, SHIP_COLOR)
   return grid.map(line => {
     const cells: Segment[] = []
