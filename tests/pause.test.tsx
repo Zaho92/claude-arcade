@@ -154,6 +154,36 @@ test('the game freezes when Claude is done and runs while Claude works', async (
   }
 })
 
+test('Meteors freezes with Claude, and after an interruption waits for P', async ($, on) => {
+  engine(on, { language: 'german' })
+  await $.session.start(SESSION)
+  const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
+  await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
+  await ui.advance(100)
+  for (let i = 0; i < 2; i++) await ui.key({ key: 'down', in: 'arcade' })
+  expect(await shows(ui, /Weich den fallenden Felsen aus/)).toBeDefined()
+  await ui.key({ key: 'return', in: 'arcade' })
+  await $.turn.start({ text: 'go', turnId: 'm1' })
+  await ui.advance(100)
+  expect(await shows(ui, /Leertaste: Start/)).toBeDefined()
+  await ui.key({ key: ' ', in: 'arcade' })
+  await ui.advance(500)
+  expect(await shows(ui, /Leertaste: Start/)).toBeUndefined()
+
+  await $.turn.complete({ ...DONE, turnId: 'm1' })
+  await ui.advance(2000)
+  expect(await shows(ui, /Claude ist fertig – du bist dran/)).toBeDefined()
+
+  await $.turn.start({ text: 'more', turnId: 'm2' })
+  await ui.advance(100)
+  expect(await shows(ui, /Pause – P zum Weiterspielen/)).toBeDefined()
+  await ui.key({ key: 'p', in: 'arcade' })
+  await ui.advance(100)
+  expect(await shows(ui, /Pause – P zum Weiterspielen/)).toBeUndefined()
+  await $.turn.complete({ ...DONE, turnId: 'm2' })
+  await ui.unmount()
+})
+
 test('the line that says why nothing moves stands under the field, whole, and hides no row of it', async ($, on) => {
   engine(on, {}, { LANG: 'ko_KR.UTF-8' })
   await $.session.start(SESSION)
@@ -244,7 +274,7 @@ test('the menu: the title, the games in a frame, and under it what the chosen ga
   await ui.advance(100)
 
   expect((await menu(ui)).title).toEqual(['▄▀█ █▀█ █▀▀ ▄▀█ █▀▄ █▀▀', '█▀█ █▀▄ █▄▄ █▀█ █▄▀ ██▄'])
-  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe', 'Fünfzehn', '██ Lampen', '♥★ Paare'])
+  expect((await menu(ui)).rows.map(row => row.trim())).toEqual(['▶ ██ Mauerbrecher', '██ Wurm', '●▲ Meteoriten', 'Verschmelzen', '✱  Minen', '●○ Bullen & Kühe', 'Fünfzehn', '██ Lampen', '♥★ Paare'])
   expect(await shows(ui, /Räum die Mauer ab/)).toBeDefined()
   expect(await shows(ui, /Fressen, wachsen/)).toBeUndefined()
 
@@ -265,11 +295,11 @@ for (const language of ['en', 'de', 'ja', 'zh', 'ru'] as const) {
     await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
     await ui.advance(100)
     const { width, rows } = await menu(ui)
-    expect(rows).toHaveLength(8)
+    expect(rows).toHaveLength(9)
     // The frame's border and padding take two cells on either side.
     for (const row of rows) expect([row, textWidth(row) + 4]).toEqual([row, width])
     expect(rows[0]).toMatch(/ 300$/)
-    expect(rows[3]).toMatch(/ 12345$/)
+    expect(rows[4]).toMatch(/ 12345$/)
     await ui.unmount()
   })
 }
@@ -396,7 +426,7 @@ test('a record is stored while the game still runs, so closing the pane keeps it
   await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
   await ui.advance(100)
   // Mines: the first field opened is always safe and counts at once.
-  for (let i = 0; i < 3; i++) await ui.key({ key: 'down', in: 'arcade' })
+  for (let i = 0; i < 4; i++) await ui.key({ key: 'down', in: 'arcade' })
   await ui.key({ key: 'return', in: 'arcade' })
   await $.turn.start({ text: 'go', turnId: 't1' })
   await ui.advance(100)
@@ -417,7 +447,7 @@ test('leaving a game with Q stores what was scored', async ($, on) => {
   const ui = await $.ui.mount({ surface: 'terminal', ...PANE })
   await ui.resize({ columns: 70, rows: 24, in: 'arcade' })
   await ui.advance(100)
-  for (let i = 0; i < 3; i++) await ui.key({ key: 'down', in: 'arcade' })
+  for (let i = 0; i < 4; i++) await ui.key({ key: 'down', in: 'arcade' })
   await ui.key({ key: 'return', in: 'arcade' })
   await $.turn.start({ text: 'go', turnId: 't1' })
   await ui.advance(100)

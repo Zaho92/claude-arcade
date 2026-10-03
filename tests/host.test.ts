@@ -225,6 +225,30 @@ describe('pause', () => {
     expect(frameTick(s, 70).changed).toBe(true)
   })
 
+  test('every game on the clock stays paused after Claude interrupted it, until P', () => {
+    const ids = GAMES.filter(def => def.tickMs > 0).map(def => def.id)
+    expect(ids).toContain('meteors')
+    for (const id of ids) {
+      const s = playing(id)
+      // Bricks launches its ball; the others start on Space as well.
+      handle(s, 'primary', 70, 24)
+      expect([id, s.run?.def.status(s.run.g)]).toEqual([id, 'play'])
+      interrupt(s)
+      expect([id, s.isManuallyPaused]).toEqual([id, true])
+      for (let i = 0; i < 100; i++) expect(frameTick(s, 70).changed).toBe(false)
+      expect([id, handle(s, 'left', 70, 24).changed]).toEqual([id, false])
+      handle(s, 'pause', 70, 24)
+      expect([id, s.isManuallyPaused]).toEqual([id, false])
+    }
+  })
+
+  test('Meteors waits for Space before the first rock, and a ship not yet started is not held', () => {
+    const s = playing('meteors')
+    interrupt(s)
+    expect(s.isManuallyPaused).toBe(false)
+    expect(handle(s, 'primary', 70, 24).changed).toBe(true)
+  })
+
   test('a game that only moves on keys goes on as soon as Claude works again', () => {
     const s = scoring()
     s.props = WAITING

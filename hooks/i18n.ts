@@ -72,6 +72,9 @@ const en = {
   'pairs.help': '←↑↓→ move · Space turn card',
   'pairs.cleared': 'Cleared! {n} points · Space: next board',
   'pairs.won': 'All boards cleared! {n} points · Space',
+  'meteors.name': 'Meteors',
+  'meteors.blurb': 'Dodge the falling rocks',
+  'meteors.help': '←/→ move · catch {bonus}',
 }
 
 export type TextKey = keyof typeof en
@@ -138,6 +141,9 @@ const de: Table = {
   'pairs.help': '←↑↓→ bewegen · Leertaste Karte umdrehen',
   'pairs.cleared': 'Geschafft! {n} Punkte · Leertaste: nächstes Brett',
   'pairs.won': 'Alle Bretter gelöst! {n} Punkte · Leertaste',
+  'meteors.name': 'Meteoriten',
+  'meteors.blurb': 'Weich den fallenden Felsen aus',
+  'meteors.help': '←/→ bewegen · {bonus} fangen',
 }
 
 const fr: Table = {
@@ -201,6 +207,9 @@ const fr: Table = {
   'pairs.help': '←↑↓→ déplacer · Espace retourner',
   'pairs.cleared': 'Réussi ! {n} points · Espace : plateau suivant',
   'pairs.won': 'Tous les plateaux résolus ! {n} points · Espace',
+  'meteors.name': 'Météores',
+  'meteors.blurb': 'Esquive les rochers qui tombent',
+  'meteors.help': '←/→ déplacer · attrape {bonus}',
 }
 
 const es: Table = {
@@ -264,6 +273,9 @@ const es: Table = {
   'pairs.help': '←↑↓→ mover · Espacio girar carta',
   'pairs.cleared': '¡Hecho! {n} puntos · Espacio: siguiente tablero',
   'pairs.won': '¡Todos los tableros resueltos! {n} puntos · Espacio',
+  'meteors.name': 'Meteoros',
+  'meteors.blurb': 'Esquiva las rocas que caen',
+  'meteors.help': '←/→ mover · atrapa {bonus}',
 }
 
 const pt: Table = {
@@ -327,6 +339,9 @@ const pt: Table = {
   'pairs.help': '←↑↓→ mover · Espaço virar carta',
   'pairs.cleared': 'Feito! {n} pontos · Espaço: próximo tabuleiro',
   'pairs.won': 'Todos os tabuleiros resolvidos! {n} pontos · Espaço',
+  'meteors.name': 'Meteoros',
+  'meteors.blurb': 'Desvie das pedras que caem',
+  'meteors.help': '←/→ mover · pegue {bonus}',
 }
 
 const it: Table = {
@@ -390,6 +405,9 @@ const it: Table = {
   'pairs.help': '←↑↓→ muovi · Spazio gira carta',
   'pairs.cleared': 'Fatto! {n} punti · Spazio: tavolo successivo',
   'pairs.won': 'Tutti i tavoli risolti! {n} punti · Spazio',
+  'meteors.name': 'Meteoriti',
+  'meteors.blurb': 'Schiva le rocce che cadono',
+  'meteors.help': '←/→ muovi · prendi {bonus}',
 }
 
 const ja: Table = {
@@ -453,6 +471,9 @@ const ja: Table = {
   'pairs.help': '←↑↓→ 移動 · Space めくる',
   'pairs.cleared': 'クリア！ {n} 点 · Space: 次の盤面',
   'pairs.won': '全盤面クリア！ {n} 点 · Space',
+  'meteors.name': 'メテオ',
+  'meteors.blurb': '落ちてくる岩をよけよう',
+  'meteors.help': '←/→ 移動 · {bonus} を取る',
 }
 
 const zh: Table = {
@@ -516,6 +537,9 @@ const zh: Table = {
   'pairs.help': '←↑↓→ 移动 · Space 翻牌',
   'pairs.cleared': '过关！{n} 分 · Space：下一局',
   'pairs.won': '全部过关！{n} 分 · Space',
+  'meteors.name': '流星雨',
+  'meteors.blurb': '躲开坠落的岩石',
+  'meteors.help': '←/→ 移动 · 接住 {bonus}',
 }
 
 const ko: Table = {
@@ -579,6 +603,9 @@ const ko: Table = {
   'pairs.help': '←↑↓→ 이동 · Space 뒤집기',
   'pairs.cleared': '성공! {n}점 · Space: 다음 판',
   'pairs.won': '모두 성공! {n}점 · Space',
+  'meteors.name': '메테오',
+  'meteors.blurb': '떨어지는 바위를 피하세요',
+  'meteors.help': '←/→ 이동 · {bonus} 받기',
 }
 
 const ru: Table = {
@@ -642,6 +669,9 @@ const ru: Table = {
   'pairs.help': '←↑↓→ двигаться · Пробел открыть',
   'pairs.cleared': 'Готово! {n} очков · Пробел: следующее поле',
   'pairs.won': 'Все поля пройдены! {n} очков · Пробел',
+  'meteors.name': 'Метеориты',
+  'meteors.blurb': 'Уворачивайся от падающих камней',
+  'meteors.help': '←/→ двигать · лови {bonus}',
 }
 
 export const TEXTS: Record<Locale, Table> = { en, de, fr, es, pt, it, ja, zh, ko, ru }

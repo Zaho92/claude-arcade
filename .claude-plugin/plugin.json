@@ -1,6 +1,6 @@
 {
   "name": "arcade",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Retro games in a Claude Code pane that run while Claude works and freeze the moment it needs you.",
   "author": {
     "name": "zaho92"
