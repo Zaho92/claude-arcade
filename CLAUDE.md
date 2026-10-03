@@ -41,10 +41,9 @@ stay outside it.
   in English and in every other language. Width on screen is `textWidth`,
   never `.length` (CJK takes two cells).
 - Every glyph a game draws comes from `Glyphs`, with an ascii fallback.
-- No hook answers or changes a permission: `tool.check` is not hooked (the
-  plugin directory refuses a hook that reads its verdict), and the answer of
-  `classic.PermissionRequest` is returned as it came, looked at only to see
-  whether a hook beneath answered, so that no dialog opens.
+- No hook answers or changes a permission: `tool.check` is not hooked, and the
+  `classic.PermissionRequest` hook ends in `return next(e)`: the answer is
+  neither bound nor read. The plugin directory refuses anything else.
 - `userConfig` fields list no `options` (the directory refuses them): the
   allowed values stand in the description, and the code takes any other value
   as `auto`.

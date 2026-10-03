@@ -17,7 +17,7 @@ Speaks ten languages and follows the one you set for Claude Code.
 | starts working on your prompt | runs |
 | finishes its turn | freezes: *"Claude is done – your turn"* |
 | asks you a question (AskUserQuestion) | freezes until you have answered |
-| waits for a permission | freezes until the tool has run |
+| waits for a permission | freezes until the tool has run (also when one of your own hooks gives the permission) |
 | runs a subagent that finishes | keeps running (only the main turn counts) |
 
 The line under the field says why it stands still. Bricks, Worm and Meteors, once
@@ -136,15 +136,14 @@ happens in your session. This is all of them, and all they do:
 | `/arcade` being typed | open the pane |
 | Claude's turn starting and ending | run and freeze the game |
 | a tool call starting and ending, `AskUserQuestion` among them | know when a question or a permission dialog is open, and when it is answered |
-| a permission request | freeze the game while the dialog is open |
+| a permission request | freeze the game until the tool it is for has run or was refused |
 | the pane being drawn, and a score the pane reports | draw the game, keep the high score |
 
-- **It never answers a permission.** It only notices that a dialog opens and
-  hands the request on, and the answer back, untouched; allowing or refusing
-  stays with you and your settings. The one thing it looks at is whether one
-  of your own hooks already answered, because then no dialog opens and the
-  game need not freeze. It does not hook the permission check itself, and it changes
-  no tool call, no prompt and no answer of Claude.
+- **It never answers a permission request.** It only notices that one is
+  made, hands it on untouched, and hands the answer back without looking at
+  it; allowing or refusing stays with you and your settings. It does not hook
+  the permission check itself, and it changes no tool call, no prompt and no
+  answer of Claude.
 - **It sends nothing anywhere.** No network, no telemetry, no files written.
   What it reads beyond the events above: Claude Code's `language` setting and
   the locale variables `LC_ALL`, `LC_MESSAGES` and `LANG`, to pick a

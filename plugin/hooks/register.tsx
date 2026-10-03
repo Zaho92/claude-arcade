@@ -2,11 +2,11 @@
 // Claude is done, asks a question or waits for a permission.
 
 import { atom, derive, read, update } from 'claude-code'
-import type { EngineInterface, PluginOptions, Register } from 'claude-code'
+import type { EngineInterface, PluginOptions, Register, RenderInput } from 'claude-code'
 
 import { prefersAscii, resolveLocale, t } from './i18n'
 import type { GlyphSet } from './glyphs'
-import type { Display, PauseState, Waiting } from '../types'
+import type { Display, Locale, PauseState, Waiting } from '../types'
 
 const PANE = 'arcade'
 const BEST_KEY = 'best'
@@ -143,18 +143,6 @@ export function ended(w: Waiting, agent: string, tool: string, call: string): Wa
   return { ...w, running, permission }
 }
 
-/**
- * Something beneath answered a permission request of `tool` in the loop
- * `agent` in the person's place: no dialog opens, and the newest entry of
- * that tool in that loop goes. Not the entry as it was put down: a call
- * ending in the meantime may have shortened it.
- */
-export function answered(w: Waiting, agent: string, tool: string): Waiting {
-  const ofTool = `${agent}:${tool}#`
-  const i = w.permission.findLastIndex(p => p.startsWith(ofTool))
-  return i < 0 ? w : { ...w, permission: [...w.permission.slice(0, i), ...w.permission.slice(i + 1)] }
-}
-
 /** A loop's turn ends: whatever dialog or call of its own is still down has gone with it. */
 export function loopEnds(w: Waiting, agent: string): Waiting {
   const others = (list: string[]) => list.filter(entry => !entry.startsWith(`${agent}:`))
@@ -211,6 +199,12 @@ async function freeze($: EngineInterface, change: (w: Waiting) => Waiting, isSou
   if (pauseOf(after).isPaused && !pauseOf(before).isPaused) await chime($, isSoundOn)
 }
 
+/** What a surface that cannot draw the game region shows in its place. */
+function unsupported($: EngineInterface, e: RenderInput<'Pane'>, locale: Locale) {
+  const { Text } = $.ui.resolve(e)
+  return <Text dimColor>{t(locale, 'unsupported')}</Text>
+}
+
 export const register: Register = (on, options) => {
   const isSoundOn = options.sound === true
 
@@ -265,16 +259,14 @@ export const register: Register = (on, options) => {
 
   // A permission dialog: freeze until the tool it is for has run. Frozen
   // before the hooks beneath are asked, so the game never runs on under a
-  // dialog. When one of them answers instead of the person, no dialog opens:
-  // the game runs again, and only a dialog that does open chimes.
+  // dialog. The answer is not this plugin's to see: it goes back as it comes.
+  // So when a hook beneath answers instead of the person and no dialog opens,
+  // the game stands still all the same, until the tool has run or was refused.
   on('classic.PermissionRequest', async ($, e, next) => {
     const agent = e.agent_id ?? ''
-    const { before } = await settle($, w => dialog(w, agent, e.tool_name, digest(e.tool_input)))
-    const answer = await next(e)
-    if (answer.decision) await settle($, w => answered(w, agent, e.tool_name))
-    else if (!pauseOf(before).isPaused) await chime($, isSoundOn)
+    await freeze($, w => dialog(w, agent, e.tool_name, digest(e.tool_input)), isSoundOn)
 
-    return answer
+    return next(e)
   })
 
   // The permission check runs inside the call: the call is remembered while
@@ -306,11 +298,7 @@ export const register: Register = (on, options) => {
 
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const shown = await read($, display)
-    if (e.surface !== 'terminal' && e.surface !== 'desktop') {
-      const { Text } = $.ui.resolve(e)
-      return <Text dimColor>{t(shown.locale, 'unsupported')}</Text>
-    }
-    const { Client } = $.ui.resolve(e)
+    if (e.surface !== 'terminal' && e.surface !== 'desktop') return unsupported($, e, shown.locale)
 
     const state = await read($, pause)
     const record = await read($, best)
@@ -321,10 +309,11 @@ export const register: Register = (on, options) => {
     // the pane is as tall as what is drawn, so its body rows must not size it.
     const height = e.props.placement === 'dock' ? e.props.scroll.bodyRows : '100%'
 
+    const { Client } = $.ui.resolve(e)
     return (
       <Client
-        key="arcade"
         module="./arcade.tsx"
+        key="arcade"
         props={{ ...state, ...shown, best: record }}
         width="100%"
         height={height}

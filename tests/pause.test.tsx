@@ -606,7 +606,7 @@ test('a dialog answered while Claude is idle leaves the game frozen', async ($, 
   await ui.unmount()
 })
 
-test('a permission a settings hook answers by itself does not leave the game frozen', async ($, on) => {
+test('a permission a settings hook answers by itself freezes the game until the tool has run', async ($, on) => {
   const world = engine(on, { language: 'german' })
   world.decision = { behavior: 'allow' }
   on('tool.call', () => ({ result: { text: 'ok' } }) as never)
@@ -616,15 +616,20 @@ test('a permission a settings hook answers by itself does not leave the game fro
   await ui.key({ key: 'return', in: 'arcade' })
   await $.turn.start({ text: 'go', turnId: 't1' })
 
-  // No dialog opens, and the tool may run for minutes.
-  await $.classic.PermissionRequest(BASH)
+  // No dialog opens, but the arcade does not look at the answer.
+  const answer = await $.classic.PermissionRequest(BASH)
+  expect(answer).toEqual({ decision: { behavior: 'allow' } })
   await ui.advance(100)
-  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeUndefined()
+  expect(await shows(ui, /Claude wartet auf deine Freigabe/)).toBeDefined()
+
+  await $.tool.call({ tool: 'Bash', command: 'ls' } as never)
+  await ui.advance(100)
+  expect(await shows(ui, /⏸/)).toBeUndefined()
   expect(await shows(ui, /Leertaste: Start/)).toBeDefined()
   await ui.unmount()
 })
 
-test('a hook that answers one permission does not take another, open dialog with it', async ($, on) => {
+test('a permission answered by a hook and a dialog open beside it each end with their own tool', async ($, on) => {
   const world = engine(on, { language: 'german' })
   on('tool.call', () => ({ result: { text: 'ok' } }) as never)
   await $.session.start(SESSION)
@@ -650,13 +655,16 @@ test('a hook that answers one permission does not take another, open dialog with
   await ui.unmount()
 })
 
-test('with sound on, a permission a settings hook answers by itself does not chime', { options: { sound: true } }, async ($, on) => {
+test('with sound on, a permission request chimes once, whoever answers it', { options: { sound: true } }, async ($, on) => {
   const world = engine(on)
   world.decision = { behavior: 'allow' }
+  on('tool.call', () => ({ result: { text: 'ok' } }) as never)
   await $.session.start(SESSION)
   await $.turn.start({ text: 'go', turnId: 't1' })
   await $.classic.PermissionRequest(BASH)
-  expect(world.sounds).toEqual([])
+  expect(world.sounds).toEqual(['sounds/pause.wav'])
+  await $.tool.call({ tool: 'Bash', command: 'ls' } as never)
+  expect(world.sounds).toEqual(['sounds/pause.wav'])
 })
 
 test('a subagent that ends takes its open dialog with it', async ($, on) => {
