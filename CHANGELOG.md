@@ -3,7 +3,7 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
-## 1.1.0 - 2026-10-03
+## 1.2.0 - 2026-10-03
 
 ### Added
 
@@ -13,6 +13,22 @@ CI are in the pull requests, not here.
   line counts your moves, and the fewer moves you need, the higher the
   score. Space starts a new shuffle. Turn-based, so a pause never costs
   anything.
+
+## 1.1.0 - 2026-10-03
+
+### Added
+
+- Bricks: now and then a broken brick drops a bonus. It falls straight down;
+  catch it with the paddle to switch it on, miss it and it just falls out.
+  There are four, each with its own sign: an extra ball (a life is only lost
+  when the last ball is gone), a wide paddle for a while, a slow ball for a
+  while (back to the first wall's speed) and an extra life (only while you
+  have fewer than three).
+- Bricks: a running wide paddle or slow ball shows in the bottom corner of
+  the field, with a bar that runs down as the time runs out. Pausing stops
+  the bonuses and the bars together with the ball.
+- Bricks: a lost life or a cleared wall ends the running bonuses and drops
+  the ones still falling.
 
 ## 1.0.1 - 2026-10-03
 
