@@ -108,6 +108,7 @@ the game region yet and show a note instead.
 | Merge | Slide and merge number tiles up to the gold tile and beyond; turn-based, so a pause never costs anything |
 | Mines | Open every safe field, flag the mines; the first field is always safe |
 | Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
+| Fifteen | Slide the tiles into order, 1 to 15; the fewer moves, the higher the score; turn-based, so a pause never costs anything |
 
 ## Settings
 
