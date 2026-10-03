@@ -3,6 +3,12 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.7.1 - 2026-10-04
+
+### Fixed
+
+- Nothing you will notice while playing: the game pane is declared in a way the plugin directory's check can read.
+
 ## 1.7.0 - 2026-10-04
 
 ### Changed

@@ -309,15 +309,13 @@ export const register: Register = (on, options) => {
     // the pane is as tall as what is drawn, so its body rows must not size it.
     const height = e.props.placement === 'dock' ? e.props.scroll.bodyRows : '100%'
 
-    const { Client } = $.ui.resolve(e)
+    // The plugin directory reads the surface module's path off this source,
+    // and its check took a line that only fetched the element from the table
+    // for an element without a path. So the element is named once in this
+    // file, in the tag below, with its `module` on the same line.
+    const elements = $.ui.resolve(e)
     return (
-      <Client
-        module="./arcade.tsx"
-        key="arcade"
-        props={{ ...state, ...shown, best: record }}
-        width="100%"
-        height={height}
-      />
+      <elements.Client module="./arcade.tsx" key="arcade" width="100%" height={height} props={{ ...state, ...shown, best: record }} />
     )
   })
 }
