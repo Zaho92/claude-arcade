@@ -42,7 +42,7 @@ Or from a clone, for one session:
 
 ```
 git clone https://github.com/zaho92/claude-arcade
-claude --plugin-dir ./claude-arcade
+claude --plugin-dir ./claude-arcade/plugin
 ```
 
 ## Play
@@ -111,8 +111,11 @@ Under `/plugin` → arcade → configure, or in `settings.json` under
 | Setting | Default | |
 |---|---|---|
 | `language` | `auto` | `auto`, `en`, `de`, `fr`, `es`, `pt`, `it`, `ja`, `zh`, `ko`, `ru` |
-| `glyphs` | `auto` | `unicode` draws with block symbols, `ascii` with plain characters |
+| `glyphs` | `auto` | `auto`, `unicode` (block symbols) or `ascii` (plain characters) |
 | `sound` | `false` | chime when Claude needs you while the arcade is open (macOS only) |
+
+`language` and `glyphs` are typed in as text. A value the arcade does not
+know counts as `auto`.
 
 **Language.** `auto` takes the first of: Claude Code's own `language` setting
 (free text such as `"german"` or `"日本語"`), then `LC_ALL`, `LC_MESSAGES`,
@@ -122,13 +125,45 @@ Under `/plugin` → arcade → configure, or in `settings.json` under
 like `●` or `█` two cells wide, which tears the field apart. `auto` uses
 `ascii` for those three languages and `unicode` otherwise.
 
+## What the hooks do
+
+The plugin is a set of hooks: functions Claude Code calls when something
+happens in your session. This is all of them, and all they do:
+
+| The hook listens for | To |
+|---|---|
+| the session starting | pick the language, register `/arcade`, read your high scores |
+| `/arcade` being typed | open the pane |
+| Claude's turn starting and ending | run and freeze the game |
+| a tool call starting and ending, `AskUserQuestion` among them | know when a question or a permission dialog is open, and when it is answered |
+| a permission request | freeze the game while the dialog is open |
+| the pane being drawn, and a score the pane reports | draw the game, keep the high score |
+
+- **It never answers a permission.** It only notices that a dialog opens and
+  hands the request on, and the answer back, untouched; allowing or refusing
+  stays with you and your settings. The one thing it looks at is whether one
+  of your own hooks already answered, because then no dialog opens and the
+  game need not freeze. It does not hook the permission check itself, and it changes
+  no tool call, no prompt and no answer of Claude.
+- **It sends nothing anywhere.** No network, no telemetry, no files written.
+  What it reads beyond the events above: Claude Code's `language` setting and
+  the locale variables `LC_ALL`, `LC_MESSAGES` and `LANG`, to pick a
+  language. Of a tool call it keeps the tool's name, the call's id and a short
+  checksum of its arguments, in memory, until the call has ended.
+- **It stores your high scores, locally.** One number per game, in Claude
+  Code's own store for the plugin on your machine. Nothing else is kept
+  beyond the session.
+- **It plays one local sound, on macOS, if you switch it on.** With `sound`
+  set, the file `sounds/pause.wav` that comes with the plugin chimes when the
+  game freezes. It is off by default.
+
 ## Contributing
 
 Contributions are very welcome, translations and new games above all.
 
 - **Translations:** the nine languages besides English were translated
   without native review. If yours reads oddly, a one-line pull request to
-  `hooks/i18n.ts` makes a real difference. New languages are welcome too.
+  `plugin/hooks/i18n.ts` makes a real difference. New languages are welcome too.
 - **New games:** a game is one file of pure logic; the arcade handles keys,
   pausing, drawing and high scores. Original games and public-domain classics
   only, no trademarks or look-alikes.
@@ -143,24 +178,29 @@ releases work. What changed in each version is in
 
 ```
 claude plugin validate .
-claude plugin test .
+claude plugin validate plugin
+node scripts/test.mjs
 ```
 
-- `hooks/register.tsx`: the hooks module. It registers `/arcade`, opens the
+The plugin itself is the folder `plugin/`; tests, CI and docs stay outside
+it, so an installation gets the plugin alone. `scripts/test.mjs` runs
+`claude plugin test` with the tests copied in for the run.
+
+- `plugin/hooks/register.tsx`: the hooks module. It registers `/arcade`, opens the
   pane, picks the language and turns Claude's turn events into a pause state.
-- `hooks/arcade.tsx`: the surface module. It runs on the drawing thread and
+- `plugin/hooks/arcade.tsx`: the surface module. It runs on the drawing thread and
   draws the menu and the running game.
-- `hooks/host.ts`: the arcade's rules: keys, menu, pause, frame clock.
-- `hooks/games/`: one file per game as pure logic behind `GameDef`
+- `plugin/hooks/host.ts`: the arcade's rules: keys, menu, pause, frame clock.
+- `plugin/hooks/games/`: one file per game as pure logic behind `GameDef`
   (`types.ts`), listed in `index.ts`.
-- `hooks/i18n.ts`, `hooks/glyphs.ts`: texts and characters.
-- `types/index.d.ts`: the plugin's state contract.
+- `plugin/hooks/i18n.ts`, `plugin/hooks/glyphs.ts`: texts and characters.
+- `plugin/types/index.d.ts`: the plugin's state contract.
 
-A new game is one file in `hooks/games/` implementing `GameDef`, its texts in
-`hooks/i18n.ts`, an entry in `GAMES` and a test file.
+A new game is one file in `plugin/hooks/games/` implementing `GameDef`, its texts in
+`plugin/hooks/i18n.ts`, an entry in `GAMES` and a test file.
 
-The engine writes the API types to `.claude-plugin/types/` when it loads the
-plugin, and `tsc -p .` type-checks against them.
+The engine writes the API types to `plugin/.claude-plugin/types/` when it loads the
+plugin, and `tsc -p .` type-checks against them, from the repository root.
 
 ## Ideas
 

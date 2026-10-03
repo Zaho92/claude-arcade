@@ -2,7 +2,7 @@
 //
 // To add a language: copy the `en` block and translate it; add the code to
 // LOCALES, to `Locale` in types/index.d.ts, its names to ALIASES, and to the
-// `language` options in .claude-plugin/plugin.json. Every language has every
+// `language` description in .claude-plugin/plugin.json. Every language has every
 // key; a test checks it.
 
 import type { Locale } from '../types'

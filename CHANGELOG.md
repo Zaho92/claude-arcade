@@ -3,6 +3,14 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.6.0 - 2026-10-03
+
+### Changed
+
+- The settings `language` and `glyphs` are typed in as text instead of picked from a list. The values are the same (`auto`, `en`, `de`, … and `auto`, `unicode`, `ascii`), and a value the arcade does not know counts as `auto`.
+- When Claude runs several commands at once and one of them waits for your permission, the game may stay frozen a moment longer than before, until those commands have ended. It still never runs on under an open permission dialog.
+- Installing from a clone now points at the `plugin` folder inside it: `claude --plugin-dir ./claude-arcade/plugin`. Installing and updating through `/plugin` works as before.
+
 ## 1.5.0 - 2026-10-03
 
 ### Added

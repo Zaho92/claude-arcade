@@ -1,3 +1,5 @@
 # Laid by Claude Code at every load; regenerated, never committed.
-.claude-plugin/types/
+plugin/.claude-plugin/types/
+# The tests, copied in for a run by scripts/test.mjs.
+plugin/tests/
 node_modules/

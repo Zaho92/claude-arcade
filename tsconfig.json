@@ -1,4 +1,9 @@
 {
-  "extends": "./.claude-plugin/types/tsconfig.json",
-  "include": [".claude-plugin/types", "hooks", "types", "tests"]
+  "extends": "./plugin/.claude-plugin/types/tsconfig.json",
+  "compilerOptions": {
+    // The tests import the plugin as if they lay in its folder ("../hooks/..."),
+    // which is where scripts/test.mjs puts them for a run.
+    "rootDirs": [".", "plugin"]
+  },
+  "include": ["plugin/.claude-plugin/types", "plugin/hooks", "plugin/types", "tests"]
 }

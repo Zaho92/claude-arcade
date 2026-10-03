@@ -33,11 +33,11 @@ jobs:
         timeout-minutes: 3
         run: |
           claude plugin validate .
-          claude plugin validate .claude-plugin/plugin.json
+          claude plugin validate plugin
       - name: Test
         id: test
         timeout-minutes: 5
-        run: claude plugin test .
+        run: node scripts/test.mjs
       # Only for the checks themselves: a failed download is not an API change.
       - name: Open an issue, unless one is open
         if: failure() && (steps.validate.outcome == 'failure' || steps.test.outcome == 'failure')
