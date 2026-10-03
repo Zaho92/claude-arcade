@@ -2,9 +2,10 @@
 
 import { bricks } from './bricks'
 import { cows } from './cows'
+import { lamps } from './lamps'
 import { merge } from './merge'
 import { mines } from './mines'
 import { worm } from './worm'
 import type { GameDef } from './types'
 
-export const GAMES: readonly GameDef[] = [bricks, worm, merge, mines, cows]
+export const GAMES: readonly GameDef[] = [bricks, worm, merge, mines, cows, lamps]
