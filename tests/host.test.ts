@@ -150,24 +150,44 @@ describe('pause', () => {
     expect(frameTick(s, 70).changed).toBe(true)
     handle(s, 'pause', 70, 24)
     expect(s.isManuallyPaused).toBe(true)
-    const at = { x: g.ballX, y: g.ballY, paddle: g.paddleX }
+    const at = { x: g.balls[0]!.x, y: g.balls[0]!.y, paddle: g.paddleX }
     for (let i = 0; i < 10; i++) expect(frameTick(s, 70).changed).toBe(false)
     expect(handle(s, 'left', 70, 24).changed).toBe(false)
-    expect({ x: g.ballX, y: g.ballY, paddle: g.paddleX }).toEqual(at)
+    expect({ x: g.balls[0]!.x, y: g.balls[0]!.y, paddle: g.paddleX }).toEqual(at)
     handle(s, 'pause', 70, 24)
     expect(frameTick(s, 70).changed).toBe(true)
-    expect(g.ballY).not.toBe(at.y)
+    expect(g.balls[0]!.y).not.toBe(at.y)
+  })
+
+  test('falling bonuses and effect timers stand still with the ball, and go on with it', () => {
+    const { s, g } = rally()
+    g.drops = [{ kind: 'life', x: 1, y: 5 }]
+    g.wideLeft = 300
+    g.slowLeft = 200
+    expect(frameTick(s, 70).changed).toBe(true)
+    handle(s, 'pause', 70, 24)
+    const at = { drop: g.drops[0]!.y, wide: g.wideLeft, slow: g.slowLeft }
+    for (let i = 0; i < 50; i++) frameTick(s, 70)
+    s.props = WAITING
+    for (let i = 0; i < 50; i++) frameTick(s, 70)
+    expect({ drop: g.drops[0]!.y, wide: g.wideLeft, slow: g.slowLeft }).toEqual(at)
+    s.props = PLAYING
+    handle(s, 'pause', 70, 24)
+    expect(frameTick(s, 70).changed).toBe(true)
+    expect(g.wideLeft).toBeLessThan(at.wide)
+    expect(g.slowLeft).toBeLessThan(at.slow)
+    expect(g.drops[0]!.y).toBeGreaterThan(at.drop)
   })
 
   test('a ball in the air stands still while Claude needs you, and after it until P', () => {
     const { s, g } = rally()
     expect(frameTick(s, 70).changed).toBe(true)
     s.props = WAITING
-    const at = { x: g.ballX, y: g.ballY, paddle: g.paddleX, lives: g.lives }
+    const at = { x: g.balls[0]!.x, y: g.balls[0]!.y, paddle: g.paddleX, lives: g.lives }
     for (let i = 0; i < 200; i++) expect(frameTick(s, 70).changed).toBe(false)
     expect(handle(s, 'left', 70, 24).changed).toBe(false)
     expect(handle(s, 'pause', 70, 24).changed).toBe(false)
-    expect({ x: g.ballX, y: g.ballY, paddle: g.paddleX, lives: g.lives }).toEqual(at)
+    expect({ x: g.balls[0]!.x, y: g.balls[0]!.y, paddle: g.paddleX, lives: g.lives }).toEqual(at)
     // No time piles up for the moment Claude is back at work.
     expect(s.run?.carry).toBe(0)
 
@@ -176,11 +196,11 @@ describe('pause', () => {
     s.props = PLAYING
     for (let i = 0; i < 200; i++) expect(frameTick(s, 70).changed).toBe(false)
     expect(handle(s, 'left', 70, 24).changed).toBe(false)
-    expect({ x: g.ballX, y: g.ballY, paddle: g.paddleX, lives: g.lives }).toEqual(at)
+    expect({ x: g.balls[0]!.x, y: g.balls[0]!.y, paddle: g.paddleX, lives: g.lives }).toEqual(at)
 
     expect(handle(s, 'pause', 70, 24).changed).toBe(true)
     expect(frameTick(s, 70).changed).toBe(true)
-    expect(g.ballY).not.toBe(at.y)
+    expect(g.balls[0]!.y).not.toBe(at.y)
   })
 
   test('a moment in which nobody was asked anything does not hold the ball', () => {
@@ -188,12 +208,12 @@ describe('pause', () => {
     // Twice just under the time that holds: the moments do not add up.
     for (let round = 0; round < 2; round++) {
       s.props = WAITING
-      const y = g.ballY
+      const y = g.balls[0]!.y
       for (let ms = FRAME_MS; ms < HOLD_AFTER_MS; ms += FRAME_MS) expect(frameTick(s, 70).changed).toBe(false)
       s.props = PLAYING
       expect(frameTick(s, 70).changed).toBe(true)
       expect(s.isManuallyPaused).toBe(false)
-      expect(g.ballY).not.toBe(y)
+      expect(g.balls[0]!.y).not.toBe(y)
     }
   })
 
@@ -356,11 +376,11 @@ describe('field size', () => {
     expect(fits(run, 70)).toBe(true)
     expect(fits(run, run.w + 1)).toBe(false)
 
-    const at = { x: g.ballX, y: g.ballY }
+    const at = { x: g.balls[0]!.x, y: g.balls[0]!.y }
     for (let i = 0; i < 10; i++) expect(frameTick(s, 40).changed).toBe(false)
     expect(handle(s, 'left', 40, 24).changed).toBe(false)
     expect(handle(s, 'pause', 40, 24).changed).toBe(false)
-    expect({ x: g.ballX, y: g.ballY }).toEqual(at)
+    expect({ x: g.balls[0]!.x, y: g.balls[0]!.y }).toEqual(at)
 
     expect(frameTick(s, 70).changed).toBe(true)
   })

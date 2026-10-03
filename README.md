@@ -77,6 +77,8 @@ claude --plugin-dir ./claude-arcade
    │   ✱  Mines                │
    │                           │
    │   ●○ Bulls & Cows         │
+   │                           │
+   │   ♥★ Pairs                │
    ╰───────────────────────────╯
     Clear the wall
     ↑/↓ choose · Enter play · Esc prompt
@@ -109,6 +111,9 @@ the game region yet and show a note instead.
 | Merge | Slide and merge number tiles up to the gold tile and beyond; turn-based, so a pause never costs anything |
 | Mines | Open every safe field, flag the mines; the first field is always safe |
 | Bulls & Cows | Crack a four-digit code in ten tries, the old pencil-and-paper game |
+| Fifteen | Slide the tiles into order, 1 to 15; the fewer moves, the higher the score; turn-based, so a pause never costs anything |
+| Lamps | Switch every lamp off; pressing a lamp flips it and its four neighbours, and fewer presses score more; turn-based |
+| Pairs | Find the matching cards in as few tries as you can; bigger boards as the pane allows; turn-based |
 
 ## Settings
 
