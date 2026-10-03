@@ -3,6 +3,12 @@
 What changes for the person playing, newest first. Changes to tests, docs and
 CI are in the pull requests, not here.
 
+## 1.7.0 - 2026-10-04
+
+### Changed
+
+- When one of your own hooks answers a permission request in your place, the game now freezes all the same, until the tool has run or was refused; before, it ran on. With `sound` on, it chimes then too, and the line under the field says Claude is waiting for your approval although nothing is asked of you. The arcade no longer looks at the answer to a permission request at all.
+
 ## 1.6.0 - 2026-10-03
 
 ### Changed

@@ -3,7 +3,7 @@
 
 import { describe, expect, test } from 'claude-code/testing'
 
-import { answered, argsOf, dialog, digest, ended, highest, loopEnds, mainTurn, pauseOf, scores, started, without } from '../hooks/register'
+import { argsOf, dialog, digest, ended, highest, loopEnds, mainTurn, pauseOf, scores, started, without } from '../hooks/register'
 import type { Waiting } from '../types'
 
 const RUNNING: Waiting = { turn: '', asking: [], running: [], permission: [] }
@@ -96,15 +96,6 @@ describe('permission dialogs', () => {
     w = ended(w, '', 'Bash', 'c1')
     expect(w.permission).toEqual([':Bash#'])
     expect(ended(w, '', 'Bash', 'c2').permission).toEqual([])
-  })
-
-  test('a request answered in the person\'s place takes its entry with it, also one a call has shortened since', () => {
-    let w = started(started(RUNNING, '', 'Bash', 'c1', LS), '', 'Bash', 'c2', LS)
-    w = dialog(dialog(w, 'a1', 'Bash', LS), '', 'Bash', LS)
-    w = ended(w, '', 'Bash', 'c1')
-    expect(w.permission).toEqual(['a1:Bash#', ':Bash#c2'])
-    expect(answered(w, '', 'Bash').permission).toEqual(['a1:Bash#'])
-    expect(answered(w, '', 'Read')).toBe(w)
   })
 
   test('a call that got no dialog leaves nothing behind', () => {
